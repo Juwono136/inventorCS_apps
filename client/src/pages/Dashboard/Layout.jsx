@@ -5,9 +5,9 @@ import NavbarDashboard from "../../components/NavbarDashboard";
 const Layout = ({ children }) => {
   return (
     <>
-      <div>
+      <div className="flex">
         <SidebarDashboard />
-        <div>
+        <div className="w-full">
           <NavbarDashboard />
           <main>{children}</main>
         </div>

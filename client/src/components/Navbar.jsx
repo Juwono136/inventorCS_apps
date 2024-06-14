@@ -4,7 +4,6 @@ import {
   Navbar,
   Collapse,
   Typography,
-  Button,
   IconButton,
 } from "@material-tailwind/react";
 import CartsDrawer from "../common/CartsDrawer";
