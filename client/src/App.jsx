@@ -10,6 +10,7 @@ import ProfilePage from "./pages/Dashboard/ProfilePage";
 import InventoriesPage from "./pages/Dashboard/InventoriesPage";
 import BorrowedItemPage from "./pages/Dashboard/BorrowedItemPage";
 import SettingsPage from "./pages/Dashboard/SettingsPage";
+import UpdateUsersPage from "./pages/Dashboard/UpdateUsersPage";
 
 function App() {
   return (
@@ -24,9 +25,10 @@ function App() {
           </Route>
 
           <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
           <Route path="/inventories" element={<InventoriesPage />} />
           <Route path="/borrowed-item" element={<BorrowedItemPage />} />
+          <Route path="/users" element={<UpdateUsersPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Routes>
       </BrowserRouter>

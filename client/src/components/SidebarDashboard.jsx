@@ -31,15 +31,18 @@ const SidebarDashboard = ({ isDrawerOpen = false, closeDrawer }) => {
               <IoClose className="text-2xl" />
             </IconButton>
           </div>
-          <List onClick={closeDrawer}>
-            <ListItem>
-              <NavLink to="/profile">Profile</NavLink>
-            </ListItem>
+          <List>
             <ListItem>
               <NavLink to="/inventories">Inventories</NavLink>
             </ListItem>
             <ListItem>
               <NavLink to="/borrowed-item">Borrowed Item</NavLink>
+            </ListItem>
+            <ListItem>
+              <NavLink to="/users">Update User</NavLink>
+            </ListItem>
+            <ListItem>
+              <NavLink to="/profile">Profile</NavLink>
             </ListItem>
             <ListItem>
               <NavLink to="/settings">Settings</NavLink>

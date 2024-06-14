@@ -13,7 +13,7 @@ import {
 import { HiMenuAlt2 } from "react-icons/hi";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import { CiPower } from "react-icons/ci";
-import { FaArrowRight } from "react-icons/fa";
+import { IoHome } from "react-icons/io5";
 
 import SidebarDashboard from "./SidebarDashboard";
 
@@ -64,8 +64,8 @@ const NavbarDashboard = () => {
                 target={"_blank"}
                 className="flex items-center justify-center gap-2 bg-white text-indigo-500 text-sm font-semibold px-2 py-1 rounded-md transition-all hover:bg-indigo-100"
               >
+                <IoHome className="text-md" />
                 See Home Page
-                <FaArrowRight className="text-md" />
               </Link>
             </div>
 
