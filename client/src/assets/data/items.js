@@ -54,7 +54,7 @@ export const items = [
         status: "returned",
         purpose: "for quiz",
         product: {
-            name: ["ASUS Laptop", "Solder", "3D Printer", "ASUS Laptop", "Solder", "3D Printer", "ASUS Laptop", "Solder", "3D Printer", "ASUS Laptop", "Solder", "3D Printer"],
+            name: ["ASUS Laptop", "Solder", "3D Printer"],
             serial_number: ["5722", "1109", "6342"],
         },
         return_date: "July 15, 2024"
@@ -74,4 +74,7 @@ export const items = [
         },
         return_date: "July 10, 2024"
     },
+
+
+
 ];

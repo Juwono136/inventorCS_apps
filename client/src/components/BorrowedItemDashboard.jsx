@@ -46,7 +46,7 @@ const BorrowedItemDashboard = () => {
       <h1 className="text-gray-700 text-md md:text-2xl">Borrowed Items List</h1>
       <hr className="my-2 border-blue-gray-50" />
 
-      <div className="mt-4">
+      <div className="mt-4 ">
         <Card className="w-full overflow-y-hidden">
           <CardHeader floated={false} shadow={false} className="rounded-none">
             <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
@@ -79,19 +79,19 @@ const BorrowedItemDashboard = () => {
               </div>
             </div>
           </CardHeader>
-          <CardBody className="overflow-scroll px-0">
+          <CardBody className="max-h-[400px] overflow-y-auto px-0">
             <table className="w-full table-auto text-left">
               <thead>
                 <tr>
                   {TABLE_HEAD.map((head) => (
                     <th
                       key={head}
-                      className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
+                      className="border-y border-blue-gray-100 bg-blue-gray-50 p-4"
                     >
                       <Typography
                         variant="small"
                         color="blue-gray"
-                        className="font-normal leading-none opacity-70"
+                        className="font-normal leading-none opacity-80"
                       >
                         {head}
                       </Typography>
@@ -100,149 +100,122 @@ const BorrowedItemDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {items.map(
-                  (
-                    {
-                      binusian_id,
-                      borrower_name,
-                      date,
-                      address,
-                      phone,
-                      email,
-                      status,
-                      purpose,
-                      product,
-                      return_date,
-                    },
-                    index
-                  ) => {
-                    const isLast = index === items.length - 1;
-                    const classes = isLast
-                      ? "p-4"
-                      : "p-4 border-b border-blue-gray-50";
+                {items.map((item, index) => {
+                  const isLast = index === items.length - 1;
+                  const classes = isLast
+                    ? "p-4"
+                    : "p-4 border-b border-blue-gray-50";
 
-                    return (
-                      <tr key={borrower_name}>
-                        <td className={classes}>
+                  return (
+                    <tr key={item.borrower_name}>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {index + 1}
+                        </Typography>
+                      </td>
+
+                      <td className={classes}>
+                        <div className="flex items-center gap-3">
                           <Typography
                             variant="small"
                             color="blue-gray"
-                            className="font-normal"
+                            className="font-bold"
                           >
-                            {index + 1}
+                            {item.binusian_id}
                           </Typography>
-                        </td>
+                        </div>
+                      </td>
 
-                        <td className={classes}>
-                          <div className="flex items-center gap-3">
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-bold"
-                            >
-                              {binusian_id}
-                            </Typography>
-                          </div>
-                        </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {item.borrower_name}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {item.date}
+                        </Typography>
+                      </td>
 
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {item.address}
+                        </Typography>
+                      </td>
+
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {item.phone}
+                        </Typography>
+                      </td>
+
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {item.email}
+                        </Typography>
+                      </td>
+
+                      <td className={classes}>
+                        <div className="w-max">
+                          <Chip
+                            size="sm"
+                            variant="ghost"
+                            value={item.status}
+                            color={item.status === "borrowed" ? "red" : "green"}
+                          />
+                        </div>
+                      </td>
+
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          className="font-semibold text-indigo-700"
+                        >
+                          {item.product.name.length > 2
+                            ? `${item.product.name
+                                .slice(0, 2)
+                                .join(", ")}, etc.`
+                            : item.product.name.join(", ")}
+                        </Typography>
+                      </td>
+
+                      <td className={classes}>
+                        <Tooltip content="More Info">
+                          <IconButton
+                            variant="text"
+                            onClick={() => handleOpenDialog(item)}
                           >
-                            {borrower_name}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {date}
-                          </Typography>
-                        </td>
-
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {address}
-                          </Typography>
-                        </td>
-
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {phone}
-                          </Typography>
-                        </td>
-
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {email}
-                          </Typography>
-                        </td>
-
-                        <td className={classes}>
-                          <div className="w-max">
-                            <Chip
-                              size="sm"
-                              variant="ghost"
-                              value={status}
-                              color={status === "borrowed" ? "red" : "green"}
-                            />
-                          </div>
-                        </td>
-
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            className="font-semibold text-indigo-700"
-                          >
-                            {product.name.length > 2
-                              ? `${product.name.slice(0, 2).join(", ")}, etc.`
-                              : product.name.join(", ")}
-                          </Typography>
-                        </td>
-
-                        <td className={classes}>
-                          <Tooltip content="More Info">
-                            <IconButton
-                              variant="text"
-                              onClick={() =>
-                                handleOpenDialog({
-                                  binusian_id,
-                                  borrower_name,
-                                  date,
-                                  address,
-                                  phone,
-                                  email,
-                                  status,
-                                  purpose,
-                                  product,
-                                  return_date,
-                                })
-                              }
-                            >
-                              <IoIosMore className="h-4 w-4" />
-                            </IconButton>
-                          </Tooltip>
-                        </td>
-                      </tr>
-                    );
-                  }
-                )}
+                            <IoIosMore className="h-4 w-4" />
+                          </IconButton>
+                        </Tooltip>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </CardBody>

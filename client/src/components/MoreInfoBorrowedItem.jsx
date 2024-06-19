@@ -38,42 +38,44 @@ const MoreInfoBorrowedItem = ({ open, handleOpenDialog, item }) => {
       </DialogHeader>
 
       <DialogBody divider className="grid gap-4 md:m-4">
-        <div className="space-y-2 text-sm">
+        <div className="space-y-2 text-sm ">
           <div className="grid grid-cols-3 gap-2">
             <span className="font-medium text-gray-800 w-full">Date:</span>
-            <span className="col-span-2">{item.date}</span>
+            <span className="col-span-2 text-gray-900">{item.date}</span>
           </div>
           <div className="grid grid-cols-3 gap-2">
             <span className="font-medium text-gray-800 w-full">
               Borrower Name:
             </span>
-            <span className="col-span-2">{item.borrower_name}</span>
+            <span className="col-span-2 text-gray-900">
+              {item.borrower_name}
+            </span>
           </div>
           <div className="grid grid-cols-3 gap-2">
             <span className="font-medium text-gray-800 w-full">
               Binusian ID:
             </span>
-            <span className="col-span-2">{item.binusian_id}</span>
+            <span className="col-span-2 text-gray-900">{item.binusian_id}</span>
           </div>
           <div className="grid grid-cols-3 gap-2">
             <span className="font-medium text-gray-800 w-full">
               Home Address:
             </span>
-            <span className="col-span-2">{item.address}</span>
+            <span className="col-span-2 text-gray-900">{item.address}</span>
           </div>
           <div className="grid grid-cols-3 gap-2">
             <span className="font-medium text-gray-800 w-full">Phone:</span>
-            <span className="col-span-2">{item.phone}</span>
+            <span className="col-span-2 text-gray-900">{item.phone}</span>
           </div>
           <div className="grid grid-cols-3 gap-2">
             <span className="font-medium text-gray-800 w-full">Email:</span>
-            <span className="col-span-2">{item.email}</span>
+            <span className="col-span-2 text-gray-900">{item.email}</span>
           </div>
           <div className="grid grid-cols-3 gap-2">
             <span className="font-medium text-gray-800 w-full">
               Purpose of Loan:
             </span>
-            <span className="col-span-2">{item.purpose}</span>
+            <span className="col-span-2 text-gray-900">{item.purpose}</span>
           </div>
 
           <div className="grid grid-cols-3 gap-2">
@@ -82,18 +84,20 @@ const MoreInfoBorrowedItem = ({ open, handleOpenDialog, item }) => {
               <Chip
                 size="sm"
                 variant="ghost"
-                className="max-w-max"
+                className="max-w-max "
                 value={item.status || ""}
                 color={item.status === "borrowed" ? "red" : "green"}
               />
-              <p>{item.status === "borrowed" ? "" : item.return_date}</p>
+              <p className="text-gray-900">
+                {item.status === "borrowed" ? "" : item.return_date}
+              </p>
             </span>
           </div>
 
-          <div className="grid gap-2 h-[300px]">
-            <Card className="w-full overflow-scroll">
-              <table className="w-full min-w-max table-auto text-left">
-                <thead>
+          <div className="grid gap-2">
+            <Card className="w-full max-h-[250px] overflow-y-auto">
+              <table className="w-full table-auto text-left">
+                <thead className="sticky top-0">
                   <tr>
                     {TABLE_HEAD.map((head) => (
                       <th
