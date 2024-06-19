@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardHeader,
@@ -13,83 +13,53 @@ import {
   Input,
 } from "@material-tailwind/react";
 import { CiSearch } from "react-icons/ci";
-import { HiMiniPencilSquare, HiArrowDownTray } from "react-icons/hi2";
+import { HiArrowDownTray } from "react-icons/hi2";
+import { IoIosMore } from "react-icons/io";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import MoreInfoBorrowedItem from "./MoreInfoBorrowedItem";
+import { items } from "../assets/data/items";
 
-const TABLE_HEAD = ["Transaction", "Amount", "Date", "Status", "Account", ""];
-
-const TABLE_ROWS = [
-  {
-    img: "https://docs.material-tailwind.com/img/logos/logo-spotify.svg",
-    name: "Spotify",
-    amount: "$2,500",
-    date: "Wed 3:00pm",
-    status: "paid",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "https://docs.material-tailwind.com/img/logos/logo-amazon.svg",
-    name: "Amazon",
-    amount: "$5,000",
-    date: "Wed 1:00pm",
-    status: "paid",
-    account: "master-card",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "https://docs.material-tailwind.com/img/logos/logo-pinterest.svg",
-    name: "Pinterest",
-    amount: "$3,400",
-    date: "Mon 7:40pm",
-    status: "pending",
-    account: "master-card",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "https://docs.material-tailwind.com/img/logos/logo-google.svg",
-    name: "Google",
-    amount: "$1,000",
-    date: "Wed 5:00pm",
-    status: "paid",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "https://docs.material-tailwind.com/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
+const TABLE_HEAD = [
+  "No.",
+  "Binusian ID",
+  "Borrower Name",
+  "Date",
+  "Address",
+  "Phone",
+  "Email",
+  "Status",
+  "Item Name",
+  "",
 ];
 
 const BorrowedItemDashboard = () => {
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedItem, setSelectedItem] = useState([]);
+
+  const handleOpenDialog = (item) => {
+    setSelectedItem(item);
+    setOpenDialog(!openDialog);
+  };
+
   return (
     <div className="px-8 py-6">
       <h1 className="text-gray-700 text-md md:text-2xl">Borrowed Items List</h1>
       <hr className="my-2 border-blue-gray-50" />
 
       <div className="mt-4">
-        <Card className="h-full w-full">
+        <Card className="w-full overflow-y-hidden">
           <CardHeader floated={false} shadow={false} className="rounded-none">
             <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
               <div>
-                <Typography className="text-indigo-800 text-md font-semibold md:text-xl">
-                  Recent Loan Transactions
+                <Typography className="text-indigo-800 text-sm font-semibold md:text-xl">
+                  Recent Loan of Equitment Transactions
                 </Typography>
                 <Typography
                   color="gray"
                   className="mt-1 font-normal text-xs md:text-sm"
                 >
-                  These are details about the last loan transactions
+                  These are details about the last loan of equitment
+                  transactions
                 </Typography>
               </div>
               <div className="flex w-full shrink-0 gap-6  flex-col-reverse md:flex-row md:w-max md:gap-2">
@@ -100,7 +70,7 @@ const BorrowedItemDashboard = () => {
                   />
                 </div>
                 <Button
-                  className="flex items-center justify-center gap-2"
+                  className="flex items-center justify-center gap-2 bg-indigo-800"
                   size="sm"
                 >
                   <HiArrowDownTray className="h-4 w-4" />
@@ -110,7 +80,7 @@ const BorrowedItemDashboard = () => {
             </div>
           </CardHeader>
           <CardBody className="overflow-scroll px-0">
-            <table className="w-full min-w-max table-auto text-left">
+            <table className="w-full table-auto text-left">
               <thead>
                 <tr>
                   {TABLE_HEAD.map((head) => (
@@ -130,51 +100,58 @@ const BorrowedItemDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {TABLE_ROWS.map(
+                {items.map(
                   (
                     {
-                      img,
-                      name,
-                      amount,
+                      binusian_id,
+                      borrower_name,
                       date,
+                      address,
+                      phone,
+                      email,
                       status,
-                      account,
-                      accountNumber,
-                      expiry,
+                      purpose,
+                      product,
+                      return_date,
                     },
                     index
                   ) => {
-                    const isLast = index === TABLE_ROWS.length - 1;
+                    const isLast = index === items.length - 1;
                     const classes = isLast
                       ? "p-4"
                       : "p-4 border-b border-blue-gray-50";
 
                     return (
-                      <tr key={name}>
-                        <td className={classes}>
-                          <div className="flex items-center gap-3">
-                            <Avatar
-                              src={img}
-                              alt={name}
-                              size="md"
-                              className="border border-blue-gray-50 bg-blue-gray-50/50 object-contain p-1"
-                            />
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-bold"
-                            >
-                              {name}
-                            </Typography>
-                          </div>
-                        </td>
+                      <tr key={borrower_name}>
                         <td className={classes}>
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {amount}
+                            {index + 1}
+                          </Typography>
+                        </td>
+
+                        <td className={classes}>
+                          <div className="flex items-center gap-3">
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-bold"
+                            >
+                              {binusian_id}
+                            </Typography>
+                          </div>
+                        </td>
+
+                        <td className={classes}>
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {borrower_name}
                           </Typography>
                         </td>
                         <td className={classes}>
@@ -186,59 +163,79 @@ const BorrowedItemDashboard = () => {
                             {date}
                           </Typography>
                         </td>
+
+                        <td className={classes}>
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {address}
+                          </Typography>
+                        </td>
+
+                        <td className={classes}>
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {phone}
+                          </Typography>
+                        </td>
+
+                        <td className={classes}>
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {email}
+                          </Typography>
+                        </td>
+
                         <td className={classes}>
                           <div className="w-max">
                             <Chip
                               size="sm"
                               variant="ghost"
                               value={status}
-                              color={
-                                status === "paid"
-                                  ? "green"
-                                  : status === "pending"
-                                  ? "amber"
-                                  : "red"
-                              }
+                              color={status === "borrowed" ? "red" : "green"}
                             />
                           </div>
                         </td>
+
                         <td className={classes}>
-                          <div className="flex items-center gap-3">
-                            <div className="h-9 w-12 rounded-md border border-blue-gray-50 p-1">
-                              <Avatar
-                                src={
-                                  account === "visa"
-                                    ? "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/logos/visa.png"
-                                    : "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/logos/mastercard.png"
-                                }
-                                size="sm"
-                                alt={account}
-                                variant="square"
-                                className="h-full w-full object-contain p-1"
-                              />
-                            </div>
-                            <div className="flex flex-col">
-                              <Typography
-                                variant="small"
-                                color="blue-gray"
-                                className="font-normal capitalize"
-                              >
-                                {account.split("-").join(" ")} {accountNumber}
-                              </Typography>
-                              <Typography
-                                variant="small"
-                                color="blue-gray"
-                                className="font-normal opacity-70"
-                              >
-                                {expiry}
-                              </Typography>
-                            </div>
-                          </div>
+                          <Typography
+                            variant="small"
+                            className="font-semibold text-indigo-700"
+                          >
+                            {product.name.length > 2
+                              ? `${product.name.slice(0, 2).join(", ")}, etc.`
+                              : product.name.join(", ")}
+                          </Typography>
                         </td>
+
                         <td className={classes}>
-                          <Tooltip content="Edit User">
-                            <IconButton variant="text">
-                              <HiMiniPencilSquare className="h-4 w-4" />
+                          <Tooltip content="More Info">
+                            <IconButton
+                              variant="text"
+                              onClick={() =>
+                                handleOpenDialog({
+                                  binusian_id,
+                                  borrower_name,
+                                  date,
+                                  address,
+                                  phone,
+                                  email,
+                                  status,
+                                  purpose,
+                                  product,
+                                  return_date,
+                                })
+                              }
+                            >
+                              <IoIosMore className="h-4 w-4" />
                             </IconButton>
                           </Tooltip>
                         </td>
@@ -282,6 +279,13 @@ const BorrowedItemDashboard = () => {
           </CardFooter>
         </Card>
       </div>
+
+      {/* Open Dialog More Info */}
+      <MoreInfoBorrowedItem
+        open={openDialog}
+        handleOpenDialog={() => setOpenDialog(false)}
+        item={selectedItem}
+      />
     </div>
   );
 };

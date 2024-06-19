@@ -39,7 +39,7 @@ const NavbarDashboard = () => {
   const closeMenuProfile = () => setIsMenuProfileOpen(false);
 
   return (
-    <div className="flex">
+    <>
       <Navbar
         color="blue-gray"
         className="sticky top-0 z-10 h-max max-w-full bg-indigo-700 px-4 py-3 rounded-none"
@@ -126,7 +126,7 @@ const NavbarDashboard = () => {
         </div>
       </Navbar>
       <SidebarDashboard isDrawerOpen={isDrawerOpen} closeDrawer={closeDrawer} />
-    </div>
+    </>
   );
 };
 

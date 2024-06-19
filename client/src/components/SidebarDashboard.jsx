@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Link, NavLink } from "react-router-dom";
 import {
   IconButton,
@@ -10,14 +10,19 @@ import {
 import { IoClose } from "react-icons/io5";
 
 const SidebarDashboard = ({ isDrawerOpen = false, closeDrawer }) => {
+  const overlayRef = useRef(null);
+
   return (
     <>
-      <Drawer open={isDrawerOpen}>
-        <Card
-          color="transparent"
-          shadow={false}
-          className="h-[calc(100vh-2rem)] w-full p-4"
-        >
+      <Drawer
+        open={isDrawerOpen}
+        overlayProps={{
+          ref: overlayRef,
+          className: "fixed inset-0 bg-black bg-opacity-50 z-40",
+          style: { height: "100vh", width: "100vw" },
+        }}
+      >
+        <Card color="transparent" shadow={false} className="h-full w-full p-4">
           <div className="mb-2 flex items-center justify-between gap-4 p-4">
             <Link
               to="/dashboard"
@@ -31,7 +36,7 @@ const SidebarDashboard = ({ isDrawerOpen = false, closeDrawer }) => {
               <IoClose className="text-2xl" />
             </IconButton>
           </div>
-          <List>
+          <List onClick={closeDrawer}>
             <ListItem>
               <NavLink to="/inventories">Inventories</NavLink>
             </ListItem>
