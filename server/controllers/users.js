@@ -160,7 +160,7 @@ export const resetPassword = async (req, res) => {
 
 export const logout = async (req, res) => {
     try {
-        res.clearCookie('refreshToken', { path: '/user/refresh_token' })
+        res.clearCookie('refreshtoken', { path: 'api/user/refresh_token' })
         return res.json({ message: "Logged out.", isLoggedOut: true })
     } catch (error) {
         return res.status(500).json({ message: error.message })
