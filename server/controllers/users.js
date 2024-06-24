@@ -7,9 +7,9 @@ const { CLIENT_URL } = process.env
 
 export const signUp = async (req, res) => {
     try {
-        const { name, email, password, confirmPassword } = req.body
+        const { binusian_id, name, email, password, confirmPassword } = req.body
 
-        if (!name || !email || !password || !confirmPassword) {
+        if (!binusian_id || !name || !email || !password || !confirmPassword) {
             return res.status(400).json({ message: "Please fill in all fields." })
         }
 
@@ -29,6 +29,7 @@ export const signUp = async (req, res) => {
 
         const newUser = {
             personal_info: {
+                binusian_id,
                 name,
                 email,
                 password: passwordHash
@@ -53,12 +54,13 @@ export const activateEmail = async (req, res) => {
         const { activation_token } = req.body;
         const user = jwt.verify(activation_token, process.env.ACTIVATION_TOKEN_SECRET)
 
-        const { name, email, password } = user.personal_info
+        const { binusian_id, name, email, password } = user.personal_info
 
         const check = await User.findOne({ "personal_info.email": email })
         if (check) return res.status(400).json({ message: "This email already exists." })
 
         const newUser = new User({
+            'personal_info.binusian_id': binusian_id,
             'personal_info.name': name,
             'personal_info.email': email,
             'personal_info.password': password
@@ -66,7 +68,7 @@ export const activateEmail = async (req, res) => {
 
         await newUser.save()
 
-        res.json({ message: "Account has been activated." })
+        res.json({ message: "Account has been activated. Please login now!" });
     } catch (error) {
         return res.status(500).json({ message: error.message })
     }

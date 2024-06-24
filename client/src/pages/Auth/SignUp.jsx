@@ -1,13 +1,84 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { reset, signup } from "../../features/auth/authSlice";
+import toast from "react-hot-toast";
+import { Spinner } from "@material-tailwind/react";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    binusian_id: "",
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    isError: "",
+    isSuccess: "",
+  });
+
+  const { binusian_id, name, email, password, confirmPassword } = formData;
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+
+    if (isSuccess) {
+      toast.success(user.message);
+      dispatch(reset());
+      setFormData({
+        binusian_id: "",
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
+    }
+
+    if (user.isLoggedOut === false) {
+      navigate("/dashboard");
+    }
+  }, [user, isError, isSuccess, message, dispatch, setFormData, navigate]);
+
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value, isError: "", isSuccess: "" });
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+
+    const userData = {
+      binusian_id,
+      name,
+      email,
+      password,
+      confirmPassword,
+    };
+
+    dispatch(signup(userData));
+    dispatch(reset());
+  };
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   };
+
+  if (isLoading || (user && !user.isLoggedOut)) {
+    return (
+      <div className="grid h-screen place-items-center">
+        <Spinner className="h-16 w-16 text-indigo-900/50" />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -19,7 +90,26 @@ const SignUp = () => {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action="#" method="POST">
+          <form className="space-y-6" onSubmit={onSubmit}>
+            <div>
+              <label
+                htmlFor="binusian_id"
+                className="flex text-sm font-medium leading-6 text-gray-900"
+              >
+                Binusian ID
+              </label>
+              <div className="mt-2">
+                <input
+                  id="binusian_id"
+                  name="binusian_id"
+                  type="text"
+                  value={binusian_id}
+                  onChange={onChange}
+                  className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+
             <div>
               <label
                 htmlFor="name"
@@ -32,8 +122,8 @@ const SignUp = () => {
                   id="name"
                   name="name"
                   type="name"
-                  autoComplete="name"
-                  required
+                  value={name}
+                  onChange={onChange}
                   className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -51,8 +141,8 @@ const SignUp = () => {
                   id="email"
                   name="email"
                   type="email"
-                  autoComplete="email"
-                  required
+                  value={email}
+                  onChange={onChange}
                   className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -71,9 +161,9 @@ const SignUp = () => {
                 <input
                   id="password"
                   name="password"
+                  value={password}
+                  onChange={onChange}
                   type={`${showPassword ? "text" : "password"}`}
-                  autoComplete="current-password"
-                  required
                   className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
 
@@ -100,32 +190,31 @@ const SignUp = () => {
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
-                  autoComplete="current-password"
+                  value={confirmPassword}
+                  onChange={onChange}
                   type="password"
-                  required
                   className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
 
             <div>
-              <button
+              <input
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Sign Up
-              </button>
+                value="Sign Up"
+                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm cursor-pointer hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              />
             </div>
           </form>
 
           <p className="mt-10 text-center text-sm text-gray-500">
             Already have an account?{" "}
-            <Link
-              to="/signin"
+            <a
+              href="/signin"
               className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
             >
               Please Sign In?
-            </Link>
+            </a>
           </p>
         </div>
       </div>

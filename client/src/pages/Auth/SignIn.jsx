@@ -1,44 +1,72 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
+import { toast } from "react-hot-toast";
+import { reset, signin } from "../../features/auth/authSlice";
+import { Spinner } from "@material-tailwind/react";
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    isError: "",
+    isSuccess: "",
+  });
+  const { email, password } = formData;
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+
+    if (isSuccess) {
+      toast.success(user.message);
+    }
+
+    if (!user.isLoggedOut) {
+      navigate("/dashboard");
+    }
+
+    // if (user.isLoggedOut) {
+    //   toast.success(user.message);
+    // }
+  }, [user, isError, isSuccess, message, navigate]);
+
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value, isError: "", isSuccess: "" });
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    const userData = {
+      email,
+      password,
+    };
+
+    dispatch(signin(userData));
+    dispatch(reset());
+  };
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(false);
-
-    const formData = new FormData();
-    formData.append("email", email);
-    formData.append("password", password);
-
-    try {
-      const response = await axios.post(
-        "http://10.25.130.107:8000/users/token",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      console.log(response.data);
-    } catch (error) {
-      setError(error.response ? error.response.data.message : "Network Error");
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (isLoading || (user && !user.isLoggedOut)) {
+    return (
+      <div className="grid h-screen place-items-center">
+        <Spinner className="h-16 w-16 text-indigo-900/50" />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -49,7 +77,7 @@ const SignIn = () => {
           </h2>
         </div>
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" onSubmit={handleLogin}>
+          <form className="space-y-6" onSubmit={onSubmit}>
             <div>
               <label
                 htmlFor="email"
@@ -63,9 +91,8 @@ const SignIn = () => {
                   name="email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  autoComplete="email"
-                  required
+                  onChange={onChange}
+                  placeholder="Email"
                   className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -80,12 +107,12 @@ const SignIn = () => {
                   Password
                 </label>
                 <div className="text-sm">
-                  <Link
-                    to="/forgot"
+                  <a
+                    href="/forgot"
                     className="font-semibold text-indigo-600 hover:text-indigo-500"
                   >
                     Forgot password?
-                  </Link>
+                  </a>
                 </div>
               </div>
               <div className="mt-2 relative">
@@ -93,10 +120,9 @@ const SignIn = () => {
                   id="password"
                   name="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={onChange}
                   type={`${showPassword ? "text" : "password"}`}
-                  autoComplete="current-password"
-                  required
+                  placeholder="Password"
                   className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
 
@@ -111,23 +137,22 @@ const SignIn = () => {
             </div>
 
             <div>
-              <button
+              <input
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Sign in
-              </button>
+                value="Sign in"
+                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm cursor-pointer hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              />
             </div>
           </form>
 
           <p className="mt-10 text-center text-sm text-gray-500">
             If you don't have an account,{" "}
-            <Link
-              to="/signup"
+            <a
+              href="/signup"
               className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
             >
               Please Sign Up.
-            </Link>
+            </a>
           </p>
         </div>
       </div>

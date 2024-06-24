@@ -54,28 +54,28 @@ const NavbarComponent = () => {
     <>
       <Navbar className="sticky top-0 h-max max-w-full z-50 rounded-none px-4 py-2 lg:px-8 lg:py-4">
         <div className="flex items-center justify-between text-blue-gray-900">
-          <Link
-            to="/"
+          <a
+            href="/"
             className="mr-4 cursor-pointer py-1.5 font-bold text-xl text-indigo-700 hover:text-indigo-900"
           >
             InventorCS
-          </Link>
+          </a>
           <div className="flex items-center gap-4">
             <div className="mr-4 hidden lg:block">{navList}</div>
             <div className="flex items-center gap-x-1">
-              <Link
-                to="/signin"
+              <a
+                href="/signin"
                 className="text-sm px-3 hover:text-indigo-700 hover:font-semibold hidden lg:inline-block"
               >
                 <span>Log In</span>
-              </Link>
+              </a>
 
-              <Link
-                to="/signup"
+              <a
+                href="/signup"
                 className="text-sm bg-indigo-700 text-white p-2.5 rounded-md shadow-md hover:bg-indigo-600 hidden lg:inline-block"
               >
                 <span>Sign Up</span>
-              </Link>
+              </a>
             </div>
 
             <button

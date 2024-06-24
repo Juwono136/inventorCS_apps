@@ -7,6 +7,7 @@ const userSchema = mongoose.Schema({
     personal_info: {
         binusian_id: {
             type: String,
+            required: true,
             unique: true
         },
         name: {

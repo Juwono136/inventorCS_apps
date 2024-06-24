@@ -1,16 +1,39 @@
-import React, { useRef } from "react";
-import { Link, NavLink } from "react-router-dom";
+import React, { useRef, useState } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import {
   IconButton,
   List,
   ListItem,
   Drawer,
   Card,
+  Dialog,
+  DialogHeader,
+  Typography,
+  DialogBody,
+  DialogFooter,
+  Button,
 } from "@material-tailwind/react";
 import { IoClose } from "react-icons/io5";
+import { useDispatch } from "react-redux";
+import { logout, reset } from "../features/auth/authSlice";
 
 const SidebarDashboard = ({ isDrawerOpen = false, closeDrawer }) => {
   const overlayRef = useRef(null);
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleOpenDialog = () => {
+    setOpenDialog(!openDialog);
+  };
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    dispatch(logout());
+    navigate("/signin");
+    dispatch(reset());
+  };
 
   return (
     <>
@@ -52,10 +75,35 @@ const SidebarDashboard = ({ isDrawerOpen = false, closeDrawer }) => {
             <ListItem>
               <NavLink to="/settings">Settings</NavLink>
             </ListItem>
-            <ListItem>Log Out</ListItem>
+            <ListItem onClick={handleOpenDialog}>Log Out</ListItem>
           </List>
         </Card>
       </Drawer>
+
+      {/* Dialog logout button */}
+      <Dialog open={openDialog} handler={handleOpenDialog}>
+        <DialogHeader>
+          <Typography variant="h5" className="text-indigo-900">
+            Attention is Required!
+          </Typography>
+        </DialogHeader>
+
+        <DialogBody divider className="grid place-items-center gap-4">
+          <i className="bx bxs-bell text-4xl text-indigo-900"></i>
+          <Typography className="text-indigo-700 text-xl">
+            You want to logout?
+          </Typography>
+        </DialogBody>
+
+        <DialogFooter className="space-x-2">
+          <Button variant="text" color="blue-gray" onClick={handleOpenDialog}>
+            Back
+          </Button>
+          <Button className="bg-indigo-700" onClick={handleLogout}>
+            Logout
+          </Button>
+        </DialogFooter>
+      </Dialog>
     </>
   );
 };
