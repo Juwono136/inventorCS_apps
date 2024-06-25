@@ -1,4 +1,4 @@
-# InvetorCS Project App
+# InventorCS Project App
 
 ### Running Client
 
