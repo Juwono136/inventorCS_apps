@@ -1,7 +1,62 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { forgotPassword, reset } from "../../features/auth/authSlice";
+import { Spinner } from "@material-tailwind/react";
+import toast from "react-hot-toast";
 
 const ForgotPassword = () => {
+  const [data, setData] = useState({
+    email: "",
+  });
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { email } = data;
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+
+    if (isSuccess) {
+      toast.success(user.message);
+      // navigate('/auth')
+    }
+
+    if (user.isLoggedOut === false) {
+      navigate("/");
+    }
+  }, [user, isError, isSuccess, message, dispatch, navigate]);
+
+  const handleChangeInput = (e) => {
+    const { name, value } = e.target;
+    setData({ ...data, [name]: value, isError: "", isSuccess: "" });
+  };
+
+  const handleForgotPass = (e) => {
+    e.preventDefault();
+
+    const userEmail = {
+      email,
+    };
+
+    dispatch(forgotPassword(userEmail));
+    setData({ email: "" });
+    dispatch(reset());
+  };
+
+  if (isLoading) {
+    return (
+      <div className="grid h-screen place-items-center">
+        <Spinner className="h-16 w-16 text-indigo-900/50" />
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -14,33 +69,33 @@ const ForgotPassword = () => {
           </p>
         </div>
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleForgotPass}>
             <div>
               <label
                 htmlFor="email"
                 className="flex text-sm font-medium leading-6 text-gray-900"
               >
-                Email
+                Your Email
               </label>
               <div className="mt-2">
                 <input
                   id="email"
                   name="email"
                   type="email"
-                  autoComplete="email"
-                  required
+                  value={email}
+                  onChange={handleChangeInput}
+                  placeholder="Email"
                   className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
 
             <div>
-              <button
+              <input
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Verify my email
-              </button>
+                value="Verify my email"
+                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm cursor-pointer hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              />
             </div>
           </form>
         </div>

@@ -1,13 +1,68 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
+import { reset, resetPassword } from "../../features/auth/authSlice";
+import { Spinner } from "@material-tailwind/react";
 
 const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [data, setData] = useState({
+    password: "",
+    confirmPassword: "",
+  });
+
+  const { token } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { password, confirmPassword } = data;
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+
+    if (isSuccess) {
+      toast.success(user.message);
+    }
+
+    if (user.isLoggedOut === false) {
+      navigate("/");
+    }
+  }, [user, isError, isSuccess, message, dispatch, navigate]);
+
+  const handleChangeInput = (e) => {
+    const { name, value } = e.target;
+    setData({ ...data, [name]: value, isError: "", isSuccess: "" });
+  };
+
+  const handleResetPassword = (e) => {
+    e.preventDefault();
+
+    const resetPass = { data, token };
+
+    dispatch(resetPassword(resetPass));
+    dispatch(reset());
+    setData({ password: "", confirmPassword: "" });
+  };
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   };
+
+  if (isLoading) {
+    return (
+      <div className="grid h-screen place-items-center">
+        <Spinner className="h-16 w-16 text-indigo-900/50" />
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -21,7 +76,7 @@ const ResetPassword = () => {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleResetPassword}>
             <div>
               <div className="flex items-center justify-between">
                 <label
@@ -36,8 +91,8 @@ const ResetPassword = () => {
                   id="password"
                   name="password"
                   type={`${showPassword ? "text" : "password"}`}
-                  autoComplete="current-password"
-                  required
+                  value={password}
+                  onChange={handleChangeInput}
                   className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
 
@@ -64,21 +119,20 @@ const ResetPassword = () => {
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
-                  autoComplete="current-password"
                   type="password"
-                  required
+                  value={confirmPassword}
+                  onChange={handleChangeInput}
                   className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
 
             <div>
-              <button
+              <input
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Update Password
-              </button>
+                value="Update Password"
+                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm cursor-pointer hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              />
             </div>
           </form>
         </div>

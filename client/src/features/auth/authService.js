@@ -31,10 +31,27 @@ const activateMail = async (activationToken) => {
     return response.data
 }
 
+// forgot password user
+const forgotPassword = async (email) => {
+    const response = await axios.post(API_URL + '/forgot', email)
+
+    return response.data
+}
+
+// reset password user
+const resetPassword = async (data, token) => {
+    const response = await axios.post(API_URL + '/reset', data, {
+        headers: { Authorization: token }
+    })
+
+    return response.data
+}
+
 // logout user
 const logout = async () => {
     const response = await axios.get(API_URL + '/logout')
     localStorage.removeItem('profile')
+
     return response.data
 }
 
@@ -42,7 +59,9 @@ const authService = {
     signin,
     logout,
     signup,
-    activateMail
+    activateMail,
+    forgotPassword,
+    resetPassword
 }
 
 export default authService
