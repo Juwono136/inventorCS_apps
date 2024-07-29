@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Navbar,
   IconButton,
@@ -16,6 +16,8 @@ import { CiPower } from "react-icons/ci";
 import { IoHome } from "react-icons/io5";
 
 import SidebarDashboard from "./SidebarDashboard";
+import { useDispatch } from "react-redux";
+import { logout, reset } from "../features/auth/authSlice";
 
 const profileMenuItems = [
   {
@@ -31,6 +33,16 @@ const profileMenuItems = [
 ];
 
 const NavbarDashboard = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    dispatch(logout());
+    navigate("/signin");
+    dispatch(reset());
+  };
+
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isMenuProfileOpen, setIsMenuProfileOpen] = useState(false);
 

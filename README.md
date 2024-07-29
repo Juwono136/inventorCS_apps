@@ -13,5 +13,5 @@ npm run dev
 ```
 cd server
 npm install
-nodemon index.js
+npm start
 ```

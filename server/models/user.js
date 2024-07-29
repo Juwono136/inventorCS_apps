@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 let profile_imgs_name_list = ["Garfield", "Tinkerbell", "Annie", "Loki", "Cleo", "Angel", "Bob", "Mia", "Coco", "Gracie", "Bear", "Bella", "Abby", "Harley", "Cali", "Leo", "Luna", "Jack", "Felix", "Kiki"];
 let profile_imgs_collections_list = ["notionists-neutral", "adventurer-neutral", "fun-emoji"];
@@ -30,6 +30,10 @@ const userSchema = mongoose.Schema({
             default: ""
         },
         phone: {
+            type: String,
+            default: ""
+        },
+        bio: {
             type: String,
             default: ""
         },
@@ -70,8 +74,20 @@ const userSchema = mongoose.Schema({
             default: "",
         }
     },
-    id: {
-        type: String
+    account_info: {
+        total_borrowed: {
+            type: Number,
+            default: 0
+        },
+        total_project: {
+            type: Number,
+            default: 0
+        }
+    },
+    inventory: {
+        type: [Schema.Types.ObjectId],
+        ref: 'inventory',
+        default: []
     }
 },
     {

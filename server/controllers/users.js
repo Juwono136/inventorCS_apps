@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
-import { sendMail } from './sendMail.js';
+import { userSendMail } from './UserSendMail.js';
 
 const { CLIENT_URL } = process.env
 
@@ -40,7 +40,7 @@ export const signUp = async (req, res) => {
 
         const url = `${CLIENT_URL}/user/activate/${activation_token}`
 
-        sendMail(email, url, "Verify your email address")
+        userSendMail(email, url, "Verify your email address", "Confirm Email")
 
         res.json({ message: "Register Success! Please activate your email to start." })
 
@@ -133,7 +133,7 @@ export const forgotPassword = async (req, res) => {
         const access_token = createAccessToken({ id: user._id })
         const url = `${CLIENT_URL}/user/reset/${access_token}`
 
-        sendMail(email, url, "Reset your password")
+        userSendMail(email, url, "Reset your account", "Reset Password")
         res.json({ message: "Please check your email for reset" })
     } catch (error) {
         return res.status(500).json({ message: error.message })
@@ -186,7 +186,7 @@ function isMatch(password, confirm_password) {
 }
 
 function createRefreshToken(payload) {
-    return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' })
+    return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '5m' })
 }
 
 function createAccessToken(payload) {
@@ -194,5 +194,5 @@ function createAccessToken(payload) {
 }
 
 function createActivationToken(payload) {
-    return jwt.sign(payload, process.env.ACTIVATION_TOKEN_SECRET, { expiresIn: '5m' })
+    return jwt.sign(payload, process.env.ACTIVATION_TOKEN_SECRET, { expiresIn: '3m' })
 }

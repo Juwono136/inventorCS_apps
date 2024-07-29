@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import {
   IconButton,
   List,
@@ -7,14 +8,13 @@ import {
   Drawer,
   Card,
   Dialog,
-  DialogHeader,
-  Typography,
-  DialogBody,
-  DialogFooter,
-  Button,
 } from "@material-tailwind/react";
-import { IoClose } from "react-icons/io5";
-import { useDispatch } from "react-redux";
+import { IoClose, IoSettingsOutline, IoLogOutOutline } from "react-icons/io5";
+import { MdOutlineInventory2, MdOutlineInventory } from "react-icons/md";
+import { BsCartCheck } from "react-icons/bs";
+import { LuUserCog } from "react-icons/lu";
+import { CgProfile } from "react-icons/cg";
+
 import { logout, reset } from "../features/auth/authSlice";
 
 const SidebarDashboard = ({ isDrawerOpen = false, closeDrawer }) => {
@@ -49,9 +49,10 @@ const SidebarDashboard = ({ isDrawerOpen = false, closeDrawer }) => {
           <div className="mb-2 flex items-center justify-between gap-4 p-4">
             <Link
               to="/dashboard"
-              className="text-indigo-700 text-2xl font-semibold transition-all hover:text-indigo-400"
+              className="flex justify-center items-center gap-2 text-indigo-700 text-2xl font-semibold transition-all hover:text-indigo-400"
               onClick={closeDrawer}
             >
+              <MdOutlineInventory className="text-md" />
               InventorCS
             </Link>
 
@@ -59,50 +60,79 @@ const SidebarDashboard = ({ isDrawerOpen = false, closeDrawer }) => {
               <IoClose className="text-2xl" />
             </IconButton>
           </div>
-          <List onClick={closeDrawer}>
-            <ListItem>
-              <NavLink to="/inventories">Inventories</NavLink>
+          <hr className="my-2 border-blue-gray-50" />
+
+          <List>
+            <NavLink to="/inventories" onClick={closeDrawer}>
+              <ListItem className="flex gap-2 items-center text-indigo-800">
+                <MdOutlineInventory2 className="text-md" />
+                Inventories
+              </ListItem>
+            </NavLink>
+
+            <NavLink to="/borrowed-item" onClick={closeDrawer}>
+              <ListItem className="flex gap-2 items-center text-indigo-800">
+                <BsCartCheck className="text-md" />
+                Borrowed Item
+              </ListItem>
+            </NavLink>
+
+            <NavLink to="/users" onClick={closeDrawer}>
+              <ListItem className="flex gap-2 items-center text-indigo-800">
+                <LuUserCog className="text-md" />
+                Update User
+              </ListItem>
+            </NavLink>
+
+            <NavLink to="/profile" onClick={closeDrawer}>
+              <ListItem className="flex gap-2 items-center text-indigo-800">
+                <CgProfile className="text-md" />
+                Profile
+              </ListItem>
+            </NavLink>
+
+            <NavLink to="/settings" onClick={closeDrawer}>
+              <ListItem className="flex gap-2 items-center text-indigo-800">
+                <IoSettingsOutline className=" text-md" />
+                Settings
+              </ListItem>
+            </NavLink>
+
+            <ListItem
+              className="flex gap-2 items-center text-indigo-800"
+              onClick={() => handleOpenDialog("xs")}
+            >
+              <IoLogOutOutline className="text-md" />
+              Log Out
             </ListItem>
-            <ListItem>
-              <NavLink to="/borrowed-item">Borrowed Item</NavLink>
-            </ListItem>
-            <ListItem>
-              <NavLink to="/users">Update User</NavLink>
-            </ListItem>
-            <ListItem>
-              <NavLink to="/profile">Profile</NavLink>
-            </ListItem>
-            <ListItem>
-              <NavLink to="/settings">Settings</NavLink>
-            </ListItem>
-            <ListItem onClick={handleOpenDialog}>Log Out</ListItem>
           </List>
         </Card>
       </Drawer>
 
       {/* Dialog logout button */}
-      <Dialog open={openDialog} handler={handleOpenDialog}>
-        <DialogHeader>
-          <Typography variant="h5" className="text-indigo-900">
-            Attention is Required!
-          </Typography>
-        </DialogHeader>
+      <Dialog open={openDialog} size="xs">
+        <div className="flex justify-center items-center flex-col rounded-lg bg-white p-6 shadow-2xl">
+          <h2 className="flex items-center justify-center text-md font-bold">
+            Are you sure you want to log out?
+          </h2>
 
-        <DialogBody divider className="grid place-items-center gap-4">
-          <i className="bx bxs-bell text-4xl text-indigo-900"></i>
-          <Typography className="text-indigo-700 text-xl">
-            You want to logout?
-          </Typography>
-        </DialogBody>
+          <div className="mt-4 flex gap-2">
+            <button
+              type="button"
+              className="rounded bg-red-50 px-4 py-2 text-sm font-medium text-red-600"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
 
-        <DialogFooter className="space-x-2">
-          <Button variant="text" color="blue-gray" onClick={handleOpenDialog}>
-            Back
-          </Button>
-          <Button className="bg-indigo-700" onClick={handleLogout}>
-            Logout
-          </Button>
-        </DialogFooter>
+            <button
+              className="rounded bg-gray-50 px-4 py-2 text-sm font-medium text-gray-600"
+              onClick={handleOpenDialog}
+            >
+              Back
+            </button>
+          </div>
+        </div>
       </Dialog>
     </>
   );
