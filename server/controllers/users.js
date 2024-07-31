@@ -87,8 +87,10 @@ export const signIn = async (req, res) => {
         if (!isMatch) return res.status(400).json({ message: "Invalid Credentials." })
 
         const refresh_token = createRefreshToken({ id: user._id })
+
         res.cookie('refreshtoken', refresh_token, {
             httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
             path: 'api/user/refresh_token',
             maxAge: 1 * 24 * 60 * 60 * 1000 // 1 days
         })
