@@ -6,8 +6,10 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:5000",
+        target: "https://2d91-103-94-10-238.ngrok-free.app",
+        changeOrigin: true,
         secure: false,
+        ws: true,
       },
     },
   },
