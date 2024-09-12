@@ -25,6 +25,10 @@ const userSchema = mongoose.Schema({
             type: String,
             required: true
         },
+        program: {
+            type: String,
+            default: ""
+        },
         address: {
             type: String,
             default: ""
@@ -35,11 +39,13 @@ const userSchema = mongoose.Schema({
         },
         bio: {
             type: String,
+            maxlength: 250,
             default: ""
         },
         role: {
             type: Number,
-            default: 0 // 0 = user, 1 = staff, 2 = admin
+            required: true,
+            default: 0 // 0 = user, 1 = admin, 2 = staff
         },
         avatar: {
             type: String,
@@ -84,7 +90,7 @@ const userSchema = mongoose.Schema({
             default: 0
         }
     },
-    inventory: {
+    borrowed_items: {
         type: [Schema.Types.ObjectId],
         ref: 'inventory',
         default: []

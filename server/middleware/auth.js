@@ -4,10 +4,10 @@ export const auth = (req, res, next) => {
     try {
         const token = req.headers.authorization
         // console.log(token)
-        if (!token) return res.status(400).json({ message: "Invalid Authentication." })
+        if (!token) return res.status(403).json({ message: "Token Expired or Invalid Authentication." })
 
         jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-            if (err) return res.status(400).json({ message: "Invalid Authentication." })
+            if (err) return res.status(403).json({ message: "Token Expired or Invalid Authentication." })
 
             req.user = user
             // console.log(user)
