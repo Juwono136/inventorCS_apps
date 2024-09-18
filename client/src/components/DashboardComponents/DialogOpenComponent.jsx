@@ -11,7 +11,7 @@ const DialogOpenComponent = ({
   return (
     <Dialog open={openDialog} size="xs">
       <div className="flex justify-center items-center flex-col rounded-lg bg-white p-6 shadow-2xl">
-        <h2 className="flex items-center justify-center text-md font-bold">
+        <h2 className="flex items-center justify-center text-base text-center font-bold">
           {message}
         </h2>
 

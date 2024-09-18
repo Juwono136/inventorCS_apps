@@ -1,5 +1,5 @@
 import express from 'express';
-import { activateEmail, deleteUser, forgotPassword, getAccessToken, getAllUsersInfor, getUserInfor, logout, resetPassword, signIn, signUp, updateUser, updateUserRole } from '../controllers/users.js';
+import { activateEmail, deleteUser, forgotPassword, getAccessToken, getAllUsersInfor, getUserInfor, logout, resetPassword, signIn, signUp, updateUser, updateUserRole, updateUserStatus } from '../controllers/users.js';
 import { auth } from '../middleware/auth.js';
 import { authAdmin } from '../middleware/authAdmin.js';
 
@@ -47,6 +47,8 @@ const router = express.Router()
  *     responses:
  *       '200':
  *         description: Registration successful
+ *       '403':
+ *         description: Requested resource is forbidden
  *       '400':
  *         description: Bad request
  *       '500':
@@ -104,6 +106,8 @@ router.post("/activation", activateEmail)
  *     responses:
  *       '200':
  *         description: Sign in successful
+ *       '403':
+ *         description: Requested resource is forbidden
  *       '400':
  *         description: Bad request
  *       '500':
@@ -362,6 +366,48 @@ router.patch("/update_user", auth, updateUser)
  *         description: Internal server error
  */
 router.patch("/update_role/:id", auth, authAdmin, updateUserRole)
+
+/**
+ * @openapi
+ * /update_user_status/{id}:
+ *   patch:
+ *     tags:
+ *       - Users
+ *     summary: Change the status of a user (e.g., active, inactive)
+ *     parameters:
+ *       - name: Authorization
+ *         in: header
+ *         required: true
+ *         description: Bearer token for authentication
+ *         schema:
+ *           type: string
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: User ID
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 example: "active or inactive"
+ *     responses:
+ *       '200':
+ *         description: User status updated successfully
+ *       '400':
+ *         description: Bad request
+ *       '404':
+ *         description: User not found
+ *       '500':
+ *         description: Internal server error
+ */
+router.patch("/update_user_status/:id", auth, authAdmin, updateUserStatus)
 
 /**
  * @openapi

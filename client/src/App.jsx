@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllUsersInfor, getUserInfor } from "./features/user/userSlice";
 import { accessToken } from "./features/token/tokenSlice";
 import UpdateUserRole from "./pages/DashboardPages/updateUserRole";
+import ProtectedUserRoutes from "./common/ProtectedUserRoutes";
 
 function App() {
   const [sort, setSort] = useState({
@@ -65,8 +66,24 @@ function App() {
           <Route path="user/reset/:token" element={<ResetPassword />} />
 
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="inventories" element={<Inventories />} />
-          <Route path="borrowed-item" element={<BorrowedItems />} />
+
+          <Route
+            path="inventories"
+            element={
+              <ProtectedUserRoutes allowedRoles={[1, 2]}>
+                <Inventories />
+              </ProtectedUserRoutes>
+            }
+          />
+
+          <Route
+            path="borrowed-item"
+            element={
+              <ProtectedUserRoutes allowedRoles={[1, 2]}>
+                <BorrowedItems />
+              </ProtectedUserRoutes>
+            }
+          />
           <Route
             path="users"
             element={
@@ -83,6 +100,7 @@ function App() {
             }
           />
           <Route path="users/update_user/:id" element={<UpdateUserRole />} />
+
           <Route path="profile" element={<MyProfile />} />
           <Route path="settings" element={<MySettings />} />
         </Routes>

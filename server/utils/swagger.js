@@ -59,6 +59,9 @@ const __dirname = path.dirname(__filename);
  *             avatar:
  *               type: string
  *               description: URL or base64 format to the user's avatar or image
+ *             status:
+ *               type: string
+ *               description: Change user status (active or inactive)
  *         socialLinks:
  *           type: object
  *           properties:
@@ -116,6 +119,7 @@ const __dirname = path.dirname(__filename);
  *           password: "securePassword"
  *           avatar: "https://api.dicebear.com/9.x/adventurer-neutral/svg?seed=Toby"
  *           program: "Computer Science"
+ *           status: "active"
  *         social_links:
  *           youtube: https://youtube.com/johndoe
  *           instagram: https://instagram.com/johndoe

@@ -31,7 +31,15 @@ const UserList = ({
   search,
   setSearch,
 }) => {
-  const TABLE_HEAD = ["No.", "Member", "Program", "Role", "Joined At", ""];
+  const TABLE_HEAD = [
+    "No.",
+    "Member",
+    "Program",
+    "Role",
+    "Status",
+    "Joined At",
+    "",
+  ];
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [openDialogDelete, setOpenDialogDelete] = useState(false);
@@ -97,6 +105,7 @@ const UserList = ({
       Member: "personal_info.name",
       Program: "personal_info.program",
       Role: "personal_info.role",
+      Status: "personal_info.status",
       "Joined At": "joinedAt",
     };
 
@@ -177,8 +186,15 @@ const UserList = ({
                 )}
 
                 {users?.map(({ personal_info, _id, joinedAt }, index) => {
-                  const { avatar, name, email, role, program, address } =
-                    personal_info;
+                  const {
+                    avatar,
+                    name,
+                    email,
+                    role,
+                    program,
+                    status,
+                    address,
+                  } = personal_info;
                   const isLast = index === users.length - 1;
                   const classes = isLast
                     ? "p-4"
@@ -259,6 +275,15 @@ const UserList = ({
                         </div>
                       </td>
                       <td className={classes}>
+                        <div className="w-max">
+                          <Chip
+                            size="sm"
+                            value={status === "active" ? "Active" : "Inactive"}
+                            color={status === "active" ? "green" : "red"}
+                          />
+                        </div>
+                      </td>
+                      <td className={classes}>
                         <Typography
                           variant="small"
                           color="blue-gray"
@@ -312,7 +337,7 @@ const UserList = ({
         openDialog={openDialogDelete}
         handleFunc={(e) => handleDeleteUser(e, deleteUserId)}
         handleOpenDialog={handleOpenDialogDelete}
-        message="Delete user?"
+        message="Are you sure want to delete this user permanently?"
         btnText="Delete"
       />
     </Layout>

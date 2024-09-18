@@ -27,6 +27,10 @@ export const signUp = async (req, res) => {
             ]
         });
 
+        if (user && user.personal_info.status === 'inactive') {
+            return res.status(403).json({ message: "Your account is inactive. Please contact admin to reactivate." });
+        }
+
         if (user) return res.status(400).json({ message: "This account already exists" })
 
         if (!validatePassword(password)) return res.status(400).json({ message: "Password should be 6 to 20 characters long with a numeric, 1 lowercase and 1 uppercase letters" })
@@ -93,6 +97,10 @@ export const signIn = async (req, res) => {
 
         if (!user) return res.status(400).json({ message: "Invalid Credentials" })
 
+        if (user.personal_info.status === 'inactive') {
+            return res.status(403).json({ message: "Your account is inactive. Please contact admin to reactivate." });
+        }
+
         const isMatch = await bcrypt.compare(password, user.personal_info.password)
         if (!isMatch) return res.status(400).json({ message: "Invalid Credentials" })
 
@@ -109,6 +117,7 @@ export const signIn = async (req, res) => {
 
         res.json({
             message: `🖖Welcome, ${user.personal_info.name}`,
+            role: user.personal_info.role
             // isLoggedOut: false
         })
     } catch (error) {
@@ -326,11 +335,34 @@ export const updateUserRole = async (req, res) => {
     }
 }
 
-// delete user
+// update user status
+export const updateUserStatus = async (req, res) => {
+    try {
+        const { status } = req.body
+
+        const validStatuses = ['active', 'inactive'];
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ message: "Invalid user status" });
+        }
+
+        const updatedUser = await User.findOneAndUpdate({ _id: req.params.id }, {
+            "personal_info.status": status
+        }, { new: true })
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found" })
+        }
+
+        res.json({ message: "User status updated" })
+    } catch (error) {
+        return res.status(500).json({ message: error.message })
+    }
+}
+
+// delete user permanently
 export const deleteUser = async (req, res) => {
     try {
         const user = await User.findByIdAndDelete(req.params.id)
-
 
         if (!user) {
             return res.status(404).json({ message: "User not found" })
@@ -351,7 +383,6 @@ export const logout = async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 };
-
 
 
 function validateEmail(email) {

@@ -13,7 +13,10 @@ import SocialComponent from "../../components/DashboardComponents/SocialComponen
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../common/Loader";
-import { updateUserRole } from "../../features/user/userSlice";
+import {
+  updateUserRole,
+  updateUserStatus,
+} from "../../features/user/userSlice";
 import { accessToken } from "../../features/token/tokenSlice";
 import toast from "react-hot-toast";
 import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
@@ -25,8 +28,11 @@ const UpdateUserRole = () => {
     2: "Staff",
   };
 
+  const userStatus = ["active", "inactive"];
+
   const initialState = {
     role: "",
+    status: "",
   };
 
   const { id } = useParams();
@@ -40,26 +46,40 @@ const UpdateUserRole = () => {
 
   useEffect(() => {
     if (foundUser) {
-      setSelectedRole({ role: foundUser?.personal_info.role });
+      setSelectedUser({
+        role: foundUser?.personal_info.role,
+        status: foundUser?.personal_info.status,
+      });
     }
   }, [foundUser]);
 
   const [userDetail, setUserDetail] = useState(null);
-  const [selectedRole, setSelectedRole] = useState(initialState);
+  const [selectedUser, setSelectedUser] = useState(initialState);
   const [openDialogSave, setOpenDialogSave] = useState(false);
-  const { role } = selectedRole;
+  const [isRoleChanged, setIsRoleChanged] = useState(false);
+  const [isStatusChanged, setIsStatusChanged] = useState(false);
+  const [isSaveDisabled, setIsSaveDisabled] = useState(true);
+  const { role, status } = selectedUser;
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleRoleChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setSelectedRole({
-      ...selectedRole,
-      [name]: parseInt(value),
+    setSelectedUser({
+      ...selectedUser,
+      [name]: name === "role" ? parseInt(value) : value,
       isError: "",
       isSuccess: "",
     });
+
+    if (name === "role") {
+      setIsRoleChanged(true);
+      setIsStatusChanged(false);
+    } else if (name === "status") {
+      setIsStatusChanged(true);
+      setIsRoleChanged(false);
+    }
   };
 
   const handleOpenDialogSave = () => {
@@ -71,7 +91,7 @@ const UpdateUserRole = () => {
 
     const updatedData = {
       _id: id,
-      role: selectedRole.role,
+      role: selectedUser.role,
     };
 
     dispatch(updateUserRole(updatedData)).then((res) => {
@@ -83,6 +103,37 @@ const UpdateUserRole = () => {
     }
 
     setOpenDialogSave(!openDialogSave);
+  };
+
+  const handleUpdateStatus = (e) => {
+    e.preventDefault();
+
+    const updatedData = {
+      _id: id,
+      status: selectedUser.status,
+    };
+
+    dispatch(updateUserStatus(updatedData)).then((res) => {
+      dispatch(accessToken(res));
+    });
+
+    if (isSuccess) {
+      toast.success(message);
+    }
+
+    setOpenDialogSave(!openDialogSave);
+  };
+
+  const handleSave = (e) => {
+    // e.preventDefault();
+
+    if (isRoleChanged) {
+      handleUpdateRole(e);
+    }
+
+    if (isStatusChanged) {
+      handleUpdateStatus(e);
+    }
   };
 
   useEffect(() => {
@@ -100,7 +151,13 @@ const UpdateUserRole = () => {
       setUserDetail(foundUser);
       // setSelectedRole(foundUser?.personal_info.role);
     }
-  }, [users, foundUser, isError, message, isSuccess, navigate]);
+
+    const isChanged =
+      selectedUser.role !== foundUser?.personal_info.role ||
+      selectedUser.status !== foundUser?.personal_info.status;
+
+    setIsSaveDisabled(!isChanged);
+  }, [users, selectedUser, foundUser, isError, message, isSuccess, navigate]);
 
   return (
     <Layout>
@@ -178,11 +235,38 @@ const UpdateUserRole = () => {
                     name="role"
                     className="mt-1 block w-full pl-3 pr-10 py-2 text-base text-indigo-800 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-lg"
                     value={role}
-                    onChange={handleRoleChange}
+                    onChange={handleChange}
                   >
                     {Object.entries(roleMap).map(([key, value]) => (
                       <option key={key} value={key} className="text-indigo-800">
                         {value}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* change user role */}
+                <div className="mb-2">
+                  <label
+                    htmlFor="userStatus"
+                    className="block text-sm font-semibold text-red-700"
+                  >
+                    Change User Status:
+                  </label>
+                  <select
+                    id="status"
+                    name="status"
+                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base text-red-800 border-gray-300 focus:outline-none focus:ring-read-500 focus:border-red-500 sm:text-sm rounded-md shadow-lg"
+                    value={status}
+                    onChange={handleChange}
+                  >
+                    {userStatus.map((status, index) => (
+                      <option
+                        key={index}
+                        value={status}
+                        className="text-red-800"
+                      >
+                        {status.charAt(0).toUpperCase() + status.slice(1)}
                       </option>
                     ))}
                   </select>
@@ -230,6 +314,7 @@ const UpdateUserRole = () => {
               <Button
                 className="bg-gradient-to-r from-indigo-500 to-purple-800 text-sm py-2 px-8 rounded-lg capitalize"
                 onClick={() => handleOpenDialogSave("xs")}
+                disabled={isSaveDisabled}
               >
                 Save
               </Button>
@@ -241,9 +326,9 @@ const UpdateUserRole = () => {
       {/* save user open dialog */}
       <DialogOpenComponent
         openDialog={openDialogSave}
-        handleFunc={handleUpdateRole}
+        handleFunc={handleSave}
         handleOpenDialog={handleOpenDialogSave}
-        message="Save user profile?"
+        message="Save update user?"
         btnText="Save"
       />
     </Layout>
