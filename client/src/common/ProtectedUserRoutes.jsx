@@ -3,9 +3,9 @@ import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const ProtectedUserRoutes = ({ children, allowedRoles }) => {
-  const { user } = useSelector((state) => state.auth);
+  const { userInfor } = useSelector((state) => state.user);
 
-  if (!user || !allowedRoles.includes(user.role)) {
+  if (!userInfor || !allowedRoles.includes(userInfor?.personal_info.role)) {
     return <Navigate to="*" />;
   }
 
