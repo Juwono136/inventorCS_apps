@@ -1,4 +1,5 @@
 import Inventories from "../models/inventory.js";
+import moment from 'moment'
 
 // get All inventories info
 export const getAllInventories = async (req, res) => {
@@ -68,11 +69,11 @@ export const createInventory = async (req, res) => {
         }
 
         if (asset_name && asset_name.length > 100) {
-            return res.status(400).json({ message: "Asset name cannot exceed 100 characters." });
+            return res.status(400).json({ message: "Item name cannot exceed 100 characters." });
         }
 
         if (asset_id && asset_id.length > 10) {
-            return res.status(400).json({ message: "Asset ID cannot exceed 10 characters." });
+            return res.status(400).json({ message: "Item ID cannot exceed 10 characters." });
         }
 
         const existingInventory = await Inventories.findOne({
@@ -84,7 +85,7 @@ export const createInventory = async (req, res) => {
 
         if (existingInventory) {
             if (existingInventory.asset_id === asset_id) {
-                return res.status(400).json({ message: "Asset ID already exists." });
+                return res.status(400).json({ message: "Item ID already exists." });
             }
             if (existingInventory.serial_number === serial_number) {
                 return res.status(400).json({ message: "Serial number already exists." });
@@ -108,7 +109,7 @@ export const createInventory = async (req, res) => {
             author: req.user.id
         });
 
-        res.json(inventoryData);
+        res.json({ message: "Item created successfully", inventoryData });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
@@ -118,18 +119,18 @@ export const createInventory = async (req, res) => {
 export const updateInventory = async (req, res) => {
     try {
         const inventoryId = req.params.id
-        const { asset_id, asset_name, asset_img, serial_number, desc, categories, location, room_number, total_items } = req.body
-
-        if (!asset_id || !asset_name || !asset_img || !serial_number || !categories || !location || !desc || !room_number || !total_items) {
-            return res.status(400).json({ message: "Please fill in the required fields." });
-        }
+        const { asset_id, asset_name, asset_img, serial_number, desc, categories, location, room_number, total_items, draft } = req.body
 
         if (asset_name && asset_name.length > 100) {
-            return res.status(400).json({ message: "Asset name cannot exceed 100 characters." });
+            return res.status(400).json({ message: "Item name cannot exceed 100 characters." });
+        }
+
+        if (asset_name && asset_name.length < 3 || asset_id && asset_id.lenght < 3) {
+            return res.status(400).json({ message: "Item name or Item ID must be at least 3 letters long." })
         }
 
         if (asset_id && asset_id.length > 10) {
-            return res.status(400).json({ message: "Asset ID cannot exceed 10 characters." });
+            return res.status(400).json({ message: "Item ID cannot exceed 10 characters." });
         }
 
         if (!inventoryId) {
@@ -169,13 +170,65 @@ export const updateInventory = async (req, res) => {
             location: location || existingInventory.location,
             room_number: room_number || existingInventory.room_number,
             total_items: total_items || existingInventory.total_items,
+            draft: draft || existingInventory.draft,
             author: req.user.id
         };
 
         const result = await Inventories.findByIdAndUpdate({ _id: inventoryId }, updatedInventory, { new: true });
 
-        res.json(result);
+        res.json({ message: "Update item success", result });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
 }
+
+// draft inventory (soft delete)
+export const draftInventory = async (req, res) => {
+    try {
+        const inventoryId = req.params.id;
+
+        const existingInventory = await Inventories.findById(inventoryId);
+        if (!existingInventory) {
+            return res.status(404).json({ message: "Inventory not found." });
+        }
+
+        const updatedInventory = await Inventories.findByIdAndUpdate(
+            { _id: inventoryId },
+            { draft: true },
+            { new: true }
+        );
+
+        res.json({
+            message: "Inventory marked as draft and will be permanently deleted after 7 days.",
+            inventory: updatedInventory,
+        });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+// Delete inventory that has been in draft status for 7 days (running automatically)
+export const deleteOldDrafts = async () => {
+    try {
+        // Search items that have draft status and more than 7 days old
+        const sevenDaysAgo = moment().subtract(7, 'days').toDate();
+        const inventoriesToDelete = await Inventories.find({
+            draft: true,
+            updatedAt: { $lt: sevenDaysAgo } // Use updatedAt field to find out when it was changed to draft.
+        });
+
+        // Delete items from database
+        if (inventoriesToDelete.length > 0) {
+            const deletePromises = inventoriesToDelete.map(item =>
+                Inventories.findByIdAndDelete(item._id)
+            );
+            await Promise.all(deletePromises);
+            console.log(`${inventoriesToDelete.length} inventories permanently deleted.`);
+        } else {
+            console.log("No inventories to delete.");
+        }
+
+    } catch (error) {
+        console.error(`Error during cron job: ${error.message}`);
+    }
+};

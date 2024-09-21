@@ -8,11 +8,7 @@ import SocialComponent from "../../components/DashboardComponents/SocialComponen
 import Loader from "../../common/Loader";
 import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
 import { convertFileToBase64 } from "../../utils/convertToBase64";
-import {
-  getUserInfor,
-  updateUser,
-  userReset,
-} from "../../features/user/userSlice";
+import { getUserInfor, updateUser } from "../../features/user/userSlice";
 import { accessToken } from "../../features/token/tokenSlice";
 
 const MyProfile = () => {
@@ -143,7 +139,7 @@ const MyProfile = () => {
   useEffect(() => {
     if (isError) {
       toast.error(message);
-      dispatch(userReset());
+      // dispatch(userReset());
     }
 
     if (isSuccess) {

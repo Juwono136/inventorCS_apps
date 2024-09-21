@@ -15,18 +15,24 @@ const loanTransactionSchema = mongoose.Schema({
         maxlength: 500,
         default: ""
     },
+    quantity: {
+        type: Number,
+        default: 1
+    },
     borrow_date: {
         type: Date,
-        required: true
+        required: true,
+        default: null
     },
     return_date: {
         type: Date,
+        required: true,
         default: null
     },
     status_item: {
         type: String,
-        default: "borrowed",
-        enum: ["borrowed", "returned"]
+        default: "pending",
+        enum: ["pending", "borrowed", "returned", "cancelled"]
     }
 }, {
     timestamps: true
