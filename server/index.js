@@ -19,8 +19,8 @@ app.use(express.json());
 app.use(cors())
 app.use(cookieParser())
 
-app.use("/api/inventory", inventoryRoutes)
-app.use("/api/loan", loanRoutes)
+app.use("/service/inventory", inventoryRoutes)
+app.use("/service/loan", loanRoutes)
 
 const CONNECTION_URL = process.env.CONNECTION_URL
 const PORT = process.env.PORT

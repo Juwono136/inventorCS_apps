@@ -2,8 +2,12 @@ import mongoose, { Schema } from "mongoose";
 
 const loanTransactionSchema = mongoose.Schema({
     user_id: {
-        type: String, // save user_id from users API
+        type: String, // save user_id from users API (borrower)
         required: true
+    },
+    admin_id: {
+        type: String, // save user_id from users API (admin/staff)
+        default: null
     },
     inventory_id: {
         type: Schema.Types.ObjectId,
