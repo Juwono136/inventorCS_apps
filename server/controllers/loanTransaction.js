@@ -140,3 +140,35 @@ export const getLoanTransactionsByUser = async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 }
+
+// cancel loan transaction
+export const cancelLoanTransaction = async (req, res) => {
+    try {
+        const loanTransactionId = req.params.id
+        const loanTransaction = await LoanTransactions.findById(loanTransactionId)
+
+        if (!loanTransaction) {
+            return res.status(404).json({ message: "Loan transaction not found." });
+        }
+
+        if (loanTransaction.status_item !== "pending") {
+            return res.status(400).json({ message: "Transaction cannot be cancelled." });
+        }
+
+        const inventory = await Inventories.findById(loanTransaction.inventory_id);
+
+        if (!inventory) {
+            return res.status(404).json({ message: "Inventory not found." });
+        }
+
+        loanTransaction.status_item = "cancelled";
+        await loanTransaction.save();
+
+        inventory.total_items += loanTransaction.quantity;
+        await inventory.save();
+
+        res.json({ message: "Loan transaction has been cancelled." });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
