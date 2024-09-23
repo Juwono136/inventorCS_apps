@@ -50,10 +50,8 @@ function App() {
     if (userInfor.personal_info?.role === 1) {
       dispatch(getAllUsersInfor({ page, sort, program, search }));
     }
-
-    dispatch(getAllInventories({ page, sort, categories, search }));
     // setSearchParams({ page, search, sort: sort.sort, order: sort.order });
-  }, [dispatch, userInfor, page, sort, program, categories, search]);
+  }, [dispatch, userInfor, page, sort, program, search]);
 
   return (
     <>

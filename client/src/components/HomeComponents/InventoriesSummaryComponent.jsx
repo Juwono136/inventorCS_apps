@@ -1,5 +1,5 @@
 import React from "react";
-// import product1 from "../../assets/images/inventory_img.jpg";
+import product1 from "../../assets/images/inventory_img.jpg";
 import { Link } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa";
 import InventoryCard from "./InventoryCard";
