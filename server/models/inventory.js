@@ -1,47 +1,43 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
 const inventorySchema = mongoose.Schema({
-    inventory_id: {
+    asset_id: {
         type: String,
         required: true,
         unique: true
     },
-    title: {
+    asset_name: {
         type: String,
         required: true
     },
-    inventory_img: {
+    asset_img: {
         type: String,
-        required: true
+        default: "https://api.dicebear.com/9.x/icons/svg?seed=Chase",
+        required: true,
     },
     serial_number: {
         type: String,
-        required: true
+        unique: true,
+        default: ""
     },
     desc: {
         type: String,
         maxlength: 500,
+        default: ""
         // required: true
     },
-    category: {
-        type: [String],
-        required: true
+    categories: {
+        type: [String], // ["gadget", "electrical", "computer", "etc"]
+        required: true,
+        default: []
     },
-    borrow_date: {
-        type: Date,
-        required: true
-    },
-    return_date: {
-        type: Date,
-        default: ""
-    },
-    status_of_loan: {
-        type: String,
-        default: "ready",
-    },
-    purpose_of_loan: {
+    location: {
         type: String,
         default: ""
+    },
+    room_number: {
+        type: String,
+        default: "",
     },
     total_items: {
         type: Number,
@@ -51,10 +47,13 @@ const inventorySchema = mongoose.Schema({
         type: Number,
         default: 0
     },
-    borrower: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        ref: 'Users'
+    draft: {
+        type: Boolean,
+        default: false
+    },
+    author: {
+        type: String,
+        required: true
     }
 }, {
     timestamps: {
@@ -62,5 +61,5 @@ const inventorySchema = mongoose.Schema({
     }
 })
 
-export default mongoose.model('inventory', inventorySchema)
+export default mongoose.model('Inventories', inventorySchema)
 

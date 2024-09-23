@@ -40,6 +40,15 @@ const updateUserRole = async (data, token) => {
     return response.data
 }
 
+// update user status
+const updateUserStatus = async (data, token) => {
+    const response = await axios.patch(API_URL + `/update_user_status/${data._id}`, data, {
+        headers: { Authorization: token }
+    })
+
+    return response.data
+}
+
 // delete user (admin)
 const deleteUser = async (userId, token) => {
     const response = await axios.delete(API_URL + `/delete/${userId}`, {
@@ -54,6 +63,7 @@ const userService = {
     getAllUsersInfor,
     updateUser,
     updateUserRole,
+    updateUserStatus,
     deleteUser
 }
 

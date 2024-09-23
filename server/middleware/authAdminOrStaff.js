@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const authAdmin = async (req, res, next) => {
+export const authAdminOrStaff = async (req, res, next) => {
     try {
         const token = req.headers.authorization
         const response = await axios.get(`${process.env.API_USERS_URL}/user_infor`, {
@@ -11,8 +11,8 @@ export const authAdmin = async (req, res, next) => {
 
         const user = response.data;
 
-        if (user.personal_info.role !== 1) { // 1 = admin
-            return res.status(403).json({ message: "Admin resources access denied." });
+        if (user.personal_info.role !== 1 && user.personal_info.role !== 2) {
+            return res.status(403).json({ message: "Access denied." });
         }
 
         next();

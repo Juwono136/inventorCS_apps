@@ -14,7 +14,7 @@ import { MdOutlineInventory2 } from "react-icons/md";
 import { BsCartCheck } from "react-icons/bs";
 import { LuUserCog } from "react-icons/lu";
 import { CgProfile } from "react-icons/cg";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout, reset } from "../../features/auth/authSlice";
 import logoImg from "../../assets/images/logo.png";
 import DialogOpenComponent from "./DialogOpenComponent";
@@ -23,6 +23,9 @@ import { userReset } from "../../features/user/userSlice";
 const SidebarComponent = ({ isDrawerOpen = false, closeDrawer }) => {
   const overlayRef = useRef(null);
   const [openDialog, setOpenDialog] = useState(false);
+
+  const { user } = useSelector((state) => state.auth);
+  const { userInfor } = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -70,38 +73,45 @@ const SidebarComponent = ({ isDrawerOpen = false, closeDrawer }) => {
           <hr className="my-2 border-blue-gray-50" />
 
           <List>
-            <NavLink
-              to="/inventories"
-              onClick={closeDrawer}
-              className={getNavLinkClass}
-            >
-              <ListItem className="flex gap-2 items-center text-indigo-800">
-                <MdOutlineInventory2 className="text-md" />
-                Inventories
-              </ListItem>
-            </NavLink>
+            {userInfor?.personal_info?.role !== 0 && (
+              <>
+                {/* Menu for role 1 and 2 */}
+                <NavLink
+                  to="/inventories"
+                  onClick={closeDrawer}
+                  className={getNavLinkClass}
+                >
+                  <ListItem className="flex gap-2 items-center text-indigo-800">
+                    <MdOutlineInventory2 className="text-md" />
+                    Our Inventories
+                  </ListItem>
+                </NavLink>
 
-            <NavLink
-              to="/borrowed-item"
-              onClick={closeDrawer}
-              className={getNavLinkClass}
-            >
-              <ListItem className="flex gap-2 items-center text-indigo-800">
-                <BsCartCheck className="text-md" />
-                Borrowed Item
-              </ListItem>
-            </NavLink>
+                <NavLink
+                  to="/borrowed-item"
+                  onClick={closeDrawer}
+                  className={getNavLinkClass}
+                >
+                  <ListItem className="flex gap-2 items-center text-indigo-800">
+                    <BsCartCheck className="text-md" />
+                    Borrowed Item
+                  </ListItem>
+                </NavLink>
 
-            <NavLink
-              to="/users"
-              onClick={closeDrawer}
-              className={getNavLinkClass}
-            >
-              <ListItem className="flex gap-2 items-center text-indigo-800">
-                <LuUserCog className="text-md" />
-                Users List
-              </ListItem>
-            </NavLink>
+                {userInfor?.personal_info?.role !== 2 && (
+                  <NavLink
+                    to="/users"
+                    onClick={closeDrawer}
+                    className={getNavLinkClass}
+                  >
+                    <ListItem className="flex gap-2 items-center text-indigo-800">
+                      <LuUserCog className="text-md" />
+                      Users List
+                    </ListItem>
+                  </NavLink>
+                )}
+              </>
+            )}
 
             <NavLink
               to="/profile"

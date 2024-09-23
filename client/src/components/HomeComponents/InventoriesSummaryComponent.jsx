@@ -1,5 +1,5 @@
 import React from "react";
-import product1 from "../../assets/images/inventory_img.jpg";
+// import product1 from "../../assets/images/inventory_img.jpg";
 import { Link } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa";
 import InventoryCard from "./InventoryCard";
@@ -18,7 +18,7 @@ const InventoriesSummaryComponent = () => {
           Our Inventories
         </h1>
         <p className="text-sm text-gray-600 mt-2">
-          Check out our latest inventory
+          Check out our latest inventories
         </p>
       </div>
 
@@ -36,7 +36,7 @@ const InventoriesSummaryComponent = () => {
       <div className="my-6">
         <Link
           to="/inventory"
-          className="flex items-center gap-3 mt-3 bg-indigo-600 text-white text-sm p-3 rounded-md hover:shadow-lg transition transform hover:scale-105"
+          className="flex items-center gap-3 mt-3 bg-indigo-600 text-white text-sm px-3 py-2 rounded-lg hover:shadow-lg transition transform hover:scale-105"
         >
           See more
           <FaArrowRight />

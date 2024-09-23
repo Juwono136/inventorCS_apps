@@ -1,10 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
+import InventoryCardModal from "./InventoryCardModal";
+
+const InventoryCard = ({
+  image,
+  title,
+  total_items,
+  status,
+  serial_number,
+  desc,
+  categories,
+}) => {
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => setOpen(!open);
+
+  const itemDetails = {
+    image,
+    title,
+    total_items,
+    status,
+    serial_number,
+    desc,
+    categories,
+  };
 
 const InventoryCard = ({ image, item, addToCart }) => {
   return (
-    <div className="bg-white shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105 cursor-pointer">
+    <div className="bg-white shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105">
       <div className="h-64 overflow-hidden relative">
-        <img src={image} className="w-full h-full object-cover" />
+        <img src={image} alt={title} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black opacity-50"></div>
       </div>
       <div className="p-4 flex justify-between items-center">
@@ -18,6 +42,12 @@ const InventoryCard = ({ image, item, addToCart }) => {
           Add to Cart
         </button>
       </div>
+
+      <InventoryCardModal
+        open={open}
+        handleOpen={handleOpen}
+        item={itemDetails}
+      />
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import React from "react";
 import SidebarComponent from "../../components/DashboardComponents/SidebarComponent";
 import NavbarComponent from "../../components/DashboardComponents/NavbarComponent";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useLocation } from "react-router-dom";
 import Loader from "../../common/Loader";
 

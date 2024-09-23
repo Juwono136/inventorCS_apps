@@ -69,6 +69,19 @@ export const updateUserRole = createAsyncThunk('user/update_role', async (data, 
     }
 })
 
+// update user status
+export const updateUserStatus = createAsyncThunk('user/update_user_status', async (data, thunkAPI) => {
+    try {
+        const token = await tokenService.accessToken(data)
+
+        return await userService.updateUserStatus(data, token)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
 // delete user
 export const deleteUser = createAsyncThunk('user/delete', async (id, thunkAPI) => {
     try {
@@ -157,6 +170,28 @@ export const userSlice = createSlice({
                 }
             })
             .addCase(updateUserRole.rejected, (state, action) => {
+                state.isError = true
+                state.isLoading = false
+                state.message = action.payload
+            })
+            // update user status
+            .addCase(updateUserStatus.pending, (state) => {
+                state.isLoading = true
+            })
+            .addCase(updateUserStatus.fulfilled, (state, action) => {
+                state.isSuccess = true
+                state.isLoading = false
+                state.message = action.payload.message
+                if (state.allUsersInfor && state.allUsersInfor.length > 0) {
+                    const updateUserStatusIndex = state.allUsersInfor.findIndex(userRole => userRole._id === action.payload._id)
+                    // console.log(updateUserStatusIndex)
+
+                    if (updateUserStatusIndex !== -1) {
+                        state.allUsersInfor[updateUserStatusIndex] = action.payload
+                    }
+                }
+            })
+            .addCase(updateUserStatus.rejected, (state, action) => {
                 state.isError = true
                 state.isLoading = false
                 state.message = action.payload
