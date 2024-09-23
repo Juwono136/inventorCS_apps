@@ -19,8 +19,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllUsersInfor, getUserInfor } from "./features/user/userSlice";
 import { accessToken } from "./features/token/tokenSlice";
 import UpdateUserRole from "./pages/DashboardPages/updateUserRole";
-import MyCarts from "./pages/HomePages/MyCarts";
-import LoanFormComponent from './components/HomeComponents/LoanFormComponent';
 
 function App() {
   const [sort, setSort] = useState({
@@ -86,9 +84,7 @@ function App() {
           />
           <Route path="users/update_user/:id" element={<UpdateUserRole />} />
           <Route path="profile" element={<MyProfile />} />
-          <Route path="mycarts" element={<MyCarts />} />
           <Route path="settings" element={<MySettings />} />
-          <Route path="loanform" element={<LoanFormComponent />} />
         </Routes>
       </BrowserRouter>
     </>
