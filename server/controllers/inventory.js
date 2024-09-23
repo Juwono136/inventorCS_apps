@@ -5,7 +5,7 @@ import moment from 'moment'
 export const getAllInventories = async (req, res) => {
     try {
         const page = parseInt(req.query.page) - 1 || 0;
-        const limit = parseInt(req.query.limit) || 2;
+        const limit = parseInt(req.query.limit) || 10;
         const search = req.query.search || "";
         let sort = req.query.sort || "asset_name";
         let categories = req.query.categories || "All";
@@ -51,7 +51,7 @@ export const getAllInventories = async (req, res) => {
             page: page + 1,
             limit: limit,
             totalPages: Math.ceil(totalItems / limit),
-            totalItems
+            totalItems,
         });
 
     } catch (error) {

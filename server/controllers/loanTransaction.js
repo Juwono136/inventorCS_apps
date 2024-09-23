@@ -19,6 +19,10 @@ export const createLoanTransaction = async (req, res) => {
             return res.status(404).json({ message: "Inventory not found." });
         }
 
+        if (inventory.draft === true) {
+            return res.status(400).json({ message: "Sorry, Inventory is not ready to loan." });
+        }
+
         if (inventory.total_items <= 0) {
             return res.status(400).json({ message: "Sorry, item is not available for loan." });
         }
@@ -71,6 +75,12 @@ export const updateStatusToBorrowed = async (req, res) => {
 
         if (loanTransaction.status_item !== "pending") {
             return res.status(400).json({ message: "Transaction is not in pending status." })
+        }
+
+        const inventory = await Inventories.findById(loanTransaction.inventory_id);
+
+        if (inventory.draft === true) {
+            return res.status(400).json({ message: "Cannot borrow item. Inventory is in draft status." });
         }
 
         loanTransaction.status_item = "borrowed"
@@ -159,6 +169,10 @@ export const cancelLoanTransaction = async (req, res) => {
 
         if (!inventory) {
             return res.status(404).json({ message: "Inventory not found." });
+        }
+
+        if (inventory.draft === true) {
+            return res.status(400).json({ message: "Cannot cancel item. Inventory is in draft status." });
         }
 
         loanTransaction.status_item = "cancelled";

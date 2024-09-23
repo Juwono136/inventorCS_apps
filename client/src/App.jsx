@@ -20,6 +20,7 @@ import { getAllUsersInfor, getUserInfor } from "./features/user/userSlice";
 import { accessToken } from "./features/token/tokenSlice";
 import UpdateUserRole from "./pages/DashboardPages/updateUserRole";
 import ProtectedUserRoutes from "./common/ProtectedUserRoutes";
+import { getAllInventories } from "./features/inventory/inventorySlice";
 
 function App() {
   const [sort, setSort] = useState({
@@ -27,6 +28,7 @@ function App() {
     order: "asc",
   });
   const [program, setProgram] = useState("");
+  const [categories, setCategories] = useState("");
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const { user, isLoggedOut } = useSelector((state) => state.auth);
@@ -46,8 +48,10 @@ function App() {
     if (userInfor.personal_info?.role === 1) {
       dispatch(getAllUsersInfor({ page, sort, program, search }));
     }
+
+    dispatch(getAllInventories({ page, sort, categories, search }));
     // setSearchParams({ page, search, sort: sort.sort, order: sort.order });
-  }, [dispatch, userInfor, page, sort, program, search]);
+  }, [dispatch, userInfor, page, sort, program, categories, search]);
 
   return (
     <>
@@ -71,7 +75,16 @@ function App() {
             path="inventories"
             element={
               <ProtectedUserRoutes allowedRoles={[1, 2]}>
-                <Inventories />
+                <Inventories
+                  sort={sort}
+                  setSort={setSort}
+                  categories={categories}
+                  setCategories={setCategories}
+                  page={page}
+                  setPage={setPage}
+                  search={search}
+                  setSearch={setSearch}
+                />
               </ProtectedUserRoutes>
             }
           />
@@ -88,19 +101,29 @@ function App() {
           <Route
             path="users"
             element={
-              <UserList
-                sort={sort}
-                setSort={setSort}
-                program={program}
-                setProgram={setProgram}
-                page={page}
-                setPage={setPage}
-                search={search}
-                setSearch={setSearch}
-              />
+              <ProtectedUserRoutes allowedRoles={[1]}>
+                <UserList
+                  sort={sort}
+                  setSort={setSort}
+                  program={program}
+                  setProgram={setProgram}
+                  page={page}
+                  setPage={setPage}
+                  search={search}
+                  setSearch={setSearch}
+                />
+              </ProtectedUserRoutes>
             }
           />
-          <Route path="users/update_user/:id" element={<UpdateUserRole />} />
+
+          <Route
+            path="users/update_user/:id"
+            element={
+              <ProtectedUserRoutes allowedRoles={[1]}>
+                <UpdateUserRole />
+              </ProtectedUserRoutes>
+            }
+          />
 
           <Route path="profile" element={<MyProfile />} />
           <Route path="settings" element={<MySettings />} />
