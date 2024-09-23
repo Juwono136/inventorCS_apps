@@ -23,6 +23,7 @@ import logoImg from "../../assets/images/logo.png";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, reset } from "../../features/auth/authSlice";
 import DialogOpenComponent from "../DashboardComponents/DialogOpenComponent";
+import { useCart } from "../InventoryComponents/CartContext";
 
 const NavbarComponent = () => {
   const [openNav, setOpenNav] = useState(false);
@@ -36,6 +37,9 @@ const NavbarComponent = () => {
   const { userInfor } = useSelector((state) => state.user);
 
   const { avatar } = userInfor?.personal_info || "";
+
+  const { cartItems } = useCart();
+  const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   const closeMenuProfile = () => setIsMenuProfileOpen(false);
 
@@ -181,7 +185,7 @@ const NavbarComponent = () => {
                 <button className="flex justify-center items-center gap-1">
                   <FaCartShopping className="text-indigo-700 text-xl transition ease-in-out hover:text-indigo-400" />
                   <span className="bg-indigo-700 text-white text-sm rounded-full px-2 py-1">
-                    4
+                    {cartItemCount}
                   </span>
                 </button>
               </Link>

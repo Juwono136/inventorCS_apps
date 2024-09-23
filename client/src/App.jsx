@@ -10,6 +10,7 @@ import ActivationEmail from "./pages/AuthPages/ActivationEmail";
 import NotFound from "./common/NotFound";
 import Dashboard from "./pages/DashboardPages/Dashboard";
 import { Toaster } from "react-hot-toast";
+import Inventory from "./pages/InventoryPages/Inventory";
 import Inventories from "./pages/DashboardPages/Inventories";
 import BorrowedItems from "./pages/DashboardPages/BorrowedItems";
 import UserList from "./pages/DashboardPages/UserList";
@@ -21,6 +22,7 @@ import { accessToken } from "./features/token/tokenSlice";
 import UpdateUserRole from "./pages/DashboardPages/updateUserRole";
 import MyCarts from "./pages/HomePages/MyCarts";
 import LoanFormComponent from './components/HomeComponents/LoanFormComponent';
+import { CartProvider } from "./components/InventoryComponents/CartContext";
 
 function App() {
   const [sort, setSort] = useState({
@@ -28,6 +30,7 @@ function App() {
     order: "asc",
   });
   const [program, setProgram] = useState("");
+  const [category, setCategory] = useState("");
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const { user, isLoggedOut } = useSelector((state) => state.auth);
@@ -53,44 +56,60 @@ function App() {
   return (
     <>
       <Toaster />
-      <BrowserRouter>
-        <Routes>
-          <Route path="*" element={<NotFound />} />
-          <Route path="/" element={<NavbarComponent />}>
-            <Route index element={<Home />} />
-            <Route path="signin" element={<Signin />} />
-            <Route path="signup" element={<Singup />} />
-            <Route path="forgot" element={<ForgotPassword />} />
-            <Route path="user/activate/:token" element={<ActivationEmail />} />
-          </Route>
+      <CartProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="*" element={<NotFound />} />
+            <Route path="/" element={<NavbarComponent />}>
+              <Route index element={<Home />} />
+              <Route path="signin" element={<Signin />} />
+              <Route path="signup" element={<Singup />} />
+              <Route path="forgot" element={<ForgotPassword />} />
+              <Route path="user/activate/:token" element={<ActivationEmail />} />
+            </Route>
 
-          <Route path="user/reset/:token" element={<ResetPassword />} />
+            <Route 
+              path="inventory" 
+              element={
+                <Inventory 
+                  category={category}
+                  setCategory={setCategory}
+                  page={page}
+                  setPage={setPage}
+                  search={search}
+                  setSearch={setSearch}
+                />
+              }
+            />
 
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="inventories" element={<Inventories />} />
-          <Route path="borrowed-item" element={<BorrowedItems />} />
-          <Route
-            path="users"
-            element={
-              <UserList
-                sort={sort}
-                setSort={setSort}
-                program={program}
-                setProgram={setProgram}
-                page={page}
-                setPage={setPage}
-                search={search}
-                setSearch={setSearch}
-              />
-            }
-          />
-          <Route path="users/update_user/:id" element={<UpdateUserRole />} />
-          <Route path="profile" element={<MyProfile />} />
-          <Route path="mycarts" element={<MyCarts />} />
-          <Route path="settings" element={<MySettings />} />
-          <Route path="loanform" element={<LoanFormComponent />} />
-        </Routes>
-      </BrowserRouter>
+            <Route path="user/reset/:token" element={<ResetPassword />} />
+
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="inventories" element={<Inventories />} />
+            <Route path="borrowed-item" element={<BorrowedItems />} />
+            <Route
+              path="users"
+              element={
+                <UserList
+                  sort={sort}
+                  setSort={setSort}
+                  program={program}
+                  setProgram={setProgram}
+                  page={page}
+                  setPage={setPage}
+                  search={search}
+                  setSearch={setSearch}
+                />
+              }
+            />
+            <Route path="users/update_user/:id" element={<UpdateUserRole />} />
+            <Route path="profile" element={<MyProfile />} />
+            <Route path="mycarts" element={<MyCarts />} />
+            <Route path="settings" element={<MySettings />} />
+            <Route path="loanform" element={<LoanFormComponent />} />
+          </Routes>
+        </BrowserRouter>
+      </CartProvider>
     </>
   );
 }
