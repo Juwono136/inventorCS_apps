@@ -31,6 +31,10 @@ function App() {
     sort: "personal_info.name",
     order: "asc",
   });
+  const [sortInventory, setSortInventory] = useState({
+    sort: "asset_name",
+    order: "asc",
+  });
   const [program, setProgram] = useState("");
   const [categories, setCategories] = useState("");
   const [page, setPage] = useState(1);
@@ -76,8 +80,8 @@ function App() {
               path="inventory" 
               element={
                 <Inventory 
-                  sort={sort}
-                  setSort={setSort}
+                  sort={sortInventory}
+                  setSort={setSortInventory}
                   categories={categories}
                   setCategories={setCategories}
                   page={page}
@@ -95,8 +99,8 @@ function App() {
               element={
                 <ProtectedUserRoutes allowedRoles={[1, 2]}>
                   <Inventories
-                    sort={sort}
-                    setSort={setSort}
+                    sort={sortInventory}
+                    setSort={setSortInventory}
                     categories={categories}
                     setCategories={setCategories}
                     page={page}

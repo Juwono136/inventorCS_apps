@@ -7,6 +7,7 @@ import SearchElement from "../../common/SearchElement";
 import ItemCategories from "../../components/InventoryComponents/ItemCategories";
 import { useCart } from "../../components/InventoryComponents/CartContext";
 import toast from "react-hot-toast";
+import Pagination from "../../common/Pagination"; 
 import { getAllInventories } from "../../features/inventory/inventorySlice";
 
 const Inventory = ({
@@ -23,7 +24,7 @@ const Inventory = ({
   const currentPage = parseInt(searchParams.get("page"));
   const { addToCart } = useCart();
   const { inventories, isLoading, isError, isSuccess, message } = useSelector((state) => state.inventory);
-  const { items } = inventories;
+  const { items, totalItems, totalPage, limit } = inventories;
 
   const dispatch = useDispatch();
 
@@ -44,7 +45,7 @@ const Inventory = ({
     }
 
     if (isError) {
-      toast.error(message);
+      // toast.error(message);
     }
 
     if (isSuccess) {
@@ -68,7 +69,7 @@ const Inventory = ({
         <div className="flex basis-1/5 flex-col gap-2">
 
           <SearchElement 
-            setSearch={handleSearch} //I Didnt change anything about the search, just called it
+            setSearch={handleSearch}
           /> 
 
           <ItemCategories
@@ -95,15 +96,15 @@ const Inventory = ({
           ))}
         </div>
         
-        {/* {totalItems > 0 ? (
+        {totalItems > 0 ? (
           <Pagination
             totalPage={search ? Math.ceil(totalItems / limit) : totalPage}
             page={page}
             setPage={setPage}
           />
         ) : (
-          "" // Didnt change anything to Pagination only changing "totalUsers" to "totalItems"
-        )} */}
+          ""
+        )}
 
       </div>
 

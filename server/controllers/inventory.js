@@ -50,7 +50,7 @@ export const getAllInventories = async (req, res) => {
             categories: categoryOptions,
             page: page + 1,
             limit: limit,
-            totalPages: Math.ceil(totalItems / limit),
+            totalPage: Math.ceil(totalItems / limit),
             totalItems,
         });
 
