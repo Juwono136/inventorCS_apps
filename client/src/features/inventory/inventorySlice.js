@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
-import tokenService from '../token/tokenService'
 import inventoryService from "./inventoryService"
 
 const initialState = {

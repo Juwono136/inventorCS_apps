@@ -3,7 +3,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa";
 import InventoryCard from "./InventoryCard";
-import { itemList } from "../../utils/InventoryData";
 import { useCart } from "../InventoryComponents/CartContext";
 import { useSelector } from "react-redux";
 import Loader from "../../common/Loader";
@@ -46,6 +45,7 @@ const InventoriesSummaryComponent = () => {
                 status={item.total_items > 0 ? "Ready" : "Out of stock"}
                 categories={item.categories}
                 desc={item.desc}
+                addToCart={addToCart}
               />
             ))}
           </div>

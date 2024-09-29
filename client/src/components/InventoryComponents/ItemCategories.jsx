@@ -7,8 +7,6 @@ import {
   AccordionBody,
 } from "@material-tailwind/react";
 
-// ❗❗ I only changed variable names, other than that nothing here is different cause the same as ProgramCategories.jsx
-
 function Icon({ id, open }) {
   return (
     <IoIosArrowDown
@@ -19,9 +17,9 @@ function Icon({ id, open }) {
   );
 }
 
-const ItemCategories = ({ category, setFilterItem, setPage }) => {
+const ItemCategories = ({ categories, setFilterCategories, setPage }) => {
   const [open, setOpen] = useState(0);
-  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
 
   const handleOpen = (value) => setOpen(open === value ? 0 : value);
 
@@ -29,20 +27,20 @@ const ItemCategories = ({ category, setFilterItem, setPage }) => {
     const { value, checked } = e.target;
 
     if (checked) {
-      setSelectedItems((prev) => [...prev, value]);
+      setSelectedCategories((prev) => [...prev, value]);
     } else {
-      setSelectedItems((prev) => prev.filter((item) => item !== value));
+      setSelectedCategories((prev) => prev.filter((item) => item !== value));
     }
     setPage(1);
   };
 
   useEffect(() => {
-    if (selectedItems.length === 0) {
-      setFilterItem("");
+    if (selectedCategories.length === 0) {
+      setFilterCategories("");
     } else {
-      setFilterItem(selectedItems.join(","));
+      setFilterCategories(selectedCategories.join(","));
     }
-  }, [selectedItems, setFilterItem]);
+  }, [selectedCategories, setFilterCategories]);
 
   return (
     <>
@@ -64,7 +62,7 @@ const ItemCategories = ({ category, setFilterItem, setPage }) => {
           </div>
         </AccordionHeader>
         <AccordionBody className="flex flex-col md:flex-row md:flex-wrap gap-2 md:gap-6">
-          {category?.map((item) => (
+          {categories?.map((item) => (
             <div className="flex" key={item}>
               <label htmlFor={item} className="flex cursor-pointer gap-1">
                 <div className="flex items-center">
@@ -73,7 +71,7 @@ const ItemCategories = ({ category, setFilterItem, setPage }) => {
                     className="rounded border-gray-300"
                     id={item}
                     value={item}
-                    checked={selectedItems.includes(item)}
+                    checked={selectedCategories.includes(item)}
                     onChange={handleFilterChange}
                   />
                 </div>

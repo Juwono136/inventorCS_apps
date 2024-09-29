@@ -1,12 +1,12 @@
 import React from 'react';
 import { Typography, Button } from "@material-tailwind/react";
-import { useCart } from '../../components/InventoryComponents/CartContext'; // Import useCart hook
+import { useCart } from '../../components/InventoryComponents/CartContext';
 import CartItem from '../../components/HomeComponents/CartItem';
 import CartLogo from '../../assets/images/cartlogo.png';
 import { useNavigate } from 'react-router-dom';
 
 const MyCarts = () => {
-  const { cartItems, setCartItems } = useCart([]); // Get cart items and removeFromCart from context
+  const { cartItems, setCartItems } = useCart([]);
   const navigate = useNavigate();
 
   const handleCheckout = () => {

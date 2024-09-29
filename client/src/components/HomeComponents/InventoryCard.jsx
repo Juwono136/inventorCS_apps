@@ -9,6 +9,7 @@ const InventoryCard = ({
   serial_number,
   desc,
   categories,
+  addToCart,
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -69,6 +70,7 @@ const InventoryCard = ({
                 : "bg-indigo-500 text-white hover:bg-indigo-700"
             }`}
             disabled={total_items === 0}
+            onClick={addToCart}
           >
             Add to Cart
           </button>

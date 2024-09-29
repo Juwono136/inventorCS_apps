@@ -76,8 +76,10 @@ function App() {
               path="inventory" 
               element={
                 <Inventory 
-                  category={category}
-                  setCategory={setCategory}
+                  sort={sort}
+                  setSort={setSort}
+                  categories={categories}
+                  setCategories={setCategories}
                   page={page}
                   setPage={setPage}
                   search={search}
