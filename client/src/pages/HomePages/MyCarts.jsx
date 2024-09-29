@@ -28,7 +28,7 @@ const MyCarts = () => {
       ) : (
         <div className="grid grid-cols-1 gap-4">
           <CartItem
-            key={cartItems.item_id}
+            key={cartItems.asset_id}
             items={cartItems}
           />
           <div className="flex justify-end mt-4">

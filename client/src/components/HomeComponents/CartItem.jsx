@@ -33,21 +33,20 @@ const CartItems = ({items}) => {
       ) : (
         <div className="grid grid-cols-1 gap-4">
           {items.map(item => (
-            <Card key={item.item_id} className="shadow-lg rounded-lg transform transition-transform hover:scale-105 hover:shadow-xl">
+            <Card key={item.asset_id} className="shadow-lg rounded-lg transform transition-transform hover:scale-105 hover:shadow-xl">
               <CardBody className="bg-gradient-to-r from-gray-100 to-white rounded-lg">
                 <div className="flex">
-                  <img src={product1} alt={item.item_name} className="w-24 h-24 object-cover rounded-lg mr-4 shadow-sm" />
+                  <img src={product1} alt={item.asset_name} className="w-24 h-24 object-cover rounded-lg mr-4 shadow-sm" />
                   <div className="flex-1">
-                    <Typography variant="h6" className="font-semibold">{item.item_name}</Typography>
-                    <Typography variant="body2" color="gray">{item.category}</Typography>
-                    <Typography variant="body2" className="mt-2">{item.description}</Typography>
+                    <Typography variant="h6" className="font-semibold">{item.asset_name}</Typography>
+                    <Typography variant="body2" className="mt-2">{item.desc}</Typography>
                     <div className="flex items-center mt-2 space-x-2">
-                      <Button className="rounded-full bg-blue-500 text-white" onClick={() => decreaseQuantity(item.item_id)}>-</Button>
+                      <Button className="rounded-full bg-blue-500 text-white" onClick={() => decreaseQuantity(item.asset_id)}>-</Button>
                       <Typography variant="body2" className="mx-2">{item.quantity}</Typography>
-                      <Button className="rounded-full bg-blue-500 text-white" onClick={() => increaseQuantity(item.item_id)}>+</Button>
+                      <Button className="rounded-full bg-blue-500 text-white" onClick={() => increaseQuantity(item.asset_id)}>+</Button>
                     </div>
                   </div>
-                  <Button color="red" className="ml-4" onClick={() => handleOpenDialog(item.item_id)}>Remove</Button>
+                  <Button color="red" className="ml-4" onClick={() => handleOpenDialog(item.asset_id)}>Remove</Button>
                 </div>
               </CardBody>
             </Card>

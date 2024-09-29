@@ -67,6 +67,7 @@ function App() {
       <CartProvider>
         <BrowserRouter>
           <Routes>
+            
             <Route path="*" element={<NotFound />} />
             <Route path="/" element={<NavbarComponent />}>
               <Route index element={<Home />} />
@@ -139,21 +140,21 @@ function App() {
               }
             />
               
+            <Route
+              path="users/update_user/:id"
+              element={
+                <ProtectedUserRoutes allowedRoles={[1]}>
+                  <UpdateUserRole />
+                </ProtectedUserRoutes>
+              }
+            />
+            <Route path="mycarts" element={<MyCarts />} />
+            <Route path="loanform" element={<LoanFormComponent />} />
+            <Route path="profile" element={<MyProfile />} />
+            <Route path="settings" element={<MySettings />} />
 
-          <Route
-            path="users/update_user/:id"
-            element={
-              <ProtectedUserRoutes allowedRoles={[1]}>
-                <UpdateUserRole />
-              </ProtectedUserRoutes>
-            }
-          />
-          <Route path="mycarts" element={<MyCarts />} />
-          <Route path="loanform" element={<LoanFormComponent />} />
-          <Route path="profile" element={<MyProfile />} />
-          <Route path="settings" element={<MySettings />} />
-        </Routes>
-      </BrowserRouter>
+          </Routes>
+        </BrowserRouter>
       </CartProvider>
     </>
   );
