@@ -45,7 +45,7 @@ const InventoriesSummaryComponent = () => {
                 status={item.total_items > 0 ? "Ready" : "Out of stock"}
                 categories={item.categories}
                 desc={item.desc}
-                addToCart={addToCart}
+                addToCart={() => addToCart(item)}
               />
             ))}
           </div>
