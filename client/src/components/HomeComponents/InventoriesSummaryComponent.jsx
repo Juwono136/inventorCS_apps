@@ -1,13 +1,18 @@
 import React from "react";
-import product1 from "../../assets/images/inventory_img.jpg";
+// import product1 from "../../assets/images/inventory_img.jpg";
 import { Link } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa";
 import InventoryCard from "./InventoryCard";
 import { itemList } from "../../utils/InventoryData";
 import { useCart } from "../InventoryComponents/CartContext";
+import { useSelector } from "react-redux";
+import Loader from "../../common/Loader";
 
 const InventoriesSummaryComponent = () => {
   const { addToCart } = useCart();
+  const { inventories, isLoading } = useSelector((state) => state.inventory);
+  const { items } = inventories;
+
   return (
     <div
       id="inventories"
@@ -22,16 +27,30 @@ const InventoriesSummaryComponent = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 lg:mx-6">
-        {itemList.map((item) => (
-          <InventoryCard
-            key={item.item_id}
-            image={product1}
-            item={item}
-            addToCart={() => addToCart(item)}
-          />
-          ))}
-      </div>
+      <>
+        {isLoading ? (
+          <Loader />
+        ) : items?.length === 0 ? (
+          <h4 className="p-3 text-lg text-center font-bold text-red-900">
+            Sorry, Inventory is not available for now.
+          </h4>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 lg:mx-6">
+            {items?.map((item, i) => (
+              <InventoryCard
+                key={i}
+                image={item.asset_img}
+                title={item.asset_name}
+                serial_number={item.serial_number}
+                total_items={item.total_items}
+                status={item.total_items > 0 ? "Ready" : "Out of stock"}
+                categories={item.categories}
+                desc={item.desc}
+              />
+            ))}
+          </div>
+        )}
+      </>
 
       <div className="my-6">
         <Link

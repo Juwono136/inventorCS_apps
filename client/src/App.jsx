@@ -23,6 +23,8 @@ import UpdateUserRole from "./pages/DashboardPages/updateUserRole";
 import MyCarts from "./pages/HomePages/MyCarts";
 import LoanFormComponent from './components/HomeComponents/LoanFormComponent';
 import { CartProvider } from "./components/InventoryComponents/CartContext";
+import ProtectedUserRoutes from "./common/ProtectedUserRoutes";
+import { getAllInventories } from "./features/inventory/inventorySlice";
 
 function App() {
   const [sort, setSort] = useState({
@@ -30,7 +32,7 @@ function App() {
     order: "asc",
   });
   const [program, setProgram] = useState("");
-  const [category, setCategory] = useState("");
+  const [categories, setCategories] = useState("");
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const { user, isLoggedOut } = useSelector((state) => state.auth);
@@ -50,8 +52,10 @@ function App() {
     if (userInfor.personal_info?.role === 1) {
       dispatch(getAllUsersInfor({ page, sort, program, search }));
     }
+
+    dispatch(getAllInventories({ page, sort, categories, search }));
     // setSearchParams({ page, search, sort: sort.sort, order: sort.order });
-  }, [dispatch, userInfor, page, sort, program, search]);
+  }, [dispatch, userInfor, page, sort, program, categories, search]);
 
   return (
     <>
@@ -82,33 +86,68 @@ function App() {
               }
             />
 
-            <Route path="user/reset/:token" element={<ResetPassword />} />
-
             <Route path="dashboard" element={<Dashboard />} />
-            <Route path="inventories" element={<Inventories />} />
-            <Route path="borrowed-item" element={<BorrowedItems />} />
+
+            <Route
+              path="inventories"
+              element={
+                <ProtectedUserRoutes allowedRoles={[1, 2]}>
+                  <Inventories
+                    sort={sort}
+                    setSort={setSort}
+                    categories={categories}
+                    setCategories={setCategories}
+                    page={page}
+                    setPage={setPage}
+                    search={search}
+                    setSearch={setSearch}
+                  />
+                </ProtectedUserRoutes>
+              }
+            />
+
+            <Route
+              path="borrowed-item"
+              element={
+                <ProtectedUserRoutes allowedRoles={[1, 2]}>
+                  <BorrowedItems />
+                </ProtectedUserRoutes>
+              }
+            />
+
             <Route
               path="users"
               element={
-                <UserList
-                  sort={sort}
-                  setSort={setSort}
-                  program={program}
-                  setProgram={setProgram}
-                  page={page}
-                  setPage={setPage}
-                  search={search}
-                  setSearch={setSearch}
-                />
+                <ProtectedUserRoutes allowedRoles={[1]}>
+                  <UserList
+                    sort={sort}
+                    setSort={setSort}
+                    program={program}
+                    setProgram={setProgram}
+                    page={page}
+                    setPage={setPage}
+                    search={search}
+                    setSearch={setSearch}
+                  />
+                  </ProtectedUserRoutes>
               }
             />
-            <Route path="users/update_user/:id" element={<UpdateUserRole />} />
-            <Route path="profile" element={<MyProfile />} />
-            <Route path="mycarts" element={<MyCarts />} />
-            <Route path="settings" element={<MySettings />} />
-            <Route path="loanform" element={<LoanFormComponent />} />
-          </Routes>
-        </BrowserRouter>
+              
+
+          <Route
+            path="users/update_user/:id"
+            element={
+              <ProtectedUserRoutes allowedRoles={[1]}>
+                <UpdateUserRole />
+              </ProtectedUserRoutes>
+            }
+          />
+          <Route path="mycarts" element={<MyCarts />} />
+          <Route path="loanform" element={<LoanFormComponent />} />
+          <Route path="profile" element={<MyProfile />} />
+          <Route path="settings" element={<MySettings />} />
+        </Routes>
+      </BrowserRouter>
       </CartProvider>
     </>
   );

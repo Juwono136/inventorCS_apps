@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import authReducer from '../features/auth/authSlice'
 import userReducer from '../features/user/userSlice'
 import cartReducer from '../features/cart/cartSlice';
+import inventoryReducer from '../features/inventory/inventorySlice'
 // import tokenReducer from '../features/token/tokenSlice'
 
 export const store = configureStore({
@@ -9,6 +10,7 @@ export const store = configureStore({
         auth: authReducer,
         user: userReducer,
         cart: cartReducer,
+        inventory: inventoryReducer,
         // token: tokenReducer,
     }
 })
