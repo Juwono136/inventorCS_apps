@@ -12,7 +12,7 @@ export default defineConfig({
         ws: true,
       },
       "/api": {
-        target: "http://localhost:5000",
+        target: "https://78cb-103-94-10-238.ngrok-free.app",
         changeOrigin: true,
         secure: false,
         ws: true,

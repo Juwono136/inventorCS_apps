@@ -2,8 +2,37 @@ import React, { useState } from 'react';
 import { Typography, Button } from "@material-tailwind/react";
 import { useNavigate } from 'react-router-dom';
 import ConfirmRemovalButtonComponent from '../../components/HomeComponents/ConfirmRemovalButtonComponent';
-import CartItem from '../../components/HomeComponents/CartItem';
 import CartLogo from '../../assets/images/cartlogo.png';
+import BackButton from '../../common/BackButton';
+
+const CartItem = ({ item, onIncreaseQuantity, onDecreaseQuantity, onRemove }) => {
+  return (
+    <div className="flex items-center justify-between p-4 border-b">
+      <div className="flex items-center">
+        <img src={item.imageUrl} alt={item.name} className="w-16 h-16 object-cover" />
+        <div className="ml-4">
+          <h4 className="font-bold">{item.name}</h4>
+          <p className="text-sm">{item.category}</p>
+          <p className="text-sm">{item.description}</p>
+        </div>
+      </div>
+      <div className="flex items-center space-x-2">
+        {/* Smaller Decrease Button */}
+        <button onClick={onDecreaseQuantity} className="bg-red-500 text-white px-2 py-1 text-xs rounded">
+          -
+        </button>
+        <span>{item.quantity}</span>
+        {/* Smaller Increase Button */}
+        <button onClick={onIncreaseQuantity} className="bg-green-500 text-white px-2 py-1 text-xs rounded">
+          +
+        </button>
+        <button onClick={onRemove} className="bg-gray-500 text-white px-2 py-1 text-xs rounded">
+          Remove
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const MyCarts = () => {
   const [cartItems, setCartItems] = useState([
@@ -45,9 +74,10 @@ const MyCarts = () => {
           onCancel={() => setItemToRemove(null)}
         />
       )}
-      
-      <div className="flex items-center mb-6">
-        <img src={CartLogo} alt="Cart" className="w-8 h-8 mr-2" />
+
+      <div className="flex items-center mb-6 space-x-4">
+        <BackButton link="/previous-page" />
+        <img src={CartLogo} alt="Cart" className="w-8 h-8" />
         <Typography variant="h4" className="font-bold">My Cart</Typography>
       </div>
 
@@ -68,7 +98,7 @@ const MyCarts = () => {
             />
           ))}
           <div className="flex justify-end mt-4">
-            <Button color="green" onClick={handleCheckout}>Checkout</Button>
+            <Button color="green" onClick={() => window.location.href = '/myborrow'}>Checkout</Button>
           </div>
         </div>
       )}

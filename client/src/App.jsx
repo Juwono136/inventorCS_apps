@@ -21,6 +21,8 @@ import { accessToken } from "./features/token/tokenSlice";
 import UpdateUserRole from "./pages/DashboardPages/updateUserRole";
 import ProtectedUserRoutes from "./common/ProtectedUserRoutes";
 import { getAllInventories } from "./features/inventory/inventorySlice";
+import MyCarts from "./pages/HomePages/MyCarts";
+import MyBorrow from "./pages/HomePages/MyBorrow";
 
 function App() {
   const [sort, setSort] = useState({
@@ -127,6 +129,9 @@ function App() {
 
           <Route path="profile" element={<MyProfile />} />
           <Route path="settings" element={<MySettings />} />
+          <Route path="mycarts" element={<MyCarts />} />
+          <Route path="myborrow" element={<MyBorrow />} />
+
         </Routes>
       </BrowserRouter>
     </>
