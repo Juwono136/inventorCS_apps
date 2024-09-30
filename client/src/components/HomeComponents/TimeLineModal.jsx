@@ -1,17 +1,40 @@
-
 import React from 'react';
 import { Typography } from "@material-tailwind/react";
-import { FaCheckCircle, FaShippingFast, FaBoxOpen, FaHourglassHalf, FaUserCheck } from 'react-icons/fa';
+import { FaCheckCircle, FaHourglassHalf, FaUserCheck, FaTimesCircle } from 'react-icons/fa';
 
-const TimeLineModal = ({ onClose }) => {
+const TimeLineModal = ({ item, onClose }) => {
+  const currentStatus = item.status;
+  const currentDate = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+
   const timeline = [
     { date: '2023-01-01', event: 'Item borrowed', icon: FaCheckCircle, color: 'text-blue-500' },
-    { date: '2023-01-02', event: 'Pending', icon: FaHourglassHalf, color: 'text-yellow-400' },
-    { date: '2023-01-03', event: 'Approval by Admin', icon: FaUserCheck, color: 'text-purple-500' },
-    { date: '2023-01-05', event: 'Item processed', icon: FaBoxOpen, color: 'text-yellow-500' },
-    { date: '2023-01-10', event: 'Item shipped', icon: FaShippingFast, color: 'text-green-500' },
-    { date: '2023-01-15', event: 'Item delivered', icon: FaCheckCircle, color: 'text-green-600' },
   ];
+
+  if (currentStatus === 'Pending') {
+    timeline.push(
+      { date: '2023-01-02', event: 'Pending', icon: FaHourglassHalf, color: 'text-yellow-400' },
+      { date: '2023-01-03', event: 'Waiting for approval from admin', icon: FaUserCheck, color: 'text-purple-500' }
+    );
+  } else if (currentStatus === 'Borrowed') {
+    timeline.push(
+      { date: '2023-01-02', event: 'Pending', icon: FaHourglassHalf, color: 'text-yellow-400' },
+      { date: '2023-01-03', event: 'Waiting for approval from admin', icon: FaUserCheck, color: 'text-purple-500' },
+      { date: '2023-01-04', event: 'Approved by admin', icon: FaCheckCircle, color: 'text-green-500' }
+    );
+  } else if (currentStatus === 'Cancelled') {
+    timeline.push(
+      { date: '2023-01-02', event: 'Pending', icon: FaHourglassHalf, color: 'text-yellow-400' },
+      { date: '2023-01-03', event: 'Waiting for approval from admin', icon: FaUserCheck, color: 'text-purple-500' },
+      { date: '2023-01-04', event: 'Approved by admin', icon: FaCheckCircle, color: 'text-green-500' },
+      { date: currentDate, event: 'Item cancelled', icon: FaTimesCircle, color: 'text-gray-500' }
+    );
+  } else if (currentStatus === 'Rejected') {
+    timeline.push(
+      { date: '2023-01-02', event: 'Pending', icon: FaHourglassHalf, color: 'text-yellow-400' },
+      { date: '2023-01-03', event: 'Waiting for approval from admin', icon: FaUserCheck, color: 'text-purple-500' },
+      { date: currentDate, event: 'Rejected by admin', icon: FaTimesCircle, color: 'text-red-500' }
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
@@ -28,13 +51,14 @@ const TimeLineModal = ({ onClose }) => {
           <div className="border-l-2 border-gray-300 absolute h-full left-4"></div>
           <ul className="space-y-4">
             {timeline.map((entry, index) => (
-              <li key={index} className="relative pl-10">
-                <span className={`absolute left-0 top-1/2 transform -translate-y-1/2 ${entry.color}`}>
-                  <entry.icon size={20} />
-                </span>
-                <Typography variant="body2" className="text-sm">
-                  <strong>{entry.date}:</strong> {entry.event}
-                </Typography>
+              <li key={index} className="flex items-center space-x-4">
+                <div className={`flex-shrink-0 ${entry.color}`}>
+                  <entry.icon className="h-6 w-6" />
+                </div>
+                <div>
+                  <Typography variant="body2" className="font-bold">{entry.date}</Typography>
+                  <Typography variant="body2">{entry.event}</Typography>
+                </div>
               </li>
             ))}
           </ul>

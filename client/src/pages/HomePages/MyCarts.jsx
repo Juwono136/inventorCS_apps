@@ -34,9 +34,9 @@ const CartItem = ({ item, onIncreaseQuantity, onDecreaseQuantity, onRemove }) =>
 
 const MyCarts = () => {
   const [cartItems, setCartItems] = useState([
-    { id: 1, name: 'Book', category: 'Books', description: 'A thrilling mystery novel', imageUrl: '/images/book.jpg', quantity: 1 },
-    { id: 2, name: 'Laptop', category: 'Electronics', description: 'High-performance laptop', imageUrl: '/images/laptop.jpg', quantity: 1 },
-    { id: 3, name: 'Chair', category: 'Furniture', description: 'Comfortable office chair', imageUrl: '/images/chair.jpg', quantity: 2 },
+    { id: 1, name: 'Book', category: 'Books', description: 'A thrilling mystery novel', imageUrl: 'https://images.unsplash.com/photo-1512820790803-83ca734da794', quantity: 1 },
+    { id: 2, name: 'Laptop', category: 'Electronics', description: 'High-performance laptop', imageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8', quantity: 1 },
+    { id: 3, name: 'Chair', category: 'Furniture', description: 'Comfortable office chair', imageUrl: 'https://images.unsplash.com/photo-1562183240-33d6d9d9d0e6', quantity: 2 },
   ]);
 
   const [itemToRemove, setItemToRemove] = useState(null);
