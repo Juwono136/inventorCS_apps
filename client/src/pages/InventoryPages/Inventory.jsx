@@ -58,7 +58,6 @@ const Inventory = ({
   return (
     <InventoryLayout>
 
-
       <div className="flex gap-4 flex-col">
 
         <h3 className="text-base font-bold text-black-500/60 pointer-events-none sm:text-xl">

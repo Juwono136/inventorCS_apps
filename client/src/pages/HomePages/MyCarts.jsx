@@ -3,7 +3,8 @@ import { Typography, Button } from "@material-tailwind/react";
 import { useCart } from '../../components/InventoryComponents/CartContext';
 import CartItem from '../../components/HomeComponents/CartItem';
 import CartLogo from '../../assets/images/cartlogo.png';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { FaArrowLeft } from 'react-icons/fa6';
 
 const MyCarts = () => {
   const { cartItems, setCartItems } = useCart([]);
@@ -15,7 +16,13 @@ const MyCarts = () => {
 
   return (
     <div className="container mx-auto p-4 relative">
+      
       <div className="flex items-center mb-6">
+        <Link
+          to="/inventory"
+        >
+          <FaArrowLeft />
+        </Link>
         <img src={CartLogo} alt="Cart" className="w-8 h-8 mr-2" />
         <Typography variant="h4" className="font-bold">My Cart</Typography>
       </div>

@@ -75,6 +75,7 @@ function App() {
               <Route path="signup" element={<Singup />} />
               <Route path="forgot" element={<ForgotPassword />} />
               <Route path="user/activate/:token" element={<ActivationEmail />} />
+              <Route path="mycarts" element={<MyCarts />} />
             </Route>
 
             <Route 
