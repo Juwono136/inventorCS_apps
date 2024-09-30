@@ -20,7 +20,6 @@ const Dashboard = () => {
   return (
     <Layout>
       <div className="container mx-auto p-4">
-        {/* Welcome Message */}
         <div className="bg-blue-500 p-6 rounded-lg shadow-lg mb-6">
           <Typography variant="h4" className="text-white font-bold">
             Welcome to Your Dashboard!

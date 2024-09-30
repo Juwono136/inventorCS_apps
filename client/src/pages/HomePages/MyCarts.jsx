@@ -65,7 +65,7 @@ const MyCarts = () => {
     setTimeout(() => {
       setIsCheckoutSuccessful(false);
       navigate('/myborrow');
-    }, 2000); // Redirect after 2 seconds
+    }, 2000);
   };
 
   return (

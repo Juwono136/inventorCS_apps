@@ -4,7 +4,7 @@ import { FaCheckCircle, FaHourglassHalf, FaUserCheck, FaTimesCircle } from 'reac
 
 const TimeLineModal = ({ item, onClose }) => {
   const currentStatus = item.status;
-  const currentDate = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+  const currentDate = new Date().toISOString().split('T')[0];
 
   const timeline = [
     { date: '2023-01-01', event: 'Item borrowed', icon: FaCheckCircle, color: 'text-blue-500' },
@@ -48,8 +48,7 @@ const TimeLineModal = ({ item, onClose }) => {
         <Typography variant="h5" className="font-bold mb-4">Item Timeline</Typography>
         
         <div className="relative mb-4">
-          <div className="border-l-2 border-gray-300 absolute h-full left-4"></div>
-          <ul className="space-y-4">
+          <ul className="space-y-4 ml-4">
             {timeline.map((entry, index) => (
               <li key={index} className="flex items-center space-x-4">
                 <div className={`flex-shrink-0 ${entry.color}`}>

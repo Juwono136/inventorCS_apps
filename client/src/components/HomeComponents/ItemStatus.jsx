@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Typography, Button } from "@material-tailwind/react";
-import TimelineModal from './TimelineModal';
+import TimelineModal from '../components/HomeComponents/TimelineModal';
 
 const ItemInfo = ({ name, description, imageUrl, status }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);

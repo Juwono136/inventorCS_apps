@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Typography, Button } from "@material-tailwind/react";
 import { useNavigate } from 'react-router-dom';
 import TimeLineModal from '../../components/HomeComponents/TimeLineModal';
-import ItemInfoModal from '../../components/HomeComponents/ItemInfoModal'; // Import the ItemInfoModal component
-import NavbarComponent from '../../components/DashboardComponents/NavbarComponent'; // Import the NavbarComponent
+import ItemInfoModal from '../../components/HomeComponents/ItemInfoModal';
+import NavbarComponent from '../../components/DashboardComponents/NavbarComponent';
 
 const MyBorrow = () => {
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ const MyBorrow = () => {
   };
 
   const handleCancel = (id) => {
-    const currentDate = new Date().toLocaleDateString('en-CA'); // Get current date in YYYY-MM-DD format
+    const currentDate = new Date().toLocaleDateString('en-CA');
     setBorrowedItems(borrowedItems.map(item => 
       item.id === id ? { ...item, status: 'Cancelled', cancelDate: currentDate } : item
     ));
@@ -51,7 +51,7 @@ const MyBorrow = () => {
 
   return (
     <div>
-      <NavbarComponent /> {/* Include the NavbarComponent */}
+      <NavbarComponent />
       <div className="container mx-auto p-4 sm:p-6 lg:p-8">
         <div className="flex items-center mb-6">
           <Typography variant="h4" className="font-bold text-lg sm:text-xl lg:text-2xl">My Borrowed Items</Typography>
