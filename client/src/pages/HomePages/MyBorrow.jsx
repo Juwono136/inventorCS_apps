@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Typography, Button } from "@material-tailwind/react";
 import { useNavigate } from 'react-router-dom';
 import TimeLineModal from '../../components/HomeComponents/TimeLineModal';
+import ItemInfoModal from '../../components/HomeComponents/ItemInfoModal'; // Import the ItemInfoModal component
 import NavbarComponent from '../../components/DashboardComponents/NavbarComponent'; // Import the NavbarComponent
 
 const MyBorrow = () => {
@@ -15,6 +16,7 @@ const MyBorrow = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 
   const handleOpenModal = (item) => {
     setSelectedItem(item);
@@ -26,6 +28,16 @@ const MyBorrow = () => {
     setSelectedItem(null);
   };
 
+  const handleOpenInfoModal = (item) => {
+    setSelectedItem(item);
+    setIsInfoModalOpen(true);
+  };
+
+  const handleCloseInfoModal = () => {
+    setIsInfoModalOpen(false);
+    setSelectedItem(null);
+  };
+
   const handleCancel = (id) => {
     const currentDate = new Date().toLocaleDateString('en-CA'); // Get current date in YYYY-MM-DD format
     setBorrowedItems(borrowedItems.map(item => 
@@ -34,8 +46,7 @@ const MyBorrow = () => {
   };
 
   const handleInfo = (item) => {
-    // Define the functionality for the Info button here
-    console.log('Info button clicked for item:', item);
+    handleOpenInfoModal(item);
   };
 
   return (
@@ -77,6 +88,7 @@ const MyBorrow = () => {
           </div>
         )}
         {isModalOpen && <TimeLineModal item={selectedItem} onClose={handleCloseModal} />}
+        {isInfoModalOpen && <ItemInfoModal item={selectedItem} onClose={handleCloseInfoModal} />}
       </div>
     </div>
   );
