@@ -17,12 +17,10 @@ const CartItem = ({ item, onIncreaseQuantity, onDecreaseQuantity, onRemove }) =>
         </div>
       </div>
       <div className="flex items-center space-x-2">
-        {/* Smaller Decrease Button */}
         <button onClick={onDecreaseQuantity} className="bg-red-500 text-white px-2 py-1 text-xs rounded">
           -
         </button>
         <span>{item.quantity}</span>
-        {/* Smaller Increase Button */}
         <button onClick={onIncreaseQuantity} className="bg-green-500 text-white px-2 py-1 text-xs rounded">
           +
         </button>
@@ -42,6 +40,7 @@ const MyCarts = () => {
   ]);
 
   const [itemToRemove, setItemToRemove] = useState(null);
+  const [isCheckoutSuccessful, setIsCheckoutSuccessful] = useState(false);
   const navigate = useNavigate();
 
   const handleRemoveItem = (id) => {
@@ -62,7 +61,11 @@ const MyCarts = () => {
   };
 
   const handleCheckout = () => {
-    navigate('/loanform');
+    setIsCheckoutSuccessful(true);
+    setTimeout(() => {
+      setIsCheckoutSuccessful(false);
+      navigate('/myborrow');
+    }, 2000); // Redirect after 2 seconds
   };
 
   return (
@@ -98,7 +101,21 @@ const MyCarts = () => {
             />
           ))}
           <div className="flex justify-end mt-4">
-            <Button color="green" onClick={() => window.location.href = '/myborrow'}>Checkout</Button>
+            <Button color="green" onClick={handleCheckout}>Checkout</Button>
+          </div>
+        </div>
+      )}
+
+      {isCheckoutSuccessful && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-lg flex flex-col items-center">
+            <div className="text-green-500 mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <Typography variant="h6" className="font-bold text-4xl mb-4">Checkout was Successful!</Typography>
+            <Button color="green" onClick={() => setIsCheckoutSuccessful(false)}>Confirm</Button>
           </div>
         </div>
       )}

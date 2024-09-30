@@ -44,8 +44,8 @@ const MyBorrow = () => {
                 <img src={item.imageUrl} alt={item.name} className="w-24 h-24 mb-4" />
                 <h3 className="font-bold text-lg mb-2">{item.name}</h3>
                 <p className="text-sm mb-2">{item.description}</p>
-                <Typography variant="body2" className={`text-sm mb-2 ${item.status === 'Returned' ? 'text-green-500' : 'text-red-500'}`}>
-                  Status: {item.status}
+                <Typography variant="body2" className={`text-sm mb-2 ${item.status === 'Returned' ? 'text-green-500' : item.status === 'Pending' ? 'text-yellow-500' : 'text-red-500'}`}>
+                  Status: {item.status === 'Borrowed' ? 'Pending' : item.status}
                 </Typography>
                 <Button color="blue" className="text-sm sm:text-base lg:text-lg" onClick={() => handleOpenModal(item)}>View Status</Button>
               </div>
