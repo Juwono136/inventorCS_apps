@@ -6,14 +6,14 @@ export default defineConfig({
   server: {
     proxy: {
       // ngrok
-      "/api": {
-        target: "https://78cb-103-94-10-238.ngrok-free.app",
+      "/api/user": {
+        target: "http://localhost:5001",
         changeOrigin: true,
         secure: false,
         ws: true,
-        headers: {
-          "ngrok-skip-browser-warning": "69420"
-        }
+        // headers: {
+        //   "ngrok-skip-browser-warning": "69420"
+        // }
       },
       "/service": {
         target: "http://localhost:5000",

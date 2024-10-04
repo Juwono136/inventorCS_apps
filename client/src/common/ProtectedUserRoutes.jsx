@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 const ProtectedUserRoutes = ({ children, allowedRoles }) => {
   const { user } = useSelector((state) => state.auth);
 
-  if (!user || !allowedRoles.includes(user?.role)) {
+  if (!user || !allowedRoles.includes(user?.selectedRole)) {
     return <Navigate to="*" />;
   }
 
