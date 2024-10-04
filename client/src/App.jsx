@@ -152,7 +152,7 @@ function App() {
               }
             />
             <Route path="mycarts" element={<MyCarts />} />
-            <Route path="loanform" element={<LoanFormComponent />} />
+            <Route path="myborrow" element={<MyBorrow />} />
             <Route path="profile" element={<MyProfile />} />
             <Route path="settings" element={<MySettings />} />
 
