@@ -25,6 +25,8 @@ import LoanFormComponent from './components/HomeComponents/LoanFormComponent';
 import { CartProvider } from "./components/InventoryComponents/CartContext";
 import ProtectedUserRoutes from "./common/ProtectedUserRoutes";
 import { getAllInventories } from "./features/inventory/inventorySlice";
+import MyCarts from "./pages/HomePages/MyCarts";
+import MyBorrow from "./pages/HomePages/MyBorrow";
 
 function App() {
   const [sort, setSort] = useState({

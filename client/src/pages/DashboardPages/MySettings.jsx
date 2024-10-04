@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Typography, Dialog, DialogHeader, DialogBody, DialogFooter } from "@material-tailwind/react"; // Added Dialog components
+import { Button, Typography, Dialog, DialogHeader, DialogBody, DialogFooter } from "@material-tailwind/react";
 import Layout from './Layout';
 
 const Settings = () => {
