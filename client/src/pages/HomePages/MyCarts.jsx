@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Typography, Button } from "@material-tailwind/react";
 import { useCart } from '../../components/InventoryComponents/CartContext';
 import CartItem from '../../components/HomeComponents/CartItem';
@@ -25,11 +25,12 @@ const MyCarts = () => {
     <div className="container mx-auto p-4 relative">
       
       <div className="flex items-center mb-6">
-        <Link
-          to="/inventory"
-        >
-          <FaArrowLeft />
-        </Link>
+          <Link
+            to="/inventory"
+          >
+            <FaArrowLeft />
+          </Link>
+        {/* <BackButton link="/previous-page" /> */}
         <img src={CartLogo} alt="Cart" className="w-8 h-8 mr-2" />
         <Typography variant="h4" className="font-bold">My Cart</Typography>
       </div>

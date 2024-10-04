@@ -21,11 +21,9 @@ import { getAllUsersInfor, getUserInfor } from "./features/user/userSlice";
 import { accessToken } from "./features/token/tokenSlice";
 import UpdateUserRole from "./pages/DashboardPages/updateUserRole";
 import MyCarts from "./pages/HomePages/MyCarts";
-import LoanFormComponent from './components/HomeComponents/LoanFormComponent';
 import { CartProvider } from "./components/InventoryComponents/CartContext";
 import ProtectedUserRoutes from "./common/ProtectedUserRoutes";
 import { getAllInventories } from "./features/inventory/inventorySlice";
-import MyCarts from "./pages/HomePages/MyCarts";
 import MyBorrow from "./pages/HomePages/MyBorrow";
 
 function App() {
@@ -151,7 +149,7 @@ function App() {
                 </ProtectedUserRoutes>
               }
             />
-            <Route path="mycarts" element={<MyCarts />} />
+
             <Route path="myborrow" element={<MyBorrow />} />
             <Route path="profile" element={<MyProfile />} />
             <Route path="settings" element={<MySettings />} />
