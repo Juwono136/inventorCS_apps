@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import TimeLineModal from '../../components/HomeComponents/TimeLineModal';
 import ItemInfoModal from '../../components/HomeComponents/ItemInfoModal';
 import NavbarComponent from '../../components/DashboardComponents/NavbarComponent';
+import CancelConfirmationButton from '../../components/HomeComponents/CancelConfirmationButton'; // Import the new modal
 
 const MyBorrow = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const MyBorrow = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false); // State for cancel confirmation modal
 
   const handleOpenModal = (item) => {
     setSelectedItem(item);
@@ -28,7 +30,7 @@ const MyBorrow = () => {
     setSelectedItem(null);
   };
 
-  const handleOpenInfoModal = (item) => {
+  const handleInfo = (item) => {
     setSelectedItem(item);
     setIsInfoModalOpen(true);
   };
@@ -38,15 +40,25 @@ const MyBorrow = () => {
     setSelectedItem(null);
   };
 
-  const handleCancel = (id) => {
-    const currentDate = new Date().toLocaleDateString('en-CA');
-    setBorrowedItems(borrowedItems.map(item => 
-      item.id === id ? { ...item, status: 'Cancelled', cancelDate: currentDate } : item
-    ));
+  const handleCancel = (itemId) => {
+    setSelectedItem(itemId);
+    setIsCancelModalOpen(true);
   };
 
-  const handleInfo = (item) => {
-    handleOpenInfoModal(item);
+  const handleConfirmCancel = () => {
+    // Update the status of the selected item to 'Cancelled'
+    setBorrowedItems(prevItems =>
+      prevItems.map(item =>
+        item.id === selectedItem ? { ...item, status: 'Cancelled', cancelDate: new Date().toISOString().split('T')[0] } : item
+      )
+    );
+    setIsCancelModalOpen(false);
+    setSelectedItem(null);
+  };
+
+  const handleCloseCancelModal = () => {
+    setIsCancelModalOpen(false);
+    setSelectedItem(null);
   };
 
   return (
@@ -87,9 +99,10 @@ const MyBorrow = () => {
             ))}
           </div>
         )}
-        {isModalOpen && <TimeLineModal item={selectedItem} onClose={handleCloseModal} />}
-        {isInfoModalOpen && <ItemInfoModal item={selectedItem} onClose={handleCloseInfoModal} />}
       </div>
+      {isModalOpen && <TimeLineModal item={selectedItem} onClose={handleCloseModal} />}
+      {isInfoModalOpen && <ItemInfoModal item={selectedItem} onClose={handleCloseInfoModal} />}
+      {isCancelModalOpen && <CancelConfirmationButton onConfirm={handleConfirmCancel} onClose={handleCloseCancelModal} />}
     </div>
   );
 };
