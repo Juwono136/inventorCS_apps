@@ -25,12 +25,19 @@ export const CartProvider = ({ children }) => {
   };
 
   const increaseQuantity = (itemId) => {
+    const itemToUpdate = cartItems.find(item => item.asset_id === itemId);
+  
+    if (itemToUpdate.quantity + 1 > itemToUpdate.total_items) {
+      toast.error("Cannot exceed available stock");
+      return;
+    }
+  
     const updatedCart = cartItems.map(item =>
       item.asset_id === itemId ? { ...item, quantity: item.quantity + 1 } : item
     );
     setCartItems(updatedCart);
     syncWithLocalStorage(updatedCart);
-  };
+  };  
 
   const decreaseQuantity = (itemId) => {
     const updatedCart = cartItems.map(item =>
@@ -41,17 +48,28 @@ export const CartProvider = ({ children }) => {
   };
 
   const addToCart = (item) => {
-    const updatedCart = cartItems.some(cartItem => cartItem.asset_id === item.asset_id)
-      ? cartItems.map(cartItem =>
-          cartItem.asset_id === item.asset_id
-            ? { ...cartItem, quantity: cartItem.quantity + 1 }
-            : cartItem
-        )
-      : [...cartItems, { ...item, quantity: 1 }];
-    setCartItems(updatedCart);
-    syncWithLocalStorage(updatedCart);
+    const existingCartItem = cartItems.find(cartItem => cartItem.asset_id === item.asset_id);
+  
+    if (existingCartItem) {
+      if (existingCartItem.quantity + 1 > item.total_items) {
+        toast.error("Cannot add more than available stock");
+        return;
+      }
+  
+      const updatedCart = cartItems.map(cartItem =>
+        cartItem.asset_id === item.asset_id
+          ? { ...cartItem, quantity: cartItem.quantity + 1 }
+          : cartItem
+      );
+      setCartItems(updatedCart);
+      syncWithLocalStorage(updatedCart);
+    } else {
+      setCartItems([...cartItems, { ...item, quantity: 1 }]);
+      syncWithLocalStorage([...cartItems, { ...item, quantity: 1 }]);
+    }
     toast.success("Added to Cart Successfully!");
   };
+  
 
   useEffect(() => {
     const savedCart = localStorage.getItem("cart");

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import InventoryLayout from "./InventoryLayout";
@@ -53,7 +53,7 @@ const Inventory = ({
   
   const handleToggleSort = () => {
       const newOrder = sort.order === "asc" ? "desc" : "asc";
-      setSort({ sort:sort.sort, order: newOrder });
+      setSort({ sort: sort.sort, order: newOrder });
   };
 
   useEffect(() => {
@@ -79,22 +79,20 @@ const Inventory = ({
 
   return (
     <InventoryLayout>
-      <div className="flex gap-4 flex-col">
+      <div className="flex flex-col gap-4">
         
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center md:mb-4 flex-col md:flex-row">
           <SearchElement setSearch={handleSearch} />
-          <div className="flex flex-row items-center gap-4">
+          <div className="flex flex-row items-center gap-4 mt-4 md:mt-0">
             <button className="p-1" onClick={handleToggleSort}>
-              {sort.sort === "total_items" 
-                ? (sort.order === "asc" ? <FaSortAmountDownAlt /> : <FaSortAmountDown />)
-                : (sort.order === "asc" ? <FaSortAmountDown /> : <FaSortAmountDownAlt />)}
+              {sort.order === "asc" ? <FaSortAmountDown /> : <FaSortAmountDownAlt />}
             </button>
             <SortBy sort={sort} setSort={handleSort} />
           </div>
         </div>
 
-        <div className="flex gap-4 flex-row">
-          <div className="w-64 bg-white shadow-md p-4 rounded-lg">
+        <div className="flex gap-4 flex-col md:flex-row">
+          <div className="w-full md:w-64 bg-white shadow-md p-4 rounded-lg">
             <ItemCategories
               categories={inventories?.categories ? inventories?.categories : []}
               setFilterCategories={(categories) => setCategories(categories)}
@@ -102,7 +100,7 @@ const Inventory = ({
             />
           </div>
           
-          <div className="flex-grow grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 lg:mx-6 p-4">
+          <div className="flex-grow grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 lg:mx-6 p-4">
             {items?.map((item, i) => (
               <InventoryCard
                 key={i}
