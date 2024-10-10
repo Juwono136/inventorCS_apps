@@ -85,7 +85,9 @@ const Inventory = ({
           <SearchElement setSearch={handleSearch} />
           <div className="flex flex-row items-center gap-4">
             <button className="p-1" onClick={handleToggleSort}>
-              {sort.order === "asc" ? <FaSortAmountDown /> : <FaSortAmountDownAlt />}
+              {sort.sort === "total_items" 
+                ? (sort.order === "asc" ? <FaSortAmountDownAlt /> : <FaSortAmountDown />)
+                : (sort.order === "asc" ? <FaSortAmountDown /> : <FaSortAmountDownAlt />)}
             </button>
             <SortBy sort={sort} setSort={handleSort} />
           </div>
