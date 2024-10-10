@@ -56,12 +56,9 @@ const ItemCategories = ({ categories, setFilterCategories, setPage }) => {
           <div className="flex gap-1 justify-center items-center">
             <FaFilter />
             Filter By Category{" "}
-            <span className="text-xs font-light italic text-red-500">
-              (Click to see more)
-            </span>
           </div>
         </AccordionHeader>
-        <AccordionBody className="flex flex-col md:flex-row md:flex-wrap gap-2 md:gap-6">
+        <AccordionBody className="flex flex-col md:flex-wrap gap-2 md:gap-6">
           {categories?.map((item) => (
             <div className="flex" key={item}>
               <label htmlFor={item} className="flex cursor-pointer gap-1">

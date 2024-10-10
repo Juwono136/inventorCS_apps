@@ -6,7 +6,6 @@ import InventoryCard from "../../components/HomeComponents/InventoryCard";
 import SearchElement from "../../common/SearchElement";
 import ItemCategories from "../../components/InventoryComponents/ItemCategories";
 import { useCart } from "../../components/InventoryComponents/CartContext";
-import toast from "react-hot-toast";
 import Pagination from "../../common/Pagination"; 
 import { getAllInventories } from "../../features/inventory/inventorySlice";
 
@@ -57,56 +56,47 @@ const Inventory = ({
 
   return (
     <InventoryLayout>
-
       <div className="flex gap-4 flex-col">
-
-        <h3 className="text-base font-bold text-black-500/60 pointer-events-none sm:text-xl">
-          Inventory Item List
-        </h3>
-        <hr className="w-full border-indigo-100 my-4" />
-
-        <div className="flex basis-1/5 flex-col gap-2">
-
-          <SearchElement 
-            setSearch={handleSearch}
-          /> 
-
-          <ItemCategories
-            categories={inventories?.categories ? inventories?.categories : []}
-            setFilterCategories={(categories) => setCategories(categories)}
-            setPage={setPage}
-          />
-
-        </div>
-      
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 lg:mx-6">
-          {items?.map((item, i) => (
-            <InventoryCard
-              key={i}
-              image={item.asset_img}
-              title={item.asset_name}
-              serial_number={item.serial_number}
-              total_items={item.total_items}
-              status={item.total_items > 0 ? "Ready" : "Out of stock"}
-              categories={item.categories}
-              desc={item.desc}
-              addToCart={() => addToCart(item)}
-            />
-          ))}
-        </div>
+        <SearchElement 
+          setSearch={handleSearch}
+        />
         
-        {totalItems > 0 ? (
-          <Pagination
-            totalPage={search ? Math.ceil(totalItems / limit) : totalPage}
-            page={page}
-            setPage={setPage}
-          />
-        ) : (
-          ""
-        )}
-
+        <div className="flex gap-4 flex-row">
+          <div className="w-64 bg-white shadow-md p-4 rounded-lg">
+            <ItemCategories
+              categories={inventories?.categories ? inventories?.categories : []}
+              setFilterCategories={(categories) => setCategories(categories)}
+              setPage={setPage}
+            />
+          </div>
+          
+          <div className="flex-grow grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 lg:mx-6 p-4">
+            {items?.map((item, i) => (
+              <InventoryCard
+                key={i}
+                image={item.asset_img}
+                title={item.asset_name}
+                serial_number={item.serial_number}
+                total_items={item.total_items}
+                status={item.total_items > 0 ? "Ready" : "Out of stock"}
+                categories={item.categories}
+                desc={item.desc}
+                addToCart={() => addToCart(item)}
+              />
+            ))}
+          </div>
+        </div>
       </div>
-
+      
+      {totalItems > 0 ? (
+        <Pagination
+          totalPage={search ? Math.ceil(totalItems / limit) : totalPage}
+          page={page}
+          setPage={setPage}
+        />
+      ) : (
+        ""
+      )}
     </InventoryLayout>
   );
 };
