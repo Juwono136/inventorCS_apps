@@ -6,8 +6,10 @@ import InventoryCard from "../../components/HomeComponents/InventoryCard";
 import SearchElement from "../../common/SearchElement";
 import ItemCategories from "../../components/InventoryComponents/ItemCategories";
 import { useCart } from "../../components/InventoryComponents/CartContext";
+import SortBy from "../../components/InventoryComponents/SortBy";
 import Pagination from "../../common/Pagination"; 
 import { getAllInventories } from "../../features/inventory/inventorySlice";
+import { FaSortAmountDown, FaSortAmountDownAlt } from "react-icons/fa";
 
 const Inventory = ({
   sort,
@@ -18,7 +20,7 @@ const Inventory = ({
   setPage,
   search,
   setSearch,
-  }) => {
+}) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page"));
   const { addToCart } = useCart();
@@ -33,12 +35,34 @@ const Inventory = ({
     setPage(1);
   };
 
+  const handleSort = (sortOption) => {
+    const sortFieldMap = {
+      "Name": "asset_name",
+      "Total Items": "total_items",
+    };
+  
+    const selectedSortField = sortFieldMap[sortOption];
+    if (selectedSortField) {
+      const newOrder =
+        sort.sort === selectedSortField && sort.order === "asc"
+          ? "desc"
+          : "asc";
+      setSort({ sort: selectedSortField, order: newOrder });
+    }
+  };
+  
+  const handleToggleSort = () => {
+      const newOrder = sort.order === "asc" ? "desc" : "asc";
+      setSort({ sort:sort.sort, order: newOrder });
+  };
+
   useEffect(() => {
     if (currentPage) {
       setPage(currentPage);
       setSearchParams({
         page: currentPage,
         sort: sort.sort,
+        order: sort.order,
         search,
       });
     }
@@ -48,19 +72,25 @@ const Inventory = ({
     }
 
     if (isSuccess) {
-      // toast.success(message);
       dispatch(getAllInventories({ page, sort, categories, search }));
     }
 
-  }, [setPage, setSearchParams, search, isError, isSuccess, message, categories]);
+  }, [setPage, setSearchParams, search, sort, isError, isSuccess, message, categories]);
 
   return (
     <InventoryLayout>
       <div className="flex gap-4 flex-col">
-        <SearchElement 
-          setSearch={handleSearch}
-        />
         
+        <div className="flex justify-between items-center mb-4">
+          <SearchElement setSearch={handleSearch} />
+          <div className="flex flex-row items-center gap-4">
+            <button className="p-1" onClick={handleToggleSort}>
+              {sort.order === "asc" ? <FaSortAmountDown /> : <FaSortAmountDownAlt />}
+            </button>
+            <SortBy sort={sort} setSort={handleSort} />
+          </div>
+        </div>
+
         <div className="flex gap-4 flex-row">
           <div className="w-64 bg-white shadow-md p-4 rounded-lg">
             <ItemCategories
