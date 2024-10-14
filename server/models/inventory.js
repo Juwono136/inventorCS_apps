@@ -17,8 +17,12 @@ const inventorySchema = mongoose.Schema({
     },
     serial_number: {
         type: String,
-        unique: true,
         default: ""
+    },
+    categories: {
+        type: [String], // ["Creative Tools", "Game Board", "IOT", "IOT Parts", "PC & Laptop", "Peripheral", "Others"]
+        required: true,
+        default: []
     },
     desc: {
         type: String,
@@ -26,16 +30,15 @@ const inventorySchema = mongoose.Schema({
         default: ""
         // required: true
     },
-    categories: {
-        type: [String], // ["gadget", "electrical", "computer", "etc"]
-        required: true,
-        default: []
-    },
     location: {
         type: String,
         default: ""
     },
     room_number: {
+        type: String,
+        default: "",
+    },
+    cabinet: {
         type: String,
         default: "",
     },
@@ -47,12 +50,18 @@ const inventorySchema = mongoose.Schema({
         type: Number,
         default: 0
     },
+    item_status: {
+        type: String,
+        required: true,
+        default: "Available",
+        enum: ['Available', 'Borrowed', 'Reserved', 'Maintenance', 'Lost', 'Out of Stock', 'Damaged']
+    },
     draft: {
         type: Boolean,
         default: false
     },
-    author: {
-        type: String,
+    added_by: {
+        type: String, // user id
         required: true
     }
 }, {

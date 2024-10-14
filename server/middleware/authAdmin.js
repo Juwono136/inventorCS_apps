@@ -11,8 +11,8 @@ export const authAdmin = async (req, res, next) => {
 
         const user = response.data;
 
-        if (user.personal_info.role !== 1) { // 1 = admin
-            return res.status(403).json({ message: "Admin resources access denied." });
+        if (!user.personal_info.role.includes(1) && !user.personal_info.role.includes(3)) { // 1 = admin for app 1, 3 = admin for app 2, ...
+            return res.status(403).json({ message: "Admin resources access denied." })
         }
 
         next();

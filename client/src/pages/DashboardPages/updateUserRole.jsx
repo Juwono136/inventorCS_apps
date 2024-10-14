@@ -31,7 +31,7 @@ const UpdateUserRole = () => {
   const userStatus = ["active", "inactive"];
 
   const initialState = {
-    role: "",
+    role: [],
     status: "",
   };
 
@@ -47,7 +47,7 @@ const UpdateUserRole = () => {
   useEffect(() => {
     if (foundUser) {
       setSelectedUser({
-        role: foundUser?.personal_info.role,
+        role: foundUser?.personal_info.role || [],
         status: foundUser?.personal_info.status,
       });
     }
@@ -64,21 +64,27 @@ const UpdateUserRole = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleRoleChange = (e, index) => {
+    const { value } = e.target;
+    const updatedRoles = [...selectedUser.role];
+    updatedRoles[index] = parseInt(value);
+
     setSelectedUser({
       ...selectedUser,
-      [name]: name === "role" ? parseInt(value) : value,
-      isError: "",
-      isSuccess: "",
+      role: updatedRoles,
     });
 
-    if (name === "role") {
-      setIsRoleChanged(true);
-      setIsStatusChanged(false);
-    } else if (name === "status") {
+    setIsRoleChanged(true);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "status") {
+      setSelectedUser({
+        ...selectedUser,
+        status: value,
+      });
       setIsStatusChanged(true);
-      setIsRoleChanged(false);
     }
   };
 
@@ -166,7 +172,7 @@ const UpdateUserRole = () => {
       ) : (
         <>
           <div className="flex items-center">
-            <BackButton link={"/users"} />
+            <BackButton link="/users" />
           </div>
 
           <div className="flex w-full justify-between items-center">
@@ -192,7 +198,7 @@ const UpdateUserRole = () => {
                   />
                 </CardHeader>
 
-                <CardBody className="text-center p-1">
+                <CardBody className="text-center flex flex-col gap-2 p-2">
                   <h1 className="text-indigo-800 text-sm">
                     {userDetail?.personal_info.name}
                   </h1>
@@ -201,15 +207,15 @@ const UpdateUserRole = () => {
                     {userDetail?.personal_info.email}
                   </p>
 
-                  <Chip
-                    variant="ghost"
-                    size="sm"
-                    className="mt-4"
-                    value={role === 1 ? "admin" : role === 2 ? "staff" : "user"}
-                    color={
-                      role === 1 ? "green" : role === 2 ? "orange" : "blue"
-                    }
-                  />
+                  {role?.map((r, index) => (
+                    <Chip
+                      key={index}
+                      variant="ghost"
+                      size="sm"
+                      value={roleMap[r]}
+                      color={r === 1 ? "green" : r === 2 ? "orange" : "blue"}
+                    />
+                  ))}
                 </CardBody>
 
                 <div>
@@ -223,27 +229,38 @@ const UpdateUserRole = () => {
               {/* user detail info */}
               <div className="flex gap-4 w-full p-4 flex-col bg-indigo-50 rounded-md shadow-lg">
                 {/* change user role */}
-                <div className="mb-2">
-                  <label
-                    htmlFor="userRole"
-                    className="block text-sm font-bold text-indigo-700"
-                  >
-                    Change User Role:
-                  </label>
-                  <select
-                    id="role"
-                    name="role"
-                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base text-indigo-800 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-lg"
-                    value={role}
-                    onChange={handleChange}
-                  >
-                    {Object.entries(roleMap).map(([key, value]) => (
-                      <option key={key} value={key} className="text-indigo-800">
-                        {value}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                {selectedUser?.role?.map((roleValue, index) => (
+                  <div className="mb-2" key={index}>
+                    <label
+                      htmlFor={`role-${index}`}
+                      className="block text-sm font-semibold text-purple-800"
+                    >
+                      Change User Role-{index + 1}:
+                    </label>
+
+                    {/* Loop through user roles to create a select option for each role */}
+                    <div className="flex flex-col gap-4">
+                      <select
+                        key={index}
+                        id={`role-${index}`}
+                        name="role"
+                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base text-indigo-800 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-lg"
+                        value={roleValue}
+                        onChange={(e) => handleRoleChange(e, index)} // Adjust to handle role change for specific index
+                      >
+                        {Object.entries(roleMap).map(([key, value]) => (
+                          <option
+                            key={key}
+                            value={key}
+                            className="text-indigo-800"
+                          >
+                            {value}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                ))}
 
                 {/* change user role */}
                 <div className="mb-2">

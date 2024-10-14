@@ -21,6 +21,9 @@ import { accessToken } from "./features/token/tokenSlice";
 import UpdateUserRole from "./pages/DashboardPages/updateUserRole";
 import ProtectedUserRoutes from "./common/ProtectedUserRoutes";
 import { getAllInventories } from "./features/inventory/inventorySlice";
+import SelecteRole from "./pages/AuthPages/SelecteRole";
+import AddInventory from "./pages/DashboardPages/AddInventory";
+import UpdateInventory from "./pages/DashboardPages/UpdateInventory";
 
 function App() {
   const [sort, setSort] = useState({
@@ -45,7 +48,7 @@ function App() {
   }, [isLoggedOut, dispatch, user]);
 
   useEffect(() => {
-    if (userInfor.personal_info?.role === 1) {
+    if (user?.selectedRole === 1) {
       dispatch(getAllUsersInfor({ page, sort, program, search }));
     }
 
@@ -59,6 +62,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="*" element={<NotFound />} />
+
           <Route path="/" element={<NavbarComponent />}>
             <Route index element={<Home />} />
             <Route path="signin" element={<Signin />} />
@@ -66,6 +70,8 @@ function App() {
             <Route path="forgot" element={<ForgotPassword />} />
             <Route path="user/activate/:token" element={<ActivationEmail />} />
           </Route>
+
+          <Route path="select-role" element={<SelecteRole />} />
 
           <Route path="user/reset/:token" element={<ResetPassword />} />
 
@@ -85,6 +91,24 @@ function App() {
                   search={search}
                   setSearch={setSearch}
                 />
+              </ProtectedUserRoutes>
+            }
+          />
+
+          <Route
+            path="add_inventory"
+            element={
+              <ProtectedUserRoutes allowedRoles={[1, 2]}>
+                <AddInventory />
+              </ProtectedUserRoutes>
+            }
+          />
+
+          <Route
+            path="inventories/update_inventory/:id"
+            element={
+              <ProtectedUserRoutes allowedRoles={[1, 2]}>
+                <UpdateInventory />
               </ProtectedUserRoutes>
             }
           />

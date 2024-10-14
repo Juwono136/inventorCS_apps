@@ -8,15 +8,29 @@ import {
 } from "@material-tailwind/react";
 import { BsPencilSquare } from "react-icons/bs";
 import { TbArrowsSort } from "react-icons/tb";
-import { FaRegTrashAlt } from "react-icons/fa";
+// import { FaRegTrashAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const UserTable = ({
   users,
   TABLE_HEAD,
   handleSort,
-  handleOpenDialogDelete,
+  // handleOpenDialogDelete,
 }) => {
+  const getRoleColor = (role) => {
+    if (role === 0) return "blue"; // User
+    if (role === 1) return "green"; // Admin
+    if (role === 2) return "orange"; // Staff
+    return null;
+  };
+
+  const getRoleLabel = (role) => {
+    if (role === 0) return "User";
+    if (role === 1) return "Admin";
+    if (role === 2) return "Staff";
+    return null;
+  };
+
   return (
     <table className="min-w-max md:w-full table-auto text-left">
       <thead className="sticky top-0 bg-blue-gray-50">
@@ -50,7 +64,7 @@ const UserTable = ({
         {users?.length === 0 && (
           <tr>
             <td colSpan="5">
-              <h4 className="p-3 text-sm text-gray-800 font-medium">
+              <h4 className="p-3 text-sm text-red-800 font-medium">
                 User not found.
               </h4>
             </td>
@@ -116,15 +130,23 @@ const UserTable = ({
                 </div>
               </td>
               <td className={classes}>
-                <div className="w-max">
-                  <Chip
-                    variant="ghost"
-                    size="sm"
-                    value={role === 1 ? "admin" : role === 2 ? "staff" : "user"}
-                    color={
-                      role === 1 ? "green" : role === 2 ? "orange" : "blue"
-                    }
-                  />
+                <div className="w-max flex flex-wrap gap-2">
+                  {role.map((r) => {
+                    const roleLabel = getRoleLabel(r);
+                    const roleColor = getRoleColor(r);
+                    return (
+                      roleLabel && (
+                        <Chip
+                          key={r}
+                          variant="ghost"
+                          size="sm"
+                          value={roleLabel}
+                          color={roleColor}
+                          className="rounded-full"
+                        />
+                      )
+                    );
+                  })}
                 </div>
               </td>
               <td className={classes}>
@@ -154,7 +176,7 @@ const UserTable = ({
                   </Tooltip>
                 </Link>
 
-                <Tooltip content="Delete User">
+                {/* <Tooltip content="Delete User">
                   <IconButton
                     variant="text"
                     color="red"
@@ -162,7 +184,7 @@ const UserTable = ({
                   >
                     <FaRegTrashAlt className="h-4 w-4" />
                   </IconButton>
-                </Tooltip>
+                </Tooltip> */}
               </td>
             </tr>
           );

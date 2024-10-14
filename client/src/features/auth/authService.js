@@ -4,14 +4,27 @@ const API_URL = '/api/user'
 
 // signin user
 const signin = async (userData) => {
-    const response = await axios.post(API_URL + '/signin', userData)
+    const response = await axios.post(API_URL + '/signin', userData);
+
+    if (response.data) {
+        localStorage.setItem('user', JSON.stringify(response.data));
+    }
+
+    return response.data;
+};
+
+// select role
+const selectRole = async (userId, selectedRole) => {
+    const response = await axios.post(`${API_URL}/select-role`, { userId, selectedRole });
 
     if (response.data) {
         localStorage.setItem('user', JSON.stringify(response.data))
     }
 
-    return response.data
-}
+    // console.log(response.data)
+
+    return response.data;
+};
 
 // signup user
 const signup = async (userData) => {
@@ -55,6 +68,7 @@ const logout = async () => {
 
 const authService = {
     signin,
+    selectRole,
     signup,
     activateMail,
     forgotPassword,

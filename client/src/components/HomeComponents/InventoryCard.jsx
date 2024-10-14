@@ -43,7 +43,7 @@ const InventoryCard = ({
           </p>
           <p
             className={`text-base font-bold ${
-              total_items > 0 ? "text-green-800" : "text-red-800"
+              status === "Available" ? "text-green-800" : "text-red-800"
             } `}
           >
             {status}

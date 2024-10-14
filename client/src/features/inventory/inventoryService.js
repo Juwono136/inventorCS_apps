@@ -9,8 +9,28 @@ const getAllInventories = async (params) => {
     return response.data
 }
 
+// update inventory
+const updateInventory = async (data, token) => {
+    const response = await axios.patch(API_URL + `/update_inventory/${data._id}`, data, {
+        headers: { Authorization: token }
+    })
+
+    return response.data
+}
+
+// draft inventory
+const draftInventory = async (data, token) => {
+    const response = await axios.patch(API_URL + `/draft_inventory/${data._id}`, data, {
+        headers: { Authorization: token }
+    })
+
+    return response.data
+}
+
 const inventoryService = {
-    getAllInventories
+    getAllInventories,
+    updateInventory,
+    draftInventory
 }
 
 export default inventoryService

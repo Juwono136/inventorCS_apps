@@ -21,7 +21,7 @@ const iconMap = {
 const SocialComponent = ({ className, social_links = {}, joinedAt }) => {
   return (
     <div className={"w-full " + className}>
-      <p className="text-xs text-center text-indigo-800">
+      <p className="text-xs text-center text-purple-800 font-semibold">
         Joined on {getFullDay(joinedAt)}
       </p>
 

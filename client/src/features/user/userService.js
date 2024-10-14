@@ -33,6 +33,7 @@ const updateUser = async (data, token) => {
 
 // update user role
 const updateUserRole = async (data, token) => {
+
     const response = await axios.patch(API_URL + `/update_role/${data._id}`, data, {
         headers: { Authorization: token }
     })
@@ -50,13 +51,13 @@ const updateUserStatus = async (data, token) => {
 }
 
 // delete user (admin)
-const deleteUser = async (userId, token) => {
-    const response = await axios.delete(API_URL + `/delete/${userId}`, {
-        headers: { Authorization: token }
-    })
+// const deleteUser = async (userId, token) => {
+//     const response = await axios.delete(API_URL + `/delete/${userId}`, {
+//         headers: { Authorization: token }
+//     })
 
-    return response.data
-}
+//     return response.data
+// }
 
 const userService = {
     getUserInfor,
@@ -64,7 +65,6 @@ const userService = {
     updateUser,
     updateUserRole,
     updateUserStatus,
-    deleteUser
 }
 
 export default userService

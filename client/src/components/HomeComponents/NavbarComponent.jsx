@@ -75,7 +75,7 @@ const NavbarComponent = () => {
       >
         <HashLink
           smooth
-          to="/#inventories"
+          to="/inventory-list"
           className="flex items-center"
           onClick={() => handleNavigation("inventories")}
         >
