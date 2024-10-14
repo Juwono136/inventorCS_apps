@@ -12,7 +12,7 @@ const getAllInventories = async (params) => {
 // update inventory
 const updateInventory = async (data, token) => {
     const response = await axios.patch(API_URL + `/update_inventory/${data._id}`, data, {
-        headers: { Authorization: token }
+        headers: { Authorization: `Bearer ${token}` }
     })
 
     return response.data
@@ -21,7 +21,7 @@ const updateInventory = async (data, token) => {
 // draft inventory
 const draftInventory = async (data, token) => {
     const response = await axios.patch(API_URL + `/draft_inventory/${data._id}`, data, {
-        headers: { Authorization: token }
+        headers: { Authorization: `Bearer ${token}` }
     })
 
     return response.data

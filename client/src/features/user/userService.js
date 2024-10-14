@@ -6,7 +6,7 @@ const API_URL = '/api/user'
 const getUserInfor = async (token) => {
 
     const response = await axios.get(API_URL + '/user_infor', {
-        headers: { Authorization: token }
+        headers: { Authorization: `Bearer ${token}` }
     })
 
     return response.data
@@ -15,7 +15,7 @@ const getUserInfor = async (token) => {
 // get all user infor (admin)
 const getAllUsersInfor = async (token, params) => {
     const response = await axios.get(API_URL + "/all_infor", {
-        headers: { Authorization: token },
+        headers: { Authorization: `Bearer ${token}` },
         params
     })
 
@@ -25,7 +25,7 @@ const getAllUsersInfor = async (token, params) => {
 // update user infor
 const updateUser = async (data, token) => {
     const response = await axios.patch(API_URL + '/update_user', data, {
-        headers: { Authorization: token }
+        headers: { Authorization: `Bearer ${token}` }
     })
 
     return response.data
@@ -35,7 +35,7 @@ const updateUser = async (data, token) => {
 const updateUserRole = async (data, token) => {
 
     const response = await axios.patch(API_URL + `/update_role/${data._id}`, data, {
-        headers: { Authorization: token }
+        headers: { Authorization: `Bearer ${token}` }
     })
 
     return response.data
@@ -44,7 +44,7 @@ const updateUserRole = async (data, token) => {
 // update user status
 const updateUserStatus = async (data, token) => {
     const response = await axios.patch(API_URL + `/update_user_status/${data._id}`, data, {
-        headers: { Authorization: token }
+        headers: { Authorization: `Bearer ${token}` }
     })
 
     return response.data
@@ -53,7 +53,7 @@ const updateUserStatus = async (data, token) => {
 // delete user (admin)
 // const deleteUser = async (userId, token) => {
 //     const response = await axios.delete(API_URL + `/delete/${userId}`, {
-//         headers: { Authorization: token }
+//         headers: { Authorization: `Bearer ${token}` }
 //     })
 
 //     return response.data

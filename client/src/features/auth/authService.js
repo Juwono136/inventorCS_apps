@@ -52,7 +52,7 @@ const forgotPassword = async (email) => {
 // reset password
 const resetPassword = async (data, token) => {
     const response = await axios.post(API_URL + '/reset', data, {
-        headers: { Authorization: token }
+        headers: { Authorization: `Bearer ${token}` }
     })
 
     return response.data
