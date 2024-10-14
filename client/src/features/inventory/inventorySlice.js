@@ -32,6 +32,7 @@ export const getAllInventories = createAsyncThunk('inventory/all', async ({ page
 export const updateInventory = createAsyncThunk('inventory/update', async (data, thunkAPI) => {
     try {
         const token = await tokenService.accessToken(data)
+        // console.log(token)
 
         return await inventoryService.updateInventory(data, token)
     } catch (error) {
