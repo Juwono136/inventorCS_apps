@@ -53,7 +53,7 @@ function App() {
   }, [isLoggedOut, dispatch, user]);
 
   useEffect(() => {
-    if (userInfor.personal_info?.role === 1) {
+    if (userInfor.personal_info?.role.includes(1)) {
       dispatch(getAllUsersInfor({ page, sort, program, search }));
     }
 

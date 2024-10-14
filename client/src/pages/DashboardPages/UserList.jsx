@@ -84,7 +84,7 @@ const UserList = ({
 
     if (isSuccess) {
       toast.success(message);
-      if (userInfor.personal_info?.role === 1) {
+      if (userInfor.personal_info?.role.includes(1)) {
         dispatch(getAllUsersInfor({ page, sort, program, search }));
       }
     }

@@ -205,9 +205,9 @@ const UpdateUserRole = () => {
                     variant="ghost"
                     size="sm"
                     className="mt-4"
-                    value={role === 1 ? "admin" : role === 2 ? "staff" : "user"}
+                    value={role.includes(1) ? "admin" : role.includes(2) ? "staff" : "user"}
                     color={
-                      role === 1 ? "green" : role === 2 ? "orange" : "blue"
+                      role.includes(1) ? "green" : role.includes(2) ? "orange" : "blue"
                     }
                   />
                 </CardBody>
