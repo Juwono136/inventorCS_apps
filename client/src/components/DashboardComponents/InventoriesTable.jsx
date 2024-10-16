@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Avatar,
   Chip,
@@ -8,12 +8,28 @@ import {
 } from "@material-tailwind/react";
 import { FaRegEdit } from "react-icons/fa";
 import { TbArrowsSort } from "react-icons/tb";
-import { MdFolderDelete } from "react-icons/md";
+import { FaRegTrashAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { QRCode } from "react-qrcode-logo";
 import { useDragScroll } from "../../utils/handleMouseDrag";
+import DialogOpenComponent from "./DialogOpenComponent";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  deleteInventory,
+  getAllInventories,
+} from "../../features/inventory/inventorySlice";
+import { accessToken } from "../../features/token/tokenSlice";
+import toast from "react-hot-toast";
 
-const InventoriesTable = ({ items, TABLE_HEAD, handleSort, users }) => {
+const InventoriesTable = ({
+  items,
+  TABLE_HEAD,
+  handleSort,
+  users,
+  page,
+  sort,
+  search,
+}) => {
   const {
     tableRef,
     handleMouseDown,
@@ -22,10 +38,48 @@ const InventoriesTable = ({ items, TABLE_HEAD, handleSort, users }) => {
     handleMouseMove,
   } = useDragScroll();
 
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedItemId, setSelectedItemId] = useState(null);
+
   const findAuthorDetails = (authorId) => {
     const author = users?.find((user) => user._id === authorId);
     return author ? author?.personal_info : { name: "N/A", email: "N/A" };
   };
+
+  const { isSuccess, isError, message } = useSelector(
+    (state) => state.inventory
+  );
+
+  const dispatch = useDispatch();
+
+  const handleOpenDialog = (id = null) => {
+    setSelectedItemId(id);
+    setOpenDialog(!openDialog);
+  };
+
+  const handleDeleteInventory = (e) => {
+    e.preventDefault();
+
+    if (selectedItemId) {
+      dispatch(deleteInventory(selectedItemId)).then((res) => {
+        dispatch(accessToken(res));
+        dispatch(getAllInventories({ page, sort, search }));
+      });
+
+      setOpenDialog(false);
+      setSelectedItemId(null);
+    }
+  };
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+
+    if (isSuccess) {
+      toast.success(message);
+    }
+  }, [isError, isSuccess, message]);
 
   return (
     <div
@@ -90,7 +144,6 @@ const InventoriesTable = ({ items, TABLE_HEAD, handleSort, users }) => {
                 total_items,
                 item_status,
                 added_by,
-                draft,
                 updatedAt,
                 publishedAt,
               },
@@ -245,17 +298,6 @@ const InventoriesTable = ({ items, TABLE_HEAD, handleSort, users }) => {
                   </td>
 
                   <td className={classes}>
-                    <div className="w-max">
-                      <Chip
-                        size="sm"
-                        value={draft === true ? "Draft" : "Ready"}
-                        color={draft === true ? "red" : "green"}
-                        variant="ghost"
-                        className="rounded-full"
-                      />
-                    </div>
-                  </td>
-                  <td className={classes}>
                     <Link to={`update_inventory/${_id}`}>
                       <Tooltip content="Edit Inventory">
                         <IconButton variant="text" className="text-indigo-600">
@@ -263,6 +305,16 @@ const InventoriesTable = ({ items, TABLE_HEAD, handleSort, users }) => {
                         </IconButton>
                       </Tooltip>
                     </Link>
+
+                    <Tooltip content="Delete Inventory">
+                      <IconButton
+                        variant="text"
+                        className="text-red-600"
+                        onClick={() => handleOpenDialog(_id)}
+                      >
+                        <FaRegTrashAlt className="h-5 w-5" />
+                      </IconButton>
+                    </Tooltip>
                   </td>
                 </tr>
               );
@@ -270,6 +322,15 @@ const InventoriesTable = ({ items, TABLE_HEAD, handleSort, users }) => {
           )}
         </tbody>
       </table>
+
+      {/* save user open dialog */}
+      <DialogOpenComponent
+        openDialog={openDialog}
+        handleFunc={handleDeleteInventory}
+        handleOpenDialog={handleOpenDialog}
+        message="Are you sure want to delete this item?"
+        btnText="Delete"
+      />
     </div>
   );
 };

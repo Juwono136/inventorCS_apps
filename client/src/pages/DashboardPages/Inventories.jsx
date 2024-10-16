@@ -31,11 +31,10 @@ const Inventories = ({
     "Serial Number",
     "Category",
     "Total Items",
-    "Item Published By",
+    "Item Added By",
     "Created At",
     "Updated At",
     "Item Status",
-    "Is Draft?",
     " ",
   ];
   const [searchParams, setSearchParams] = useSearchParams();
@@ -73,7 +72,7 @@ const Inventories = ({
     // if (isSuccess) {
     //   toast.success(message);
     // }
-    // dispatch(getAllInventories({ page, sort, categories, search }));
+    // dispatch(getAllInventories({ page, sort, search }));
   }, [setPage, setSearchParams, search, sort, isError, isSuccess, message]);
 
   // handle sort
@@ -154,6 +153,9 @@ const Inventories = ({
               TABLE_HEAD={TABLE_HEAD}
               handleSort={handleSort}
               users={users}
+              page={page}
+              search={search}
+              sort={sort}
             />
           )}
         </div>

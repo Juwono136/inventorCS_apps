@@ -201,52 +201,69 @@ export const updateInventory = async (req, res) => {
     }
 }
 
-// draft inventory (soft delete)
-export const draftInventory = async (req, res) => {
+// delete inventory
+export const deleteInventory = async (req, res) => {
     try {
-        const { draft } = req.body
+        const inventory = await Inventories.findByIdAndDelete(req.params.id)
 
-        const updatedInventory = await Inventories.findByIdAndUpdate(
-            { _id: req.params.id },
-            { draft },
-            { new: true }
-        );
-
-        if (!updatedInventory) {
-            return res.status(404).json({ message: "Inventory not found." });
+        if (!inventory) {
+            return res.status(404).json({ message: "Inventory not found." })
         }
 
-        res.json({
-            message: "Inventory marked as draft and will be permanently deleted after 7 days.",
-            inventory: updatedInventory,
-        });
+        res.json({ message: "Inventory item deleted." })
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
 }
 
+// draft inventory (soft delete)
+// export const draftInventory = async (req, res) => {
+//     try {
+//         const { draft } = req.body
+
+//         const updatedInventory = await Inventories.findByIdAndUpdate(
+//             { _id: req.params.id },
+//             { draft },
+//             { new: true }
+//         );
+
+//         if (!updatedInventory) {
+//             return res.status(404).json({ message: "Inventory not found." });
+//         }
+
+//         res.json({
+//             message: "Inventory marked as draft and will be permanently deleted after 7 days.",
+//             inventory: updatedInventory,
+//         });
+//     } catch (error) {
+//         return res.status(500).json({ message: error.message });
+//     }
+// }
+
+
+
 // Delete inventory that has been in draft status for 7 days (running automatically)
-export const deleteOldDrafts = async () => {
-    try {
-        // Search items that have draft status and more than 7 days old
-        const sevenDaysAgo = moment().subtract(7, 'days').toDate();
-        const inventoriesToDelete = await Inventories.find({
-            draft: true,
-            updatedAt: { $lt: sevenDaysAgo } // Use updatedAt field to find out when it was changed to draft.
-        });
+// export const deleteOldDrafts = async () => {
+//     try {
+//         // Search items that have draft status and more than 7 days old
+//         const sevenDaysAgo = moment().subtract(7, 'days').toDate();
+//         const inventoriesToDelete = await Inventories.find({
+//             draft: true,
+//             updatedAt: { $lt: sevenDaysAgo } // Use updatedAt field to find out when it was changed to draft.
+//         });
 
-        // Delete items from database
-        if (inventoriesToDelete.length > 0) {
-            const deletePromises = inventoriesToDelete.map(item =>
-                Inventories.findByIdAndDelete(item._id)
-            );
-            await Promise.all(deletePromises);
-            console.log(`${inventoriesToDelete.length} inventories permanently deleted.`);
-        } else {
-            console.log("No inventories to delete.");
-        }
+//         // Delete items from database
+//         if (inventoriesToDelete.length > 0) {
+//             const deletePromises = inventoriesToDelete.map(item =>
+//                 Inventories.findByIdAndDelete(item._id)
+//             );
+//             await Promise.all(deletePromises);
+//             console.log(`${inventoriesToDelete.length} inventories permanently deleted.`);
+//         } else {
+//             console.log("No inventories to delete.");
+//         }
 
-    } catch (error) {
-        console.error(`Error during cron job: ${error.message}`);
-    }
-};
+//     } catch (error) {
+//         console.error(`Error during cron job: ${error.message}`);
+//     }
+// };

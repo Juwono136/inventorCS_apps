@@ -42,12 +42,12 @@ export const updateInventory = createAsyncThunk('inventory/update', async (data,
     }
 })
 
-// draft inventory
-export const draftInventory = createAsyncThunk('inventory/draft', async (data, thunkAPI) => {
+// delete inventory
+export const deleteInventory = createAsyncThunk('inventory/delete', async (id, thunkAPI) => {
     try {
-        const token = await tokenService.accessToken(data)
+        const token = await tokenService.accessToken(id)
 
-        return await inventoryService.draftInventory(data, token)
+        return await inventoryService.deleteInventory(id, token)
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
 
@@ -77,7 +77,7 @@ export const inventorySlice = createSlice({
             .addCase(getAllInventories.fulfilled, (state, action) => {
                 state.isLoading = false
                 state.inventories = action.payload
-                state.isSuccess = true
+                // state.isSuccess = true
             })
             .addCase(getAllInventories.rejected, (state, action) => {
                 state.isLoading = false
@@ -106,17 +106,17 @@ export const inventorySlice = createSlice({
                 state.isLoading = false
                 state.message = action.payload
             })
-            // draft inventory
-            .addCase(draftInventory.pending, (state) => {
+            // delete inventory
+            .addCase(deleteInventory.pending, (state) => {
                 state.isLoading = true
             })
-            .addCase(draftInventory.fulfilled, (state, action) => {
-                state.isSuccess = true
+            .addCase(deleteInventory.fulfilled, (state, action) => {
                 state.isLoading = false
-                state.message = action.payload.message
+                state.isSuccess = true
                 state.inventories = action.payload
+                state.message = action.payload.message
             })
-            .addCase(draftInventory.rejected, (state, action) => {
+            .addCase(deleteInventory.rejected, (state, action) => {
                 state.isError = true
                 state.isLoading = false
                 state.message = action.payload

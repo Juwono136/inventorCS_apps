@@ -65,7 +65,7 @@ const UpdateInventory = () => {
         asset_name: foundItem?.asset_name,
         asset_img: foundItem?.asset_img,
         serial_number: foundItem?.serial_number,
-        categories: foundItem?.categories[0] || "",
+        categories: foundItem?.categories[0],
         item_status: foundItem?.item_status,
         total_items: foundItem?.total_items,
         location: foundItem?.location,
@@ -92,7 +92,6 @@ const UpdateInventory = () => {
     cabinet,
     desc,
   } = selectedItem;
-  // console.log(selectedItem);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -308,9 +307,12 @@ const UpdateInventory = () => {
                           className="block w-full rounded-md border-0 text-xs p-3 bg-indigo-300/30 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         >
                           {categoryMenu.map((category, index) => (
-                            <option key={index} value={category}>
-                              {category.charAt(0).toUpperCase() +
-                                category.slice(1)}
+                            <option
+                              key={index}
+                              value={category.toLowerCase()}
+                              className="text-gray-900"
+                            >
+                              {category}
                             </option>
                           ))}
                         </select>

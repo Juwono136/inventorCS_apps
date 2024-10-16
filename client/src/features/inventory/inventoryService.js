@@ -18,9 +18,9 @@ const updateInventory = async (data, token) => {
     return response.data
 }
 
-// draft inventory
-const draftInventory = async (data, token) => {
-    const response = await axios.patch(API_URL + `/draft_inventory/${data._id}`, data, {
+// delete inventory
+const deleteInventory = async (inventoryId, token) => {
+    const response = await axios.delete(API_URL + `/delete_inventory/${inventoryId}`, {
         headers: { Authorization: `Bearer ${token}` }
     })
 
@@ -30,7 +30,7 @@ const draftInventory = async (data, token) => {
 const inventoryService = {
     getAllInventories,
     updateInventory,
-    draftInventory
+    deleteInventory
 }
 
 export default inventoryService

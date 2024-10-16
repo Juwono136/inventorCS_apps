@@ -3,6 +3,7 @@ import axios from 'axios';
 export const authAdmin = async (req, res, next) => {
     try {
         const token = req.headers.authorization
+
         const response = await axios.get(`${process.env.API_USERS_URL}/user_infor`, {
             headers: {
                 Authorization: token,
