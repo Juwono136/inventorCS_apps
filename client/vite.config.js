@@ -6,13 +6,13 @@ export default defineConfig({
   server: {
     proxy: {
       "/service": {
-        target: "http://localhost:5001",
+        target: "http://localhost:5000",
         changeOrigin: true,
         secure: false,
         ws: true,
       },
       "/api": {
-        target: "https://78cb-103-94-10-238.ngrok-free.app",
+        target: "http://localhost:5001",
         changeOrigin: true,
         secure: false,
         ws: true,
