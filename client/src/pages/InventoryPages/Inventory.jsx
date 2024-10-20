@@ -108,7 +108,7 @@ const Inventory = ({
                 title={item.asset_name}
                 serial_number={item.serial_number}
                 total_items={item.total_items}
-                status={item.total_items > 0 ? "Ready" : "Out of stock"}
+                status={item.item_status}
                 categories={item.categories}
                 desc={item.desc}
                 addToCart={() => addToCart(item)}

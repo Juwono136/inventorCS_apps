@@ -65,11 +65,11 @@ const InventoryCard = ({
         <div className="flex gap-2 flew-wrap">
           <button
             className={`text-xs px-4 py-2 rounded-md transition ${
-              total_items === 0
+              status !== "Available"
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-indigo-500 text-white hover:bg-indigo-700"
             }`}
-            disabled={total_items === 0}
+            disabled={status !== "Available"}
             onClick={addToCart}
           >
             Add to Cart
@@ -88,6 +88,7 @@ const InventoryCard = ({
         open={open}
         handleOpen={handleOpen}
         item={itemDetails}
+        addToCart={addToCart}
       />
     </div>
   );

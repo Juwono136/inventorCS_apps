@@ -26,7 +26,7 @@ const MyCarts = () => {
       
       <div className="flex items-center mb-6">
           <Link
-            to="/inventory"
+            to="/inventory-list"
           >
             <FaArrowLeft />
           </Link>
@@ -38,7 +38,7 @@ const MyCarts = () => {
       {cartItems.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-full">
           <Typography variant="h6" className="mb-4">Your cart is empty</Typography>
-          <Button color="blue" onClick={() => window.location.href = '/inventory'}>Go Back to Inventories</Button>
+          <Button color="blue" onClick={() => window.location.href = '/inventory-list'}>Go Back to Inventories</Button>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4">

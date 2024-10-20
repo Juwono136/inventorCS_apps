@@ -88,7 +88,7 @@ function App() {
             <Route path="dashboard" element={<Dashboard />} />
             
             <Route 
-              path="inventory" 
+              path="inventory-list" 
               element={
                 <Inventory 
                   sort={sortInventory}

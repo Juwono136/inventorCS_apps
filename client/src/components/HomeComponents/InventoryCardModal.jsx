@@ -9,7 +9,7 @@ import {
 } from "@material-tailwind/react";
 import { IoClose } from "react-icons/io5";
 
-const InventoryCardModal = ({ open, handleOpen, item }) => {
+const InventoryCardModal = ({ open, handleOpen, item, addToCart }) => {
   if (!item) return null;
   return (
     <Dialog open={open} handler={handleOpen} size="lg">
@@ -57,7 +57,7 @@ const InventoryCardModal = ({ open, handleOpen, item }) => {
           </p>
           <p
             className={`text-base font-bold mt-2 ${
-              item.total_items > 0 ? "text-green-800" : "text-red-800"
+              item.status === "Available" ? "text-green-800" : "text-red-800"
             } `}
           >
             {item.status}
@@ -72,11 +72,12 @@ const InventoryCardModal = ({ open, handleOpen, item }) => {
 
           <button
             className={`text-xs px-4 py-2 rounded-md transition ${
-              item.total_items === 0
+              item.status !== "Available"
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-indigo-500 text-white hover:bg-indigo-700"
             }`}
-            disabled={item.total_items === 0}
+            disabled={item.status !== "Available"}
+            onClick={addToCart}
           >
             Add to Cart
           </button>
