@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Layout from "./Layout";
 import { useDispatch, useSelector } from "react-redux";
 import Pagination from "../../common/Pagination";
@@ -6,9 +6,9 @@ import SearchElement from "../../common/SearchElement";
 import { useSearchParams } from "react-router-dom";
 import Loader from "../../common/Loader";
 import ProgramCategories from "../../components/DashboardComponents/ProgramCategories";
-import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
-import { deleteUser, getAllUsersInfor } from "../../features/user/userSlice";
-import { accessToken } from "../../features/token/tokenSlice";
+// import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
+import { getAllUsersInfor } from "../../features/user/userSlice";
+// import { accessToken } from "../../features/token/tokenSlice";
 import toast from "react-hot-toast";
 import UserTable from "../../components/DashboardComponents/UserTable";
 
@@ -24,8 +24,8 @@ const UserList = ({
 }) => {
   const TABLE_HEAD = [
     "No.",
-    "Member",
-    "Program",
+    "Member Info",
+    "Program & Address",
     "Role",
     "Status",
     "Joined At",
@@ -33,9 +33,9 @@ const UserList = ({
   ];
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const [openDialogDelete, setOpenDialogDelete] = useState(false);
-  const [deleteUserId, setDeleteUserId] = useState(null);
   const currentPage = parseInt(searchParams.get("page"));
+  // const [openDialogDelete, setOpenDialogDelete] = useState(false);
+  // const [deleteUserId, setDeleteUserId] = useState(null);
 
   const { allUsersInfor, userInfor, isLoading, isError, isSuccess, message } =
     useSelector((state) => state.user);
@@ -43,22 +43,22 @@ const UserList = ({
 
   const dispatch = useDispatch();
 
-  const handleOpenDialogDelete = (id) => {
-    setOpenDialogDelete(!openDialogDelete);
-    setDeleteUserId(id);
-  };
+  // const handleOpenDialogDelete = (id) => {
+  //   setOpenDialogDelete(!openDialogDelete);
+  //   setDeleteUserId(id);
+  // };
 
-  const handleDeleteUser = (e, id) => {
-    e.preventDefault();
+  // const handleDeleteUser = (e, id) => {
+  //   e.preventDefault();
 
-    dispatch(deleteUser(id)).then((res) => {
-      dispatch(accessToken(res));
-      setPage(1);
-      setSearchParams({ page: 1, search });
-    });
+  //   dispatch(deleteUser(id)).then((res) => {
+  //     dispatch(accessToken(res));
+  //     setPage(1);
+  //     setSearchParams({ page: 1, search });
+  //   });
 
-    setOpenDialogDelete(!openDialogDelete);
-  };
+  //   setOpenDialogDelete(!openDialogDelete);
+  // };
 
   const handleSearch = (term) => {
     setSearch(term);
@@ -93,8 +93,8 @@ const UserList = ({
   // handle sort
   const handleSort = (column) => {
     const sortFileMap = {
-      Member: "personal_info.name",
-      Program: "personal_info.program",
+      "Member Info": "personal_info.name",
+      "Program & Address": "personal_info.program",
       Role: "personal_info.role",
       Status: "personal_info.status",
       "Joined At": "joinedAt",
@@ -140,7 +140,6 @@ const UserList = ({
               users={users}
               TABLE_HEAD={TABLE_HEAD}
               handleSort={handleSort}
-              handleOpenDialogDelete={handleOpenDialogDelete}
             />
           )}
         </div>
@@ -151,6 +150,7 @@ const UserList = ({
             totalPage={search ? Math.ceil(totalUsers / limit) : totalPage}
             page={page}
             setPage={setPage}
+            bgColor="blue-gray"
           />
         ) : (
           ""
@@ -158,13 +158,13 @@ const UserList = ({
       </div>
 
       {/* delete user open dialog */}
-      <DialogOpenComponent
+      {/* <DialogOpenComponent
         openDialog={openDialogDelete}
         handleFunc={(e) => handleDeleteUser(e, deleteUserId)}
         handleOpenDialog={handleOpenDialogDelete}
         message="Are you sure want to delete this user permanently?"
         btnText="Delete"
-      />
+      /> */}
     </Layout>
   );
 };

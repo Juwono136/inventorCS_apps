@@ -73,7 +73,7 @@ const SidebarComponent = ({ isDrawerOpen = false, closeDrawer }) => {
           <hr className="my-2 border-blue-gray-50" />
 
           <List>
-            {userInfor?.personal_info?.role !== 0 && (
+            {user?.selectedRole !== 0 && (
               <>
                 {/* Menu for role 1 and 2 */}
                 <NavLink
@@ -98,7 +98,7 @@ const SidebarComponent = ({ isDrawerOpen = false, closeDrawer }) => {
                   </ListItem>
                 </NavLink>
 
-                {userInfor?.personal_info?.role !== 2 && (
+                {user?.selectedRole !== 2 && (
                   <NavLink
                     to="/users"
                     onClick={closeDrawer}

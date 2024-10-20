@@ -35,14 +35,14 @@ const InventoriesSummaryComponent = () => {
           </h4>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 lg:mx-6">
-            {items?.map((item, i) => (
+            {items?.slice(0, 8).map((item, i) => (
               <InventoryCard
                 key={i}
                 image={item.asset_img}
                 title={item.asset_name}
                 serial_number={item.serial_number}
                 total_items={item.total_items}
-                status={item.total_items > 0 ? "Ready" : "Out of stock"}
+                status={item.item_status}
                 categories={item.categories}
                 desc={item.desc}
                 addToCart={() => addToCart(item)}
@@ -54,7 +54,7 @@ const InventoriesSummaryComponent = () => {
 
       <div className="my-6">
         <Link
-          to="/inventory"
+          to="/inventory-list"
           className="flex items-center gap-3 mt-3 bg-indigo-600 text-white text-sm px-3 py-2 rounded-lg hover:shadow-lg transition transform hover:scale-105"
         >
           See more

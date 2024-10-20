@@ -25,6 +25,9 @@ import { CartProvider } from "./components/InventoryComponents/CartContext";
 import ProtectedUserRoutes from "./common/ProtectedUserRoutes";
 import { getAllInventories } from "./features/inventory/inventorySlice";
 import MyBorrow from "./pages/HomePages/MyBorrow";
+import SelecteRole from "./pages/AuthPages/SelecteRole";
+import AddInventory from "./pages/DashboardPages/AddInventory";
+import UpdateInventory from "./pages/DashboardPages/UpdateInventory";
 
 function App() {
   const [sort, setSort] = useState({
@@ -53,7 +56,7 @@ function App() {
   }, [isLoggedOut, dispatch, user]);
 
   useEffect(() => {
-    if (userInfor.personal_info?.role.includes(1)) {
+    if (user?.selectedRole === 1) {
       dispatch(getAllUsersInfor({ page, sort, program, search }));
     }
 
@@ -78,6 +81,12 @@ function App() {
               <Route path="mycarts" element={<MyCarts />} />
             </Route>
 
+            <Route path="select-role" element={<SelecteRole />} />
+
+            <Route path="user/reset/:token" element={<ResetPassword />} />
+            
+            <Route path="dashboard" element={<Dashboard />} />
+            
             <Route 
               path="inventory" 
               element={
@@ -94,7 +103,32 @@ function App() {
               }
             />
 
-            <Route path="dashboard" element={<Dashboard />} />
+          <Route
+            path="add_inventory"
+            element={
+              <ProtectedUserRoutes allowedRoles={[1, 2]}>
+                <AddInventory />
+              </ProtectedUserRoutes>
+            }
+          />
+
+          <Route
+            path="inventories/update_inventory/:id"
+            element={
+              <ProtectedUserRoutes allowedRoles={[1, 2]}>
+                <UpdateInventory />
+              </ProtectedUserRoutes>
+            }
+          />
+
+          <Route
+            path="borrowed-item"
+            element={
+              <ProtectedUserRoutes allowedRoles={[1, 2]}>
+                <BorrowedItems />
+              </ProtectedUserRoutes>
+            }
+          />
 
             <Route
               path="inventories"

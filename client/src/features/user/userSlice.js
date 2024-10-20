@@ -196,22 +196,22 @@ export const userSlice = createSlice({
                 state.isLoading = false
                 state.message = action.payload
             })
-            // delete user
-            .addCase(deleteUser.pending, (state) => {
-                state.isLoading = true
-            })
-            .addCase(deleteUser.fulfilled, (state, action) => {
-                state.isLoading = false
-                state.isSuccess = true
-                state.message = action.payload.message
-                state.allUsersInfor = action.payload
-                // state.message = "User deleted"
-            })
-            .addCase(deleteUser.rejected, (state, action) => {
-                state.isLoading = false
-                state.isError = true
-                state.message = action.payload
-            })
+        // delete user
+        // .addCase(deleteUser.pending, (state) => {
+        //     state.isLoading = true
+        // })
+        // .addCase(deleteUser.fulfilled, (state, action) => {
+        //     state.isLoading = false
+        //     state.isSuccess = true
+        //     state.message = action.payload.message
+        //     state.allUsersInfor = action.payload
+        //     // state.message = "User deleted"
+        // })
+        // .addCase(deleteUser.rejected, (state, action) => {
+        //     state.isLoading = false
+        //     state.isError = true
+        //     state.message = action.payload
+        // })
     }
 })
 

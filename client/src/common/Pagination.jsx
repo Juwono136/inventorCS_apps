@@ -2,7 +2,7 @@ import React from "react";
 import { Button, IconButton } from "@material-tailwind/react";
 import { useSearchParams } from "react-router-dom";
 
-const Pagination = ({ totalPage, page, setPage }) => {
+const Pagination = ({ totalPage, page, setPage, bgColor }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const handleNextPage = () => {
@@ -33,7 +33,7 @@ const Pagination = ({ totalPage, page, setPage }) => {
     <div className="flex items-center justify-center mt-3 mb-8">
       <Button
         variant="text"
-        color="blue"
+        color={bgColor}
         className="flex items-center gap-1 px-2 capitalize"
         onClick={handlePrevPage}
         disabled={page === 1}
@@ -48,7 +48,7 @@ const Pagination = ({ totalPage, page, setPage }) => {
             key={num}
             variant={num === page ? "filled" : "text"}
             onClick={() => handlePageChange(num)}
-            color="blue"
+            color={bgColor}
           >
             {num}
           </IconButton>
@@ -57,7 +57,7 @@ const Pagination = ({ totalPage, page, setPage }) => {
 
       <Button
         variant="text"
-        color="blue"
+        color={bgColor}
         className="flex items-center gap-1 px-2 capitalize"
         onClick={handleNextPage}
         disabled={page === totalPage}

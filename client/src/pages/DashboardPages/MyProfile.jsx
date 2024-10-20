@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Layout from "./Layout";
-import { avatar, Avatar, Button } from "@material-tailwind/react";
+import { avatar, Avatar, Button, Chip } from "@material-tailwind/react";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
@@ -40,6 +40,7 @@ const MyProfile = () => {
     2: "Staff",
   };
 
+  const { user } = useSelector((state) => state.auth);
   const { userInfor, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.user
   );
@@ -195,9 +196,19 @@ const MyProfile = () => {
 
                 <p className="text-indigo-600/80 text-xs">{data.email}</p>
 
-                <p className="text-indigo-600/80 text-xs font-semibold mt-2">
-                  {data.role}
-                </p>
+                <Chip
+                  variant="ghost"
+                  size="sm"
+                  className="my-2"
+                  color={
+                    user?.selectedRole === 1
+                      ? "green"
+                      : user?.selectedRole === 2
+                      ? "orange"
+                      : "blue"
+                  }
+                  value={roleMap[user?.selectedRole]}
+                />
               </div>
 
               <div>

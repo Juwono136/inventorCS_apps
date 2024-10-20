@@ -23,6 +23,16 @@ export const signin = createAsyncThunk('auth/signin', async (user, thunkAPI) => 
     }
 })
 
+// select role
+export const selectRole = createAsyncThunk('auth/selectRole', async ({ userId, selectedRole }, thunkAPI) => {
+    try {
+        return await authService.selectRole(userId, selectedRole);
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
+        return thunkAPI.rejectWithValue(message);
+    }
+});
+
 // signup user
 export const signup = createAsyncThunk('auth/signup', async (newUser, thunkAPI) => {
     try {
@@ -107,6 +117,20 @@ export const authSlice = createSlice({
                 state.isLoading = false
                 state.isError = true
                 state.message = action.payload
+            })
+            // selectRole builder
+            .addCase(selectRole.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(selectRole.fulfilled, (state, action) => {
+                state.isLoading = false;
+                // Update user data with selected role
+                state.user = action.payload
+            })
+            .addCase(selectRole.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
             })
             // signup builder
             .addCase(signup.pending, (state) => {
