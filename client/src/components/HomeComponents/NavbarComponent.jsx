@@ -23,6 +23,7 @@ import logoImg from "../../assets/images/logo.png";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, reset } from "../../features/auth/authSlice";
 import DialogOpenComponent from "../DashboardComponents/DialogOpenComponent";
+import toast from "react-hot-toast";
 
 const NavbarComponent = () => {
   const [openNav, setOpenNav] = useState(false);
@@ -34,6 +35,8 @@ const NavbarComponent = () => {
 
   const { user, isLoggedOut } = useSelector((state) => state.auth);
   const { userInfor } = useSelector((state) => state.user);
+  const cartItems = useSelector((state) => state.loan.cartItems);
+  const cartCount = cartItems.reduce((count, item) => count + item.quantity, 0);
 
   const { avatar } = userInfor?.personal_info || "";
 
@@ -52,7 +55,11 @@ const NavbarComponent = () => {
     if (isLoggedOut) {
       setOpenDialog(false);
     }
-  }, [isLoggedOut]);
+
+    // if (cartItems.length === 0 ) {
+    //   navigate("/");
+    // }
+  }, [isLoggedOut, cartItems]);
 
   const handleNavigation = (section) => {
     navigate(`/#${section}`);
@@ -63,6 +70,14 @@ const NavbarComponent = () => {
     dispatch(logout());
     dispatch(reset());
     navigate("/signin");
+  };
+
+  const handleCartClick = () => {
+    if (cartItems.length === 0) {
+      toast.error("Your cart is empty! Add items to your cart before viewing.");
+      return;
+    }
+    navigate("/mycarts");
   };
 
   const navList = (
@@ -177,14 +192,19 @@ const NavbarComponent = () => {
                 </div>
               )}
 
-              <Link to="/mycarts">
-                <button className="flex justify-center items-center gap-1">
+              {!user && isLoggedOut ? (
+                ""
+              ) : (
+                <button
+                  onClick={handleCartClick}
+                  className="flex justify-center items-center gap-1"
+                >
                   <FaCartShopping className="text-indigo-700 text-xl transition ease-in-out hover:text-indigo-400" />
                   <span className="bg-indigo-700 text-white text-sm rounded-full px-2 py-1">
-                    4
+                    {cartCount}
                   </span>
                 </button>
-              </Link>
+              )}
             </div>
             <IconButton
               variant="text"

@@ -4,30 +4,35 @@ import {
   DialogHeader,
   Typography,
   DialogBody,
-  DialogFooter,
-  Button,
   IconButton,
   Card,
   Chip,
 } from "@material-tailwind/react";
 import { IoClose } from "react-icons/io5";
 
-const MoreInfoBorrowedItem = ({ open, handleOpenDialog, item }) => {
-  const TABLE_HEAD = [
-    "No",
-    "Description of equipment borrowed",
-    "Serial Number",
-  ];
+const MoreInfoBorrowedItem = ({ open, handleOpenDialog, selectedItem }) => {
+  const TABLE_HEAD = ["No", "Item Name", "Quantity", "Is Consumable?"];
+
+  const statusLoanColors = {
+    Pending: "blue-gray",
+    Borrowed: "blue",
+    "Partially Consumed": "purple",
+    Consumed: "orange",
+    Returned: "green",
+    Cancelled: "red",
+  };
+
+  // console.log(selectedItem);
 
   return (
     <Dialog open={open}>
       <DialogHeader className="justify-between">
         <div className="flex flex-col justify-center items-center w-full">
-          <Typography variant="h5" color="blue-gray">
+          <Typography className="font-semibold text-xl bg-gradient-to-r from-blue-400 via-purple-500 to-red-500 bg-clip-text text-transparent animate-gradient">
             Loan of Equipment
           </Typography>
-          <Typography color="gray" variant="paragraph">
-            Computer Science Program
+          <Typography className="text-sm text-blue-gray-800">
+            Item borrowing information
           </Typography>
         </div>
 
@@ -44,42 +49,76 @@ const MoreInfoBorrowedItem = ({ open, handleOpenDialog, item }) => {
       <DialogBody divider className="grid gap-4 md:m-4">
         <div className="space-y-2 text-sm ">
           <div className="grid grid-cols-3 gap-2">
-            <span className="font-medium text-gray-800 w-full">Date:</span>
-            <span className="col-span-2 text-gray-900">{item.date}</span>
+            <span className="font-medium text-gray-800 w-full">
+              Binusian ID:
+            </span>
+            <span className="col-span-2 text-gray-900">
+              {selectedItem?.binusian_id}
+            </span>
           </div>
+
           <div className="grid grid-cols-3 gap-2">
             <span className="font-medium text-gray-800 w-full">
               Borrower Name:
             </span>
             <span className="col-span-2 text-gray-900">
-              {item.borrower_name}
+              {selectedItem?.name}
             </span>
           </div>
-          <div className="grid grid-cols-3 gap-2">
-            <span className="font-medium text-gray-800 w-full">
-              Binusian ID:
-            </span>
-            <span className="col-span-2 text-gray-900">{item.binusian_id}</span>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            <span className="font-medium text-gray-800 w-full">
-              Home Address:
-            </span>
-            <span className="col-span-2 text-gray-900">{item.address}</span>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            <span className="font-medium text-gray-800 w-full">Phone:</span>
-            <span className="col-span-2 text-gray-900">{item.phone}</span>
-          </div>
+
           <div className="grid grid-cols-3 gap-2">
             <span className="font-medium text-gray-800 w-full">Email:</span>
-            <span className="col-span-2 text-gray-900">{item.email}</span>
+            <span className="col-span-2 text-gray-900">
+              {selectedItem?.email}
+            </span>
           </div>
+
+          <div className="grid grid-cols-3 gap-2">
+            <span className="font-medium text-gray-800 w-full">Phone:</span>
+            <span className="col-span-2 text-gray-900">
+              {selectedItem?.phone || "-"}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2">
+            <span className="font-medium text-gray-800 w-full">Address:</span>
+            <span className="col-span-2 text-gray-900">
+              {selectedItem?.address || "-"}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2">
+            <span className="font-medium text-gray-800 w-full">Program:</span>
+            <span className="col-span-2 text-gray-900">
+              {selectedItem?.program || "-"}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2">
+            <span className="font-medium text-gray-800 w-full">
+              Borrow Date:
+            </span>
+            <span className="col-span-2 text-gray-900">
+              {selectedItem?.borrow_date}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2">
+            <span className="font-medium text-gray-800 w-full">
+              Return Date:
+            </span>
+            <span className="col-span-2 text-gray-900">
+              {selectedItem?.return_date}
+            </span>
+          </div>
+
           <div className="grid grid-cols-3 gap-2">
             <span className="font-medium text-gray-800 w-full">
               Purpose of Loan:
             </span>
-            <span className="col-span-2 text-gray-900">{item.purpose}</span>
+            <span className="col-span-2 text-gray-900">
+              {selectedItem?.purpose_of_loan}
+            </span>
           </div>
 
           <div className="grid grid-cols-3 gap-2">
@@ -89,12 +128,12 @@ const MoreInfoBorrowedItem = ({ open, handleOpenDialog, item }) => {
                 size="sm"
                 variant="ghost"
                 className="max-w-max "
-                value={item.status || ""}
-                color={item.status === "borrowed" ? "red" : "green"}
+                value={selectedItem?.loan_status || ""}
+                color={statusLoanColors[selectedItem?.loan_status]}
               />
-              <p className="text-gray-900">
+              {/* <p className="text-gray-900">
                 {item.status === "borrowed" ? "" : item.return_date}
-              </p>
+              </p> */}
             </span>
           </div>
 
@@ -120,37 +159,54 @@ const MoreInfoBorrowedItem = ({ open, handleOpenDialog, item }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {item.product?.name.map((name, i) => (
-                    <tr key={i}>
-                      <td className="border-b border-blue-gray-50 p-4">
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {i + 1}
-                        </Typography>
-                      </td>
-                      <td className="border-b border-blue-gray-50 p-4">
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {name}
-                        </Typography>
-                      </td>
-                      <td className="border-b border-blue-gray-50 p-4">
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {item.product.serial_number[i]}
-                        </Typography>
-                      </td>
-                    </tr>
-                  ))}
+                  {selectedItem?.borrowed_item?.map(
+                    ({ inventory_id, quantity, is_consumable }, index) => {
+                      const { asset_name } = inventory_id;
+
+                      return (
+                        <tr key={index}>
+                          <td className="border-b border-blue-gray-50 p-4">
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {index + 1}
+                            </Typography>
+                          </td>
+                          <td className="border-b border-blue-gray-50 p-4">
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {asset_name}
+                            </Typography>
+                          </td>
+
+                          <td className="border-b border-blue-gray-50 p-4">
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {quantity}
+                            </Typography>
+                          </td>
+
+                          <td className="border-b border-blue-gray-50 p-4">
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {is_consumable === true ? "Yes" : "No"}
+                            </Typography>
+                          </td>
+                        </tr>
+                      );
+                    }
+                  )}
                 </tbody>
               </table>
             </Card>

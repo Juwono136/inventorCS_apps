@@ -9,6 +9,15 @@ const getAllInventories = async (params) => {
     return response.data
 }
 
+// create inventory
+const createInventory = async (data, token) => {
+    const response = await axios.post(API_URL + '/add_inventory', data, {
+        headers: { Authorization: `Bearer ${token}` }
+    })
+
+    return response.data
+}
+
 // update inventory
 const updateInventory = async (data, token) => {
     const response = await axios.patch(API_URL + `/update_inventory/${data._id}`, data, {
@@ -29,6 +38,7 @@ const deleteInventory = async (inventoryId, token) => {
 
 const inventoryService = {
     getAllInventories,
+    createInventory,
     updateInventory,
     deleteInventory
 }

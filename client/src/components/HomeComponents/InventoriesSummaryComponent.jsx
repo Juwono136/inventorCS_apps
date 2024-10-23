@@ -36,6 +36,7 @@ const InventoriesSummaryComponent = () => {
             {items?.slice(0, 8).map((item, i) => (
               <InventoryCard
                 key={i}
+                itemId={item._id}
                 image={item.asset_img}
                 title={item.asset_name}
                 serial_number={item.serial_number}
@@ -43,6 +44,7 @@ const InventoriesSummaryComponent = () => {
                 status={item.item_status}
                 categories={item.categories}
                 desc={item.desc}
+                is_consumable={item.is_consumable}
               />
             ))}
           </div>

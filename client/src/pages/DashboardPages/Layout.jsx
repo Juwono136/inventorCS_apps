@@ -4,7 +4,6 @@ import NavbarComponent from "../../components/DashboardComponents/NavbarComponen
 import { useSelector } from "react-redux";
 import { Navigate, useLocation } from "react-router-dom";
 import Loader from "../../common/Loader";
-import toast from "react-hot-toast";
 
 const Layout = ({ children }) => {
   const { user, isLoggedOut, isLoading } = useSelector((state) => state.auth);

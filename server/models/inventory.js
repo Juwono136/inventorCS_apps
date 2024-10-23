@@ -54,7 +54,7 @@ const inventorySchema = mongoose.Schema({
         type: String,
         required: true,
         default: "Available",
-        enum: ['Available', 'Borrowed', 'Reserved', 'Maintenance', 'Lost', 'Out of Stock', 'Damaged']
+        enum: ['Available', 'Maintenance', 'Lost', 'Out of Stock', 'Damaged']
     },
     draft: {
         type: Boolean,
@@ -63,6 +63,10 @@ const inventorySchema = mongoose.Schema({
     added_by: {
         type: String, // user id
         required: true
+    },
+    is_consumable: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: {

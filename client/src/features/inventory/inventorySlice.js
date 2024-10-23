@@ -28,6 +28,19 @@ export const getAllInventories = createAsyncThunk('inventory/all', async ({ page
     }
 })
 
+// createa inventory
+export const createInventory = createAsyncThunk('inventory/add', async (data, thunkAPI) => {
+    try {
+        const token = await tokenService.accessToken(data)
+
+        return await inventoryService.createInventory(data, token)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
 // update inventory
 export const updateInventory = createAsyncThunk('inventory/update', async (data, thunkAPI) => {
     try {
@@ -80,6 +93,21 @@ export const inventorySlice = createSlice({
                 // state.isSuccess = true
             })
             .addCase(getAllInventories.rejected, (state, action) => {
+                state.isLoading = false
+                state.isError = true
+                state.message = action.payload
+            })
+            // create inventory
+            .addCase(createInventory.pending, (state) => {
+                state.isLoading = true
+            })
+            .addCase(createInventory.fulfilled, (state, action) => {
+                state.isLoading = false
+                state.inventories = action.payload
+                state.isSuccess = true
+                state.message = action.payload.message
+            })
+            .addCase(createInventory.rejected, (state, action) => {
                 state.isLoading = false
                 state.isError = true
                 state.message = action.payload

@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import Layout from "./Layout";
 import { MdOutlineFileDownload } from "react-icons/md";
-import { MdOutlineInventory2 } from "react-icons/md";
+import { IoIosAddCircleOutline } from "react-icons/io";
 import { Button } from "@material-tailwind/react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import InventoryCategories from "../../components/DashboardComponents/InventoryCategories";
 import { useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -11,6 +11,7 @@ import SearchElement from "../../common/SearchElement";
 import Pagination from "../../common/Pagination";
 import InventoriesTable from "../../components/DashboardComponents/InventoriesTable";
 import Loader from "../../common/Loader";
+import { getAllInventories } from "../../features/inventory/inventorySlice";
 
 const Inventories = ({
   sort,
@@ -27,25 +28,29 @@ const Inventories = ({
     "QR Code",
     "Item Info",
     "Item Location",
-    "Cabinet",
+    "Item Cabinet",
     "Serial Number",
-    "Category",
+    "Item Category",
     "Total Items",
     "Item Added By",
     "Created At",
     "Updated At",
     "Item Status",
+    "Is Consumable?",
     " ",
   ];
   const [searchParams, setSearchParams] = useSearchParams();
-  const currentPage = parseInt(searchParams.get("page"));
+  const currentPage = parseInt(searchParams.get("page")) || 1;
 
   const { allUsersInfor } = useSelector((state) => state.user);
   const { users } = allUsersInfor;
+
   const { inventories, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.inventory
   );
-  const { items, limit, totalPages, totalItems } = inventories;
+  const { items, totalPages, limit, totalItems } = inventories;
+
+  const dispatch = useDispatch();
 
   const handleSearch = (term) => {
     setSearch(term);
@@ -69,10 +74,10 @@ const Inventories = ({
       toast.error(message);
     }
 
-    // if (isSuccess) {
-    //   toast.success(message);
-    // }
-    // dispatch(getAllInventories({ page, sort, search }));
+    if (isSuccess) {
+      toast.success(message);
+      dispatch(getAllInventories({ page, sort, categories, search }));
+    }
   }, [setPage, setSearchParams, search, sort, isError, isSuccess, message]);
 
   // handle sort
@@ -80,15 +85,14 @@ const Inventories = ({
     const sortFileMap = {
       "Item Info": "asset_name",
       "Item Location": "location",
-      Cabinet: "cabinet",
+      "item Cabinet": "cabinet",
       "Serial Number": "serial_number",
-      Category: "categories",
+      "Item Category": "categories",
       "Total Items": "total_items",
-      "Item Published By": "added_by",
+      "Item Added By": "added_by",
       "Created At": "publishedAt",
       "Updated At": "updatedAt",
       "Item Status": "item_status",
-      "Is Draft?": "draft",
     };
     const selectedSortField = sortFileMap[column];
     if (selectedSortField) {
@@ -113,7 +117,7 @@ const Inventories = ({
               className="flex items-center capitalize bg-purple-500"
               size="sm"
             >
-              <MdOutlineInventory2 className="mr-1 text-lg" />
+              <IoIosAddCircleOutline className="mr-1 text-lg" />
               Add Inventory
             </Button>
           </a>
@@ -150,12 +154,9 @@ const Inventories = ({
           ) : (
             <InventoriesTable
               items={items}
+              users={users}
               TABLE_HEAD={TABLE_HEAD}
               handleSort={handleSort}
-              users={users}
-              page={page}
-              search={search}
-              sort={sort}
             />
           )}
         </div>

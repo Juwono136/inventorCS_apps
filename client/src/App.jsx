@@ -24,10 +24,15 @@ import { getAllInventories } from "./features/inventory/inventorySlice";
 import SelecteRole from "./pages/AuthPages/SelecteRole";
 import AddInventory from "./pages/DashboardPages/AddInventory";
 import UpdateInventory from "./pages/DashboardPages/UpdateInventory";
+import MyCart from "./pages/HomePages/MyCart";
 
 function App() {
-  const [sort, setSort] = useState({
+  const [sortUser, setSortUser] = useState({
     sort: "personal_info.name",
+    order: "asc",
+  });
+  const [sortInventory, setSortInventory] = useState({
+    sort: "asset_name",
     order: "asc",
   });
   const [program, setProgram] = useState("");
@@ -49,12 +54,17 @@ function App() {
 
   useEffect(() => {
     if (user?.selectedRole === 1) {
-      dispatch(getAllUsersInfor({ page, sort, program, search }));
+      dispatch(getAllUsersInfor({ page, sort: sortUser, program, search }));
     }
 
-    dispatch(getAllInventories({ page, sort, categories, search }));
     // setSearchParams({ page, search, sort: sort.sort, order: sort.order });
-  }, [dispatch, userInfor, page, sort, program, categories, search]);
+  }, [dispatch, userInfor, page, sortUser, program, search]);
+
+  useEffect(() => {
+    dispatch(
+      getAllInventories({ page, sort: sortInventory, categories, search })
+    );
+  }, [dispatch, page, sortInventory, categories, search]);
 
   return (
     <>
@@ -69,6 +79,9 @@ function App() {
             <Route path="signup" element={<Singup />} />
             <Route path="forgot" element={<ForgotPassword />} />
             <Route path="user/activate/:token" element={<ActivationEmail />} />
+
+            {/* loan transaction */}
+            <Route path="mycarts" element={<MyCart />} />
           </Route>
 
           <Route path="select-role" element={<SelecteRole />} />
@@ -82,8 +95,8 @@ function App() {
             element={
               <ProtectedUserRoutes allowedRoles={[1, 2]}>
                 <Inventories
-                  sort={sort}
-                  setSort={setSort}
+                  sort={sortInventory}
+                  setSort={setSortInventory}
                   categories={categories}
                   setCategories={setCategories}
                   page={page}
@@ -127,8 +140,8 @@ function App() {
             element={
               <ProtectedUserRoutes allowedRoles={[1]}>
                 <UserList
-                  sort={sort}
-                  setSort={setSort}
+                  sort={sortUser}
+                  setSort={setSortUser}
                   program={program}
                   setProgram={setProgram}
                   page={page}

@@ -25,7 +25,6 @@ const SidebarComponent = ({ isDrawerOpen = false, closeDrawer }) => {
   const [openDialog, setOpenDialog] = useState(false);
 
   const { user } = useSelector((state) => state.auth);
-  const { userInfor } = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();

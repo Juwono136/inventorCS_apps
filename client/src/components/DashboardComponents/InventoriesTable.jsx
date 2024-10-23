@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Avatar,
-  Chip,
-  IconButton,
-  Tooltip,
-  Typography,
-} from "@material-tailwind/react";
+import { Avatar, Chip, IconButton, Tooltip } from "@material-tailwind/react";
 import { FaRegEdit } from "react-icons/fa";
 import { TbArrowsSort } from "react-icons/tb";
 import { FaRegTrashAlt } from "react-icons/fa";
@@ -13,23 +7,11 @@ import { Link } from "react-router-dom";
 import { QRCode } from "react-qrcode-logo";
 import { useDragScroll } from "../../utils/handleMouseDrag";
 import DialogOpenComponent from "./DialogOpenComponent";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  deleteInventory,
-  getAllInventories,
-} from "../../features/inventory/inventorySlice";
+import { useDispatch } from "react-redux";
+import { deleteInventory } from "../../features/inventory/inventorySlice";
 import { accessToken } from "../../features/token/tokenSlice";
-import toast from "react-hot-toast";
 
-const InventoriesTable = ({
-  items,
-  TABLE_HEAD,
-  handleSort,
-  users,
-  page,
-  sort,
-  search,
-}) => {
+const InventoriesTable = ({ items, users, TABLE_HEAD, handleSort }) => {
   const {
     tableRef,
     handleMouseDown,
@@ -40,15 +22,12 @@ const InventoriesTable = ({
 
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState(null);
+  const [authorDetails, setAuthorDetails] = useState({});
 
   const findAuthorDetails = (authorId) => {
     const author = users?.find((user) => user._id === authorId);
-    return author ? author?.personal_info : { name: "N/A", email: "N/A" };
+    return { ...author?.personal_info };
   };
-
-  const { isSuccess, isError, message } = useSelector(
-    (state) => state.inventory
-  );
 
   const dispatch = useDispatch();
 
@@ -63,7 +42,6 @@ const InventoriesTable = ({
     if (selectedItemId) {
       dispatch(deleteInventory(selectedItemId)).then((res) => {
         dispatch(accessToken(res));
-        dispatch(getAllInventories({ page, sort, search }));
       });
 
       setOpenDialog(false);
@@ -72,14 +50,17 @@ const InventoriesTable = ({
   };
 
   useEffect(() => {
-    if (isError) {
-      toast.error(message);
+    if (items?.length > 0 && users?.length > 0) {
+      const authorData = {};
+      items.forEach((item) => {
+        const author = findAuthorDetails(item.added_by);
+        if (author) {
+          authorData[item._id] = author.name;
+        }
+      });
+      setAuthorDetails(authorData);
     }
-
-    if (isSuccess) {
-      toast.success(message);
-    }
-  }, [isError, isSuccess, message]);
+  }, [items, users]);
 
   return (
     <div
@@ -92,7 +73,7 @@ const InventoriesTable = ({
       onMouseMove={handleMouseMove}
     >
       <table className="min-w-max md:w-full table-auto text-left">
-        <thead className="sticky top-0 bg-blue-gray-50 z-20">
+        <thead className="sticky top-0 bg-blue-gray-50 z-30">
           <tr>
             {TABLE_HEAD.map((head, index) => (
               <th
@@ -102,10 +83,7 @@ const InventoriesTable = ({
                 }`}
                 onClick={() => head !== "No." && handleSort(head)}
               >
-                <Typography
-                  variant="small"
-                  className="flex items-center justify-between gap-2 font-normal leading-none opacity-70 text-white"
-                >
+                <p className="flex items-center justify-between gap-2 font-normal text-sm leading-none opacity-70 text-white">
                   {head}{" "}
                   {head !== "No." && index !== TABLE_HEAD.length - 1 && (
                     <TbArrowsSort
@@ -113,7 +91,7 @@ const InventoriesTable = ({
                       className="h-4 w-4 hover:text-indigo-200"
                     />
                   )}
-                </Typography>
+                </p>
               </th>
             ))}
           </tr>
@@ -146,6 +124,7 @@ const InventoriesTable = ({
                 added_by,
                 updatedAt,
                 publishedAt,
+                is_consumable,
               },
               index
             ) => {
@@ -154,21 +133,24 @@ const InventoriesTable = ({
                 ? "p-4"
                 : "p-4 border-b border-blue-gray-50";
 
-              const { name: AuthorName } = findAuthorDetails(added_by);
+              const statusColors = {
+                Available: "green",
+                Maintenance: "orange",
+                Lost: "red",
+                Damaged: "purple",
+              };
+
+              const authorName = authorDetails[_id] || "Unknown";
 
               const itemUrl = `${window.location.origin}/inventory/${asset_id}`;
 
               return (
-                <tr key={asset_name} className="hover:bg-indigo-50">
+                <tr key={index} className="hover:bg-indigo-50">
                   <td className={classes}>
                     <div className="flex flex-col">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
+                      <p className="font-normal text-sm text-blue-gray-700">
                         {index + 1}
-                      </Typography>
+                      </p>
                     </div>
                   </td>
 
@@ -188,101 +170,60 @@ const InventoriesTable = ({
                     <div className="flex items-center gap-3">
                       <Avatar src={asset_img} alt={asset_name} size="sm" />
                       <div className="flex flex-col">
-                        <Typography
-                          variant="small"
-                          className="font-semibold text-sm text-blue-800"
-                        >
+                        <p className="font-semibold text-sm text-blue-800">
                           {asset_name}
-                        </Typography>
-                        <Typography
-                          variant="small"
-                          className="opacity-80 font-normal text-indigo-900"
-                        >
+                        </p>
+                        <p className="opacity-80 font-normal text-xs text-indigo-900">
                           Item ID: {asset_id}
-                        </Typography>
+                        </p>
                       </div>
                     </div>
                   </td>
                   <td className={classes}>
                     <div className="flex flex-col">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
+                      <p className="font-normal text-sm text-blue-gray-700">
                         {location}
-                      </Typography>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal opacity-70"
-                      >
+                      </p>
+                      <p className="font-normal opacity-70 text-sm text-blue-gray-600">
                         Room: {room_number}
-                      </Typography>
+                      </p>
                     </div>
                   </td>
                   <td className={classes}>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal"
-                    >
+                    <p className="font-normal text-sm text-blue-gray-700">
                       {cabinet}
-                    </Typography>
+                    </p>
                   </td>
                   <td className={classes}>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal"
-                    >
+                    <p className="font-normal text-sm text-blue-gray-700">
                       {!serial_number.length ? "-" : serial_number}
-                    </Typography>
+                    </p>
                   </td>
                   <td className={classes}>
-                    <Typography
-                      variant="small"
-                      className="font-semibold capitalize text-orange-800"
-                    >
+                    <p className="font-semibold capitalize text-orange-800 text-sm">
                       {categories.join(", ")}
-                    </Typography>
+                    </p>
                   </td>
 
                   <td className={classes}>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal capitalize text-center"
-                    >
+                    <p className="font-normal text-sm text-blue-gray-700">
                       {total_items}
-                    </Typography>
+                    </p>
                   </td>
                   <td className={classes}>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal capitalize text-center"
-                    >
-                      {AuthorName}
-                    </Typography>
+                    <p className="font-normal text-sm capitalize text-blue-gray-700">
+                      {authorName}
+                    </p>
                   </td>
                   <td className={classes}>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal"
-                    >
+                    <p className="font-normal text-sm text-blue-gray-700">
                       {new Date(publishedAt).toLocaleDateString()}
-                    </Typography>
+                    </p>
                   </td>
                   <td className={classes}>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal"
-                    >
+                    <p className="font-normal text-sm text-blue-gray-700">
                       {new Date(updatedAt).toLocaleDateString()}
-                    </Typography>
+                    </p>
                   </td>
 
                   <td className={classes}>
@@ -290,7 +231,7 @@ const InventoriesTable = ({
                       <Chip
                         size="sm"
                         value={item_status}
-                        color="green"
+                        color={statusColors[item_status] || "gray"}
                         variant="outlined"
                         className="rounded-full"
                       />
@@ -298,6 +239,14 @@ const InventoriesTable = ({
                   </td>
 
                   <td className={classes}>
+                    <div className="w-full">
+                      <p className="font-base text-center capitalize text-blue-500 text-sm">
+                        {is_consumable === true ? "Yes" : "No"}
+                      </p>
+                    </div>
+                  </td>
+
+                  <td className={`${classes} sticky right-0 z-10 bg-gray-50`}>
                     <Link to={`update_inventory/${_id}`}>
                       <Tooltip content="Edit Inventory">
                         <IconButton variant="text" className="text-indigo-600">

@@ -1,5 +1,5 @@
 import Inventories from "../models/inventory.js";
-import moment from 'moment';
+// import moment from 'moment';
 import { nanoid } from 'nanoid';
 
 // get All inventories info
@@ -43,7 +43,8 @@ export const getAllInventories = async (req, res) => {
         const inventories = await Inventories.find(searchQuery)
             .sort(sortBy)
             .skip(page * limit)
-            .limit(limit);
+            .limit(limit)
+            .lean()
 
         const totalItems = await Inventories.countDocuments(searchQuery);
 
@@ -64,11 +65,11 @@ export const getAllInventories = async (req, res) => {
 // create inventory
 export const createInventory = async (req, res) => {
     try {
-        const { asset_id, asset_name, asset_img, serial_number, categories, desc, location, room_number, cabinet, total_items } = req.body;
+        const { asset_id, asset_name, asset_img, serial_number, categories, desc, location, room_number, cabinet, total_items, is_consumable, item_status } = req.body;
 
         const newAssetId = nanoid(15);
 
-        if (!asset_name || !categories || !desc || !location || !room_number || !cabinet || !total_items) {
+        if (!asset_name || !categories || !desc || !location || !room_number || !cabinet || !total_items || !is_consumable || !item_status) {
             return res.status(400).json({ message: "Please fill in the required fields." });
         }
 
@@ -89,7 +90,7 @@ export const createInventory = async (req, res) => {
         }
 
         if (total_items < 0) {
-            return res.status(400).json({ message: "Please input the total items with positive number." })
+            return res.status(400).json({ message: "Please input the total items with a positive number." })
         }
 
         const existingInventory = await Inventories.findOne({
@@ -117,6 +118,8 @@ export const createInventory = async (req, res) => {
             room_number,
             cabinet,
             total_items,
+            is_consumable,
+            item_status,
             added_by: req.user.id
         });
 
@@ -130,7 +133,7 @@ export const createInventory = async (req, res) => {
 export const updateInventory = async (req, res) => {
     try {
         const inventoryId = req.params.id
-        const { asset_id, asset_name, asset_img, serial_number, desc, categories, location, room_number, cabinet, total_items, item_status, draft } = req.body
+        const { asset_id, asset_name, asset_img, serial_number, desc, categories, location, room_number, cabinet, total_items, item_status, is_consumable, draft } = req.body
 
         if (asset_name && asset_name.length > 100) {
             return res.status(400).json({ message: "Item name cannot exceed 100 characters." });
@@ -190,6 +193,7 @@ export const updateInventory = async (req, res) => {
             cabinet: cabinet || existingInventory.cabinet,
             item_status: item_status || existingInventory.item_status,
             draft: draft || existingInventory.draft,
+            is_consumable: is_consumable || existingInventory.is_consumable,
             author: req.user.id
         };
 

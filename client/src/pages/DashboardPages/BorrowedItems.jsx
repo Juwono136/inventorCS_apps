@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "./Layout";
 import {
   Card,
@@ -15,32 +15,73 @@ import {
 } from "@material-tailwind/react";
 import { CiSearch } from "react-icons/ci";
 import { HiArrowDownTray } from "react-icons/hi2";
-import { IoIosMore } from "react-icons/io";
+import { CiCircleMore } from "react-icons/ci";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import { items } from "../../utils/itemData";
 import MoreInfoBorrowedItem from "../../components/DashboardComponents/MoreInfoBorrowedItem";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllLoanTransactions } from "../../features/loanTransaction/loanSlice";
 
 const BorrowedItems = () => {
   const TABLE_HEAD = [
     "No.",
     "Binusian ID",
     "Borrower Name",
-    "Date",
-    "Address",
-    "Phone",
     "Email",
-    "Status",
-    "Item Name",
+    "Address",
+    "Program",
+    "Borrow Date",
+    "Return Date",
+    "Loan Status",
     "",
   ];
 
-  const [openDialog, setOpenDialog] = useState(false);
-  const [selectedItem, setSelectedItem] = useState([]);
+  const { loanData } = useSelector((state) => state.loan);
+  const { user } = useSelector((state) => state.auth);
+  const { allUsersInfor } = useSelector((state) => state.user);
+  const { inventories } = useSelector((state) => state.inventory);
+  const { items } = inventories;
+  const { users } = allUsersInfor;
+  const data = loanData;
+  // console.log(data?.loanTransactions);
 
-  const handleOpenDialog = (item) => {
-    setSelectedItem(item);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const findAuthorDetails = (authorId) => {
+    const author = users?.find((user) => user._id === authorId);
+    return { ...author?.personal_info };
+  };
+
+  // const findItemDetails = (itemId) => {
+  //   const itemData = items?.find((item) => item._id === itemId);
+  //   return { ...itemData };
+  // };
+
+  const dispatch = useDispatch();
+
+  const handleOpenDialog = (id) => {
+    const selectedData = data?.loanTransactions?.find(
+      (item) => item._id === id
+    );
+
+    if (selectedData) {
+      const borrowerInfo = findAuthorDetails(selectedData.borrower_id);
+      const itemDetails = {
+        ...selectedData,
+        ...borrowerInfo,
+        borrow_date: new Date(selectedData.borrow_date).toLocaleDateString(),
+        return_date: new Date(selectedData.return_date).toLocaleDateString(),
+      };
+      setSelectedItem(itemDetails);
+    }
     setOpenDialog(!openDialog);
   };
+
+  useEffect(() => {
+    if (user?.selectedRole === 1 || user?.selectedRole === 2) {
+      dispatch(getAllLoanTransactions());
+    }
+  }, [dispatch]);
 
   return (
     <Layout>
@@ -101,156 +142,125 @@ const BorrowedItems = () => {
                 </tr>
               </thead>
               <tbody>
-                {items.map((item, index) => {
-                  const isLast = index === items.length - 1;
-                  const classes = isLast
-                    ? "p-4"
-                    : "p-4 border-b border-blue-gray-50";
+                {data?.loanTransactions?.map(
+                  (
+                    { _id, borrower_id, borrow_date, return_date, loan_status },
+                    index
+                  ) => {
+                    const isLast = index === items.length - 1;
+                    const classes = isLast
+                      ? "p-4"
+                      : "p-4 border-b border-blue-gray-50";
 
-                  return (
-                    <tr key={item.borrower_name}>
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {index + 1}
-                        </Typography>
-                      </td>
+                    const statusLoanColors = {
+                      Pending: "blue-gray",
+                      Borrowed: "blue",
+                      "Partially Consumed": "purple",
+                      Consumed: "orange",
+                      Returned: "green",
+                      Cancelled: "red",
+                    };
 
-                      <td className={classes}>
-                        <div className="flex items-center gap-3">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-bold"
-                          >
-                            {item.binusian_id}
-                          </Typography>
-                        </div>
-                      </td>
+                    const {
+                      binusian_id,
+                      name: borrowerName,
+                      email,
+                      address,
+                      program,
+                    } = findAuthorDetails(borrower_id);
 
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {item.borrower_name}
-                        </Typography>
-                      </td>
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {item.date}
-                        </Typography>
-                      </td>
+                    return (
+                      <tr key={index}>
+                        <td className={classes}>
+                          <h1 className="font-normal text-blue-gray-800 text-sm">
+                            {index + 1}
+                          </h1>
+                        </td>
 
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {item.address}
-                        </Typography>
-                      </td>
+                        <td className={classes}>
+                          <div className="flex items-center gap-3">
+                            <h1 className="font-normal text-blue-gray-800 text-sm">
+                              {binusian_id}
+                            </h1>
+                          </div>
+                        </td>
 
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {item.phone}
-                        </Typography>
-                      </td>
+                        <td className={classes}>
+                          <div className="flex items-center gap-3">
+                            <h1 className="font-normal text-blue-gray-800 text-sm">
+                              {borrowerName}
+                            </h1>
+                          </div>
+                        </td>
 
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {item.email}
-                        </Typography>
-                      </td>
+                        <td className={classes}>
+                          <div className="flex items-center gap-3">
+                            <h1 className="font-normal text-blue-gray-800 text-sm">
+                              {email}
+                            </h1>
+                          </div>
+                        </td>
 
-                      <td className={classes}>
-                        <div className="w-max">
-                          <Chip
-                            size="sm"
-                            variant="ghost"
-                            value={item.status}
-                            color={item.status === "borrowed" ? "red" : "green"}
-                          />
-                        </div>
-                      </td>
+                        <td className={classes}>
+                          <div className="flex items-center gap-3">
+                            <h1 className="font-normal text-blue-gray-800 text-sm">
+                              {address || "-"}
+                            </h1>
+                          </div>
+                        </td>
 
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          className="font-semibold text-indigo-700"
-                        >
-                          {item.product.name.length > 2
-                            ? `${item.product.name
-                                .slice(0, 2)
-                                .join(", ")}, etc.`
-                            : item.product.name.join(", ")}
-                        </Typography>
-                      </td>
+                        <td className={classes}>
+                          <div className="flex items-center gap-3">
+                            <h1 className="font-normal text-blue-gray-800 text-sm">
+                              {program || "-"}
+                            </h1>
+                          </div>
+                        </td>
 
-                      <td className={classes}>
-                        <Tooltip content="More Info">
-                          <IconButton
-                            variant="text"
-                            onClick={() => handleOpenDialog(item)}
-                          >
-                            <IoIosMore className="h-4 w-4" />
-                          </IconButton>
-                        </Tooltip>
-                      </td>
-                    </tr>
-                  );
-                })}
+                        <td className={classes}>
+                          <div className="flex items-center gap-3">
+                            <h1 className="font-normal text-blue-gray-800 text-sm">
+                              {new Date(borrow_date).toLocaleDateString()}
+                            </h1>
+                          </div>
+                        </td>
+
+                        <td className={classes}>
+                          <div className="flex items-center gap-3">
+                            <h1 className="font-normal text-blue-gray-800 text-sm">
+                              {new Date(return_date).toLocaleDateString()}
+                            </h1>
+                          </div>
+                        </td>
+
+                        <td className={classes}>
+                          <div className="w-max">
+                            <Chip
+                              size="sm"
+                              variant="ghost"
+                              value={loan_status}
+                              color={statusLoanColors[loan_status]}
+                            />
+                          </div>
+                        </td>
+
+                        <td className={classes}>
+                          <Tooltip content="More Info">
+                            <IconButton
+                              variant="text"
+                              onClick={() => handleOpenDialog(_id)}
+                            >
+                              <CiCircleMore className="h-5 w-5" />
+                            </IconButton>
+                          </Tooltip>
+                        </td>
+                      </tr>
+                    );
+                  }
+                )}
               </tbody>
             </table>
           </CardBody>
-          <CardFooter className="flex items-center justify-center border-t border-blue-gray-50 p-4">
-            <IconButton variant="outlined" size="sm">
-              <FaArrowLeft />
-            </IconButton>
-            <div className="flex items-center gap-1 md:gap-2">
-              <IconButton variant="text" size="sm">
-                1
-              </IconButton>
-              <IconButton variant="text" size="sm">
-                2
-              </IconButton>
-              <IconButton variant="text" size="sm">
-                3
-              </IconButton>
-              <IconButton variant="text" size="sm">
-                ...
-              </IconButton>
-              <IconButton variant="text" size="sm">
-                8
-              </IconButton>
-              <IconButton variant="text" size="sm">
-                9
-              </IconButton>
-              <IconButton variant="text" size="sm">
-                10
-              </IconButton>
-            </div>
-            <IconButton variant="outlined" size="sm">
-              <FaArrowRight />
-            </IconButton>
-          </CardFooter>
         </Card>
       </div>
 
@@ -258,7 +268,7 @@ const BorrowedItems = () => {
       <MoreInfoBorrowedItem
         open={openDialog}
         handleOpenDialog={() => setOpenDialog(false)}
-        item={selectedItem}
+        selectedItem={selectedItem}
       />
     </Layout>
   );

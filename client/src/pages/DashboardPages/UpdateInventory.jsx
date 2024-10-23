@@ -25,15 +25,19 @@ const UpdateInventory = () => {
     "Others",
   ];
 
-  const statusMenu = [
-    "Available",
-    // "Borrowed",
-    // "Reserved",
-    "Maintenance",
-    "Lost",
-    // "Out of Stock",
-    "Damaged",
+  const statusMenu = ["Available", "Maintenance", "Lost", "Damaged"];
+
+  const consumableMenu = [
+    { label: "Yes", value: true },
+    { label: "No", value: false },
   ];
+
+  const statusColors = {
+    Available: "green",
+    Maintenance: "orange",
+    Lost: "red",
+    Damaged: "purple",
+  };
 
   const initialState = {
     asset_id: "",
@@ -47,6 +51,7 @@ const UpdateInventory = () => {
     room_number: "",
     cabinet: "",
     desc: "",
+    is_consumable: false,
   };
 
   const { id } = useParams();
@@ -72,6 +77,7 @@ const UpdateInventory = () => {
         room_number: foundItem?.room_number,
         cabinet: foundItem?.cabinet,
         desc: foundItem?.desc,
+        is_consumable: foundItem?.is_consumable,
       });
     }
   }, [foundItem]);
@@ -91,6 +97,7 @@ const UpdateInventory = () => {
     room_number,
     cabinet,
     desc,
+    is_consumable,
   } = selectedItem;
 
   const dispatch = useDispatch();
@@ -139,10 +146,6 @@ const UpdateInventory = () => {
       dispatch(accessToken(res));
     });
 
-    // if (isSuccess) {
-    //   toast.success(message);
-    // }
-
     setOpenDialogSave(!openDialogSave);
   };
 
@@ -184,7 +187,7 @@ const UpdateInventory = () => {
               <div className="flex md:basis-1/2 gap-2 flex-col w-full items-center justify-start shadow-lg bg-indigo-50/40 rounded-md">
                 <div className="flex flex-col gap-4 px-2 py-4 justify-center items-center w-full">
                   <img
-                    className="h-72 md:h-96 w-full rounded-lg object-cover object-center shadow-xl shadow-blue-gray-900/50"
+                    className="h-96 md:h-full w-full rounded-lg object-cover object-center shadow-xl shadow-blue-gray-900/50"
                     src={image || itemDetail?.asset_img}
                     alt="item image"
                   />
@@ -209,7 +212,7 @@ const UpdateInventory = () => {
                         {itemDetail?.asset_name}
                       </h2>
                       <div className="flex flex-col py-2 gap-2 items-center lg:items-start">
-                        <h3 className="text-xs text-gray-700">CRE/02/GLASS</h3>
+                        {/* <h3 className="text-xs text-gray-700">CRE/02/GLASS</h3> */}
 
                         <Typography className="text-xs text-gray-700">
                           Asset ID: {itemDetail?.asset_id}
@@ -225,11 +228,11 @@ const UpdateInventory = () => {
 
                       <div className="flex w-full justify-center items-center lg:justify-start">
                         <Chip
-                          variant="ghost"
                           size="sm"
-                          className="my-2"
-                          color="green"
-                          value="Available"
+                          value={item_status}
+                          color={statusColors[item_status] || "gray"}
+                          variant="ghost"
+                          className="rounded-full"
                         />
                       </div>
                     </div>
@@ -251,7 +254,7 @@ const UpdateInventory = () => {
 
               {/* Inventory detail info */}
               <div className="flex gap-4 w-full p-4 bg-indigo-50/60 rounded-md shadow-lg">
-                <form className="flex flex-col w-full">
+                <form className="flex flex-col gap-1 justify-between w-full">
                   <div className="mb-6">
                     <label
                       htmlFor="asset_name"
@@ -341,6 +344,34 @@ const UpdateInventory = () => {
                               className="text-gray-900"
                             >
                               {status.charAt(0).toUpperCase() + status.slice(1)}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col w-full">
+                      <label
+                        htmlFor="is_consumable"
+                        className="text-gray-800 font-semibold lg:text-sm text-xs"
+                      >
+                        Is Consumable?
+                      </label>
+                      <div className="mt-1 relative">
+                        <select
+                          id="is_consumable"
+                          name="is_consumable"
+                          value={is_consumable.toString()}
+                          onChange={handleChange}
+                          className="block w-full rounded-md border-0 text-xs p-3 bg-indigo-300/30 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        >
+                          {consumableMenu.map((option, index) => (
+                            <option
+                              key={index}
+                              value={option.value.toString()}
+                              className="text-gray-900"
+                            >
+                              {option.label}
                             </option>
                           ))}
                         </select>
@@ -468,7 +499,7 @@ const UpdateInventory = () => {
         </>
       )}
 
-      {/* save user open dialog */}
+      {/* save inventory open dialog */}
       <DialogOpenComponent
         openDialog={openDialogSave}
         handleFunc={handleUpdateInventory}

@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 const loanTransactionSchema = mongoose.Schema({
-    user_id: {
+    borrower_id: {
         type: String, // save user_id from users API (borrower)
         required: true
     },
@@ -9,19 +9,26 @@ const loanTransactionSchema = mongoose.Schema({
         type: String, // save user_id from users API (admin/staff)
         default: null
     },
-    inventory_id: {
-        type: Schema.Types.ObjectId,
-        ref: 'Inventories',
-        required: true
-    },
+    borrowed_item: [{
+        inventory_id: {
+            type: Schema.Types.ObjectId,
+            ref: 'Inventories',
+            required: true
+        },
+        quantity: {
+            type: Number,
+            default: 1,
+            min: 1
+        },
+        is_consumable: {
+            type: Boolean,
+            required: true
+        }
+    }],
     purpose_of_loan: {
         type: String,
         maxlength: 500,
         default: ""
-    },
-    quantity: {
-        type: Number,
-        default: 1
     },
     borrow_date: {
         type: Date,
@@ -37,7 +44,7 @@ const loanTransactionSchema = mongoose.Schema({
         type: String,
         required: true,
         default: "Pending",
-        enum: ["Pending", "Borrowed", "Returned", "Cancelled"]
+        enum: ["Pending", "Borrowed", "Partially Consumed", "Consumed", "Returned", "Cancelled"]
     }
 }, {
     timestamps: true
