@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 
 Chart.register(...registerables);
 
-const ChartComponent = () => {
+const LineChartComponent = () => {
   const [dateRange, setDateRange] = useState('1month');
   const [dateLabels, setDateLabels] = useState([]);
   const [dataQuantity, setDataQuantity] = useState([]);
@@ -71,10 +71,11 @@ const ChartComponent = () => {
     labels: dateLabels,
     datasets: [
       {
-        label: 'Quantity',
+        label: '',
         data: dataQuantity,
-        fill: false,
-        borderColor: 'rgba(75, 192, 192, 1)',
+        fill: true,
+        backgroundColor: 'rgba(0, 0, 139, 0.2)',
+        borderColor: 'rgba(255, 255, 255, 1)',
         tension: 0.1,
       },
     ],
@@ -85,19 +86,16 @@ const ChartComponent = () => {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: true,
-        position: 'top',
+        display: false,
       },
       title: {
-        display: true,
-        text: 'Borrowed Item',
+        display: false,
       },
     },
     scales: {
       x: {
         title: {
-          display: true,
-          text: 'Date',
+          display: false,
         },
         ticks: {
           maxTicksLimit: 6,
@@ -105,8 +103,7 @@ const ChartComponent = () => {
       },
       y: {
         title: {
-          display: true,
-          text: 'Quantity',
+          display: false,
         },
         beginAtZero: true,
       },
@@ -114,11 +111,9 @@ const ChartComponent = () => {
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6 max-w-full">
-      <h2 className="text-lg font-semibold mb-4">Quantity Chart</h2>
-
+    <div className="bg-darkblue-500 shadow-lg rounded-lg p-6 max-w-full">
       <div className="mb-4 flex items-center space-x-2">
-        <label htmlFor="dateRange" className="font-medium">Select Date Range:</label>
+        <label htmlFor="dateRange" className="font-medium text-black">Select Date Range:</label>
         <select
           id="dateRange"
           value={dateRange}
@@ -135,8 +130,11 @@ const ChartComponent = () => {
       <div className="w-full h-96 md:h-80 sm:h-64">
         <Line data={data} options={options} />
       </div>
+      <div className="mt-4">
+        <p className="text-black font-bold" style={{ fontSize: '12pt' }}>Items Borrowed</p>
+      </div>
     </div>
   );
 };
 
-export default ChartComponent;
+export default LineChartComponent;

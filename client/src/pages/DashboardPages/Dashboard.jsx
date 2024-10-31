@@ -29,20 +29,15 @@ const Dashboard = () => {
           </Typography>
         </div>
 
-        <div className="flex justify-between items-center mb-4">
-          <Typography variant="h4">Dashboard Overview</Typography>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="md:col-span-1">
+        <div className="grid grid-cols-1 gap-4">
+          <div className="mt-8 mb-4">
             <ActiveUserComponent />
           </div>
-          <div className="md:col-span-2">
-            <Card>
-              <CardBody>
-                <LineChartComponent data={filteredData} />
-              </CardBody>
-            </Card>
-          </div>
+          <Card>
+            <CardBody>
+              <LineChartComponent data={filteredData} />
+            </CardBody>
+          </Card>
         </div>
         <div className="mt-4">
           <RecentlyBorrowedItemsComponent items={filteredData} />
