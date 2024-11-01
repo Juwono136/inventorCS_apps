@@ -28,16 +28,20 @@ import MyBorrow from "./pages/HomePages/MyBorrow";
 import SelecteRole from "./pages/AuthPages/SelecteRole";
 import AddInventory from "./pages/DashboardPages/AddInventory";
 import UpdateInventory from "./pages/DashboardPages/UpdateInventory";
+import InventoryDetail from "./pages/InventoryPages/InventoryDetail";
 
 function App() {
   const [sort, setSort] = useState({
-    sort: "personal_info.name",
-    order: "asc",
+    personalInfo: {
+      sort: "personal_info.name",
+      order: "asc",
+    },
+    inventory: {
+      sort: "publishedAt",
+      order: "desc",
+    }
   });
-  const [sortInventory, setSortInventory] = useState({
-    sort: "asset_name",
-    order: "asc",
-  });
+  
   const [program, setProgram] = useState("");
   const [categories, setCategories] = useState("");
   const [page, setPage] = useState(1);
@@ -57,10 +61,10 @@ function App() {
 
   useEffect(() => {
     if (user?.selectedRole === 1) {
-      dispatch(getAllUsersInfor({ page, sort, program, search }));
+      dispatch(getAllUsersInfor({ page, sort: sort.personalInfo, program, search }));
     }
 
-    dispatch(getAllInventories({ page, sort, categories, search }));
+    dispatch(getAllInventories({ page, sort: sort.inventory, categories, search }));
     // setSearchParams({ page, search, sort: sort.sort, order: sort.order });
   }, [dispatch, userInfor, page, sort, program, categories, search]);
 
@@ -91,8 +95,6 @@ function App() {
               path="inventory-list" 
               element={
                 <Inventory 
-                  sort={sortInventory}
-                  setSort={setSortInventory}
                   categories={categories}
                   setCategories={setCategories}
                   page={page}
@@ -103,40 +105,47 @@ function App() {
               }
             />
 
-          <Route
-            path="add_inventory"
-            element={
-              <ProtectedUserRoutes allowedRoles={[1, 2]}>
-                <AddInventory />
-              </ProtectedUserRoutes>
-            }
-          />
+            <Route 
+              path="inventory-list/item/:id"
+              element={
+                <InventoryDetail />
+              }
+            />
 
-          <Route
-            path="inventories/update_inventory/:id"
-            element={
-              <ProtectedUserRoutes allowedRoles={[1, 2]}>
-                <UpdateInventory />
-              </ProtectedUserRoutes>
-            }
-          />
+            <Route
+              path="add_inventory"
+              element={
+                <ProtectedUserRoutes allowedRoles={[1, 2]}>
+                  <AddInventory />
+                </ProtectedUserRoutes>
+              }
+            />
 
-          <Route
-            path="borrowed-item"
-            element={
-              <ProtectedUserRoutes allowedRoles={[1, 2]}>
-                <BorrowedItems />
-              </ProtectedUserRoutes>
-            }
-          />
+            <Route
+              path="inventories/update_inventory/:id"
+              element={
+                <ProtectedUserRoutes allowedRoles={[1, 2]}>
+                  <UpdateInventory />
+                </ProtectedUserRoutes>
+              }
+            />
+
+            <Route
+              path="borrowed-item"
+              element={
+                <ProtectedUserRoutes allowedRoles={[1, 2]}>
+                  <BorrowedItems />
+                </ProtectedUserRoutes>
+              }
+            />
 
             <Route
               path="inventories"
               element={
                 <ProtectedUserRoutes allowedRoles={[1, 2]}>
                   <Inventories
-                    sort={sortInventory}
-                    setSort={setSortInventory}
+                    sort={sort.inventory}
+                    setSort={setSort}
                     categories={categories}
                     setCategories={setCategories}
                     page={page}
@@ -162,7 +171,7 @@ function App() {
               element={
                 <ProtectedUserRoutes allowedRoles={[1]}>
                   <UserList
-                    sort={sort}
+                    sort={sort.personalInfo}
                     setSort={setSort}
                     program={program}
                     setProgram={setProgram}

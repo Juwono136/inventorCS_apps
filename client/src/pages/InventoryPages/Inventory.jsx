@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import InventoryLayout from "./InventoryLayout";
-import InventoryCard from "../../components/HomeComponents/InventoryCard";
+import InventoryItemCard from "../../components/InventoryComponents/InventoryItemCard";
 import SearchElement from "../../common/SearchElement";
 import ItemCategories from "../../components/InventoryComponents/ItemCategories";
 import { useCart } from "../../components/InventoryComponents/CartContext";
@@ -10,10 +10,10 @@ import SortBy from "../../components/InventoryComponents/SortBy";
 import Pagination from "../../common/Pagination"; 
 import { getAllInventories } from "../../features/inventory/inventorySlice";
 import { FaSortAmountDown, FaSortAmountDownAlt } from "react-icons/fa";
+import toast from "react-hot-toast";
+import Loader from "../../common/Loader";
 
 const Inventory = ({
-  sort,
-  setSort,
   categories,
   setCategories,
   page,
@@ -21,6 +21,10 @@ const Inventory = ({
   search,
   setSearch,
 }) => {
+  const [sort, setSort] = useState({
+    sort: "asset_name",
+    order: "asc",
+  });
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page"));
   const { addToCart } = useCart();
@@ -67,14 +71,16 @@ const Inventory = ({
       });
     }
 
-    if (isError) {
-      // toast.error(message);
+    if(isSuccess){
+      toast.success(message)
     }
 
-    if (isSuccess) {
-      dispatch(getAllInventories({ page, sort, categories, search }));
+    if(isError){
+      toast.error(message)
     }
 
+    dispatch(getAllInventories({ page, sort, categories, search }));
+    
   }, [setPage, setSearchParams, search, sort, isError, isSuccess, message, categories]);
 
   return (
@@ -100,10 +106,14 @@ const Inventory = ({
             />
           </div>
           
+          {isLoading ? (
+            <Loader />
+          ) : (
           <div className="flex-grow grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 lg:mx-6 p-4">
             {items?.map((item, i) => (
-              <InventoryCard
+              <InventoryItemCard
                 key={i}
+                _id={item._id}
                 image={item.asset_img}
                 title={item.asset_name}
                 serial_number={item.serial_number}
@@ -115,6 +125,8 @@ const Inventory = ({
               />
             ))}
           </div>
+          )}
+
         </div>
       </div>
       
