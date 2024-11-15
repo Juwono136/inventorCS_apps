@@ -9,6 +9,15 @@ const getAllInventories = async (params) => {
     return response.data
 }
 
+// get inventory by id
+const getInventoryById = async (token, inventoryId) => {
+    const response = await axios.get(API_URL + `/inventories/${inventoryId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    })
+
+    return response.data
+}
+
 // create inventory
 const createInventory = async (data, token) => {
     const response = await axios.post(API_URL + '/add_inventory', data, {
@@ -28,19 +37,20 @@ const updateInventory = async (data, token) => {
 }
 
 // delete inventory
-const deleteInventory = async (inventoryId, token) => {
-    const response = await axios.delete(API_URL + `/delete_inventory/${inventoryId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-    })
+// const deleteInventory = async (inventoryId, token) => {
+//     const response = await axios.delete(API_URL + `/delete_inventory/${inventoryId}`, {
+//         headers: { Authorization: `Bearer ${token}` }
+//     })
 
-    return response.data
-}
+//     return response.data
+// }
 
 const inventoryService = {
     getAllInventories,
+    getInventoryById,
     createInventory,
     updateInventory,
-    deleteInventory
+    // deleteInventory
 }
 
 export default inventoryService

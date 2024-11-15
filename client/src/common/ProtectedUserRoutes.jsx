@@ -5,12 +5,14 @@ import { useSelector } from "react-redux";
 const ProtectedUserRoutes = ({ children, allowedRoles }) => {
   const { user } = useSelector((state) => state.auth);
 
+  // console.log("Current User Role:", user?.selectedRole);
+
   if (
     !user ||
-    !user.selectedRole ||
-    !allowedRoles.includes(user.selectedRole)
+    !typeof user?.selectedRole ||
+    !allowedRoles.includes(user?.selectedRole)
   ) {
-    return <Navigate to="*" />;
+    return <Navigate to="404" />;
   }
 
   return children;

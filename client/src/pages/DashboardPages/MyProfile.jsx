@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Layout from "./Layout";
-import { avatar, Avatar, Button, Chip } from "@material-tailwind/react";
+import { Avatar, Button, Chip } from "@material-tailwind/react";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";

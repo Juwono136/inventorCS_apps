@@ -25,14 +25,11 @@ const Inventories = ({
 }) => {
   const TABLE_HEAD = [
     "No.",
-    "QR Code",
     "Item Info",
     "Item Location",
     "Item Cabinet",
-    "Serial Number",
     "Item Category",
     "Total Items",
-    "Item Added By",
     "Created At",
     "Updated At",
     "Item Status",
@@ -41,9 +38,6 @@ const Inventories = ({
   ];
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page")) || 1;
-
-  const { allUsersInfor } = useSelector((state) => state.user);
-  const { users } = allUsersInfor;
 
   const { inventories, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.inventory
@@ -154,7 +148,6 @@ const Inventories = ({
           ) : (
             <InventoriesTable
               items={items}
-              users={users}
               TABLE_HEAD={TABLE_HEAD}
               handleSort={handleSort}
             />

@@ -8,8 +8,8 @@ import {
 } from "@material-tailwind/react";
 import { BsPencilSquare } from "react-icons/bs";
 import { TbArrowsSort } from "react-icons/tb";
-// import { FaRegTrashAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
+// import { FaRegTrashAlt } from "react-icons/fa";
 
 const UserTable = ({
   users,

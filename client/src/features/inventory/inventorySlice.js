@@ -4,6 +4,7 @@ import tokenService from "../token/tokenService"
 
 const initialState = {
     inventories: [],
+    inventoryById: [],
     isLoading: false,
     isError: false,
     isSuccess: false,
@@ -21,6 +22,19 @@ export const getAllInventories = createAsyncThunk('inventory/all', async ({ page
         }
 
         return await inventoryService.getAllInventories(params)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
+// get inventory by id
+export const getInventoryById = createAsyncThunk('inventory/fetchById', async (id, thunkAPI) => {
+    try {
+        const token = await tokenService.accessToken(id)
+
+        return await inventoryService.getInventoryById(token, id)
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
 
@@ -56,17 +70,17 @@ export const updateInventory = createAsyncThunk('inventory/update', async (data,
 })
 
 // delete inventory
-export const deleteInventory = createAsyncThunk('inventory/delete', async (id, thunkAPI) => {
-    try {
-        const token = await tokenService.accessToken(id)
+// export const deleteInventory = createAsyncThunk('inventory/delete', async (id, thunkAPI) => {
+//     try {
+//         const token = await tokenService.accessToken(id)
 
-        return await inventoryService.deleteInventory(id, token)
-    } catch (error) {
-        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+//         return await inventoryService.deleteInventory(id, token)
+//     } catch (error) {
+//         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
 
-        return thunkAPI.rejectWithValue(message)
-    }
-})
+//         return thunkAPI.rejectWithValue(message)
+//     }
+// })
 
 export const inventorySlice = createSlice({
     name: 'inventory',
@@ -74,6 +88,7 @@ export const inventorySlice = createSlice({
     reducers: {
         inventoryReset: (state) => {
             state.inventories = []
+            state.inventoryById = []
             state.isLoading = false
             state.isError = false
             state.message = ""
@@ -81,7 +96,7 @@ export const inventorySlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            // get all inventories
+            // get all inventories builder
             .addCase(getAllInventories.pending, (state) => {
                 state.isLoading = true
                 state.isError = false
@@ -97,7 +112,22 @@ export const inventorySlice = createSlice({
                 state.isError = true
                 state.message = action.payload
             })
-            // create inventory
+            // get inventory by id builder
+            .addCase(getInventoryById.pending, (state) => {
+                state.isLoading = true
+                state.isError = false
+                state.isSuccess = false
+            })
+            .addCase(getInventoryById.fulfilled, (state, action) => {
+                state.isLoading = false
+                state.inventoryById = action.payload
+            })
+            .addCase(getInventoryById.rejected, (state, action) => {
+                state.isLoading = false
+                state.isError = true
+                state.message = action.payload
+            })
+            // create inventory builder
             .addCase(createInventory.pending, (state) => {
                 state.isLoading = true
             })
@@ -112,7 +142,7 @@ export const inventorySlice = createSlice({
                 state.isError = true
                 state.message = action.payload
             })
-            // update inventory
+            // update inventory builder
             .addCase(updateInventory.pending, (state) => {
                 state.isLoading = true
             })
@@ -134,21 +164,21 @@ export const inventorySlice = createSlice({
                 state.isLoading = false
                 state.message = action.payload
             })
-            // delete inventory
-            .addCase(deleteInventory.pending, (state) => {
-                state.isLoading = true
-            })
-            .addCase(deleteInventory.fulfilled, (state, action) => {
-                state.isLoading = false
-                state.isSuccess = true
-                state.inventories = action.payload
-                state.message = action.payload.message
-            })
-            .addCase(deleteInventory.rejected, (state, action) => {
-                state.isError = true
-                state.isLoading = false
-                state.message = action.payload
-            })
+        // delete inventory builder
+        // .addCase(deleteInventory.pending, (state) => {
+        //     state.isLoading = true
+        // })
+        // .addCase(deleteInventory.fulfilled, (state, action) => {
+        //     state.isLoading = false
+        //     state.isSuccess = true
+        //     state.inventories = action.payload
+        //     state.message = action.payload.message
+        // })
+        // .addCase(deleteInventory.rejected, (state, action) => {
+        //     state.isError = true
+        //     state.isLoading = false
+        //     state.message = action.payload
+        // })
 
     }
 })

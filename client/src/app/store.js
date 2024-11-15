@@ -3,6 +3,7 @@ import authReducer from '../features/auth/authSlice'
 import userReducer from '../features/user/userSlice'
 import inventoryReducer from '../features/inventory/inventorySlice'
 import loanReducer from '../features/loanTransaction/loanSlice'
+import notificationRedcer from '../features/notification/notificationSlice'
 // import tokenReducer from '../features/token/tokenSlice'
 
 export const store = configureStore({
@@ -11,6 +12,7 @@ export const store = configureStore({
         user: userReducer,
         inventory: inventoryReducer,
         loan: loanReducer,
+        notification: notificationRedcer
         // token: tokenReducer,
     }
 })

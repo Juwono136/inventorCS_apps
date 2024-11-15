@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Avatar, Chip, IconButton, Tooltip } from "@material-tailwind/react";
 import { FaRegEdit } from "react-icons/fa";
 import { TbArrowsSort } from "react-icons/tb";
-import { FaRegTrashAlt } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { QRCode } from "react-qrcode-logo";
+// import { FaRegTrashAlt } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
 import { useDragScroll } from "../../utils/handleMouseDrag";
-import DialogOpenComponent from "./DialogOpenComponent";
-import { useDispatch } from "react-redux";
-import { deleteInventory } from "../../features/inventory/inventorySlice";
-import { accessToken } from "../../features/token/tokenSlice";
+// import { useDispatch } from "react-redux";
+// import DialogOpenComponent from "./DialogOpenComponent";
+// import { deleteInventory } from "../../features/inventory/inventorySlice";
+// import { accessToken } from "../../features/token/tokenSlice";
 
-const InventoriesTable = ({ items, users, TABLE_HEAD, handleSort }) => {
+const InventoriesTable = ({ items, TABLE_HEAD, handleSort }) => {
   const {
     tableRef,
     handleMouseDown,
@@ -20,47 +19,31 @@ const InventoriesTable = ({ items, users, TABLE_HEAD, handleSort }) => {
     handleMouseMove,
   } = useDragScroll();
 
-  const [openDialog, setOpenDialog] = useState(false);
-  const [selectedItemId, setSelectedItemId] = useState(null);
-  const [authorDetails, setAuthorDetails] = useState({});
+  const navigate = useNavigate();
 
-  const findAuthorDetails = (authorId) => {
-    const author = users?.find((user) => user._id === authorId);
-    return { ...author?.personal_info };
-  };
+  // const [openDialog, setOpenDialog] = useState(false);
+  // const [selectedItemId, setSelectedItemId] = useState(null);
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  const handleOpenDialog = (id = null) => {
-    setSelectedItemId(id);
-    setOpenDialog(!openDialog);
-  };
+  // const handleOpenDialog = (id = null) => {
+  //   setSelectedItemId(id);
+  //   setOpenDialog(!openDialog);
+  // };
 
-  const handleDeleteInventory = (e) => {
-    e.preventDefault();
+  // delete inventory app
+  // const handleDeleteInventory = (e) => {
+  //   e.preventDefault();
 
-    if (selectedItemId) {
-      dispatch(deleteInventory(selectedItemId)).then((res) => {
-        dispatch(accessToken(res));
-      });
+  //   if (selectedItemId) {
+  //     dispatch(deleteInventory(selectedItemId)).then((res) => {
+  //       dispatch(accessToken(res));
+  //     });
 
-      setOpenDialog(false);
-      setSelectedItemId(null);
-    }
-  };
-
-  useEffect(() => {
-    if (items?.length > 0 && users?.length > 0) {
-      const authorData = {};
-      items.forEach((item) => {
-        const author = findAuthorDetails(item.added_by);
-        if (author) {
-          authorData[item._id] = author.name;
-        }
-      });
-      setAuthorDetails(authorData);
-    }
-  }, [items, users]);
+  //     setOpenDialog(false);
+  //     setSelectedItemId(null);
+  //   }
+  // };
 
   return (
     <div
@@ -114,14 +97,12 @@ const InventoriesTable = ({ items, users, TABLE_HEAD, handleSort }) => {
                 asset_id,
                 asset_name,
                 asset_img,
-                serial_number,
                 location,
                 room_number,
                 cabinet,
                 categories,
                 total_items,
                 item_status,
-                added_by,
                 updatedAt,
                 publishedAt,
                 is_consumable,
@@ -140,30 +121,24 @@ const InventoriesTable = ({ items, users, TABLE_HEAD, handleSort }) => {
                 Damaged: "purple",
               };
 
-              const authorName = authorDetails[_id] || "Unknown";
+              const handleRowClick = () => {
+                navigate(`update_inventory/${_id}`);
+              };
 
-              const itemUrl = `${window.location.origin}/inventory/${asset_id}`;
+              // const itemUrl = `${window.location.origin}/inventory/${asset_id}`;
 
               return (
-                <tr key={index} className="hover:bg-indigo-50">
+                <tr
+                  key={index}
+                  className="hover:bg-indigo-50 hover:cursor-pointer"
+                  onClick={handleRowClick}
+                >
                   <td className={classes}>
                     <div className="flex flex-col">
                       <p className="font-normal text-sm text-blue-gray-700">
                         {index + 1}
                       </p>
                     </div>
-                  </td>
-
-                  <td className={classes}>
-                    <QRCode
-                      value={itemUrl}
-                      size={64}
-                      logoWidth={16}
-                      eyeRadius={10}
-                      eyeColor="#161D6F"
-                      fgColor="#161D6F"
-                      qrStyle="dots"
-                    />
                   </td>
 
                   <td className={classes}>
@@ -195,24 +170,14 @@ const InventoriesTable = ({ items, users, TABLE_HEAD, handleSort }) => {
                     </p>
                   </td>
                   <td className={classes}>
-                    <p className="font-normal text-sm text-blue-gray-700">
-                      {!serial_number.length ? "-" : serial_number}
-                    </p>
-                  </td>
-                  <td className={classes}>
                     <p className="font-semibold capitalize text-orange-800 text-sm">
                       {categories.join(", ")}
                     </p>
                   </td>
 
                   <td className={classes}>
-                    <p className="font-normal text-sm text-blue-gray-700">
+                    <p className="font-normal text-sm text-center text-blue-gray-700">
                       {total_items}
-                    </p>
-                  </td>
-                  <td className={classes}>
-                    <p className="font-normal text-sm capitalize text-blue-gray-700">
-                      {authorName}
                     </p>
                   </td>
                   <td className={classes}>
@@ -246,7 +211,7 @@ const InventoriesTable = ({ items, users, TABLE_HEAD, handleSort }) => {
                     </div>
                   </td>
 
-                  <td className={`${classes} sticky right-0 z-10 bg-gray-50`}>
+                  {/* <td className={`${classes} sticky right-0 z-10 bg-gray-50`}>
                     <Link to={`update_inventory/${_id}`}>
                       <Tooltip content="Edit Inventory">
                         <IconButton variant="text" className="text-indigo-600">
@@ -264,7 +229,7 @@ const InventoriesTable = ({ items, users, TABLE_HEAD, handleSort }) => {
                         <FaRegTrashAlt className="h-5 w-5" />
                       </IconButton>
                     </Tooltip>
-                  </td>
+                  </td> */}
                 </tr>
               );
             }
@@ -272,14 +237,14 @@ const InventoriesTable = ({ items, users, TABLE_HEAD, handleSort }) => {
         </tbody>
       </table>
 
-      {/* save user open dialog */}
-      <DialogOpenComponent
+      {/* delte inventory open dialog */}
+      {/* <DialogOpenComponent
         openDialog={openDialog}
         handleFunc={handleDeleteInventory}
         handleOpenDialog={handleOpenDialog}
         message="Are you sure want to delete this item?"
         btnText="Delete"
-      />
+      /> */}
     </div>
   );
 };

@@ -25,6 +25,10 @@ import SelecteRole from "./pages/AuthPages/SelecteRole";
 import AddInventory from "./pages/DashboardPages/AddInventory";
 import UpdateInventory from "./pages/DashboardPages/UpdateInventory";
 import MyCart from "./pages/HomePages/MyCart";
+import LoanTransactionByUser from "./pages/DashboardPages/LoanTransactionByUser";
+import UserLoanTransaction from "./pages/DashboardPages/UserLoanTransaction";
+import LoanTransactionDetail from "./pages/DashboardPages/LoanTransactionDetail";
+import UserNotifications from "./pages/DashboardPages/UserNotifications";
 
 function App() {
   const [sortUser, setSortUser] = useState({
@@ -53,7 +57,7 @@ function App() {
   }, [isLoggedOut, dispatch, user]);
 
   useEffect(() => {
-    if (user?.selectedRole === 1) {
+    if (user?.selectedRole === 1 || user?.selectedRole === 2) {
       dispatch(getAllUsersInfor({ page, sort: sortUser, program, search }));
     }
 
@@ -93,7 +97,7 @@ function App() {
           <Route
             path="inventories"
             element={
-              <ProtectedUserRoutes allowedRoles={[1, 2]}>
+              <ProtectedUserRoutes allowedRoles={[2]}>
                 <Inventories
                   sort={sortInventory}
                   setSort={setSortInventory}
@@ -111,7 +115,7 @@ function App() {
           <Route
             path="add_inventory"
             element={
-              <ProtectedUserRoutes allowedRoles={[1, 2]}>
+              <ProtectedUserRoutes allowedRoles={[2]}>
                 <AddInventory />
               </ProtectedUserRoutes>
             }
@@ -120,7 +124,7 @@ function App() {
           <Route
             path="inventories/update_inventory/:id"
             element={
-              <ProtectedUserRoutes allowedRoles={[1, 2]}>
+              <ProtectedUserRoutes allowedRoles={[2]}>
                 <UpdateInventory />
               </ProtectedUserRoutes>
             }
@@ -129,7 +133,7 @@ function App() {
           <Route
             path="borrowed-item"
             element={
-              <ProtectedUserRoutes allowedRoles={[1, 2]}>
+              <ProtectedUserRoutes allowedRoles={[2]}>
                 <BorrowedItems />
               </ProtectedUserRoutes>
             }
@@ -158,6 +162,42 @@ function App() {
             element={
               <ProtectedUserRoutes allowedRoles={[1]}>
                 <UpdateUserRole />
+              </ProtectedUserRoutes>
+            }
+          />
+
+          <Route
+            path="user-loan"
+            element={
+              <ProtectedUserRoutes allowedRoles={[0, 1, 2]}>
+                <UserLoanTransaction />
+              </ProtectedUserRoutes>
+            }
+          />
+
+          <Route
+            path="user-loan/detail/:id"
+            element={
+              <ProtectedUserRoutes allowedRoles={[0, 1, 2]}>
+                <LoanTransactionByUser />
+              </ProtectedUserRoutes>
+            }
+          />
+
+          <Route
+            path="/user-loan/detail-loan/:id"
+            element={
+              <ProtectedUserRoutes allowedRoles={[2]}>
+                <LoanTransactionDetail />
+              </ProtectedUserRoutes>
+            }
+          />
+
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedUserRoutes allowedRoles={[0, 1, 2]}>
+                <UserNotifications />
               </ProtectedUserRoutes>
             }
           />

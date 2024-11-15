@@ -10,7 +10,11 @@ import {
 } from "@material-tailwind/react";
 import { IoClose, IoSettingsOutline } from "react-icons/io5";
 import { FaPowerOff } from "react-icons/fa";
-import { MdOutlineInventory2 } from "react-icons/md";
+import {
+  MdOutlineInventory2,
+  MdAddShoppingCart,
+  MdOutlineNotificationsActive,
+} from "react-icons/md";
 import { BsCartCheck } from "react-icons/bs";
 import { LuUserCog } from "react-icons/lu";
 import { CgProfile } from "react-icons/cg";
@@ -72,9 +76,8 @@ const SidebarComponent = ({ isDrawerOpen = false, closeDrawer }) => {
           <hr className="my-2 border-blue-gray-50" />
 
           <List>
-            {user?.selectedRole !== 0 && (
+            {user?.selectedRole === 2 && (
               <>
-                {/* Menu for role 1 and 2 */}
                 <NavLink
                   to="/inventories"
                   onClick={closeDrawer}
@@ -93,24 +96,46 @@ const SidebarComponent = ({ isDrawerOpen = false, closeDrawer }) => {
                 >
                   <ListItem className="flex gap-2 items-center text-indigo-800">
                     <BsCartCheck className="text-md" />
-                    Borrowed Item
+                    Borrowed Items List
                   </ListItem>
                 </NavLink>
-
-                {user?.selectedRole !== 2 && (
-                  <NavLink
-                    to="/users"
-                    onClick={closeDrawer}
-                    className={getNavLinkClass}
-                  >
-                    <ListItem className="flex gap-2 items-center text-indigo-800">
-                      <LuUserCog className="text-md" />
-                      Users List
-                    </ListItem>
-                  </NavLink>
-                )}
               </>
             )}
+
+            {user?.selectedRole === 1 && (
+              <NavLink
+                to="/users"
+                onClick={closeDrawer}
+                className={getNavLinkClass}
+              >
+                <ListItem className="flex gap-2 items-center text-indigo-800">
+                  <LuUserCog className="text-md" />
+                  Users List
+                </ListItem>
+              </NavLink>
+            )}
+
+            <NavLink
+              to="/user-loan"
+              onClick={closeDrawer}
+              className={getNavLinkClass}
+            >
+              <ListItem className="flex gap-2 items-center text-indigo-800">
+                <MdAddShoppingCart className="text-md" />
+                My Loan Transactions
+              </ListItem>
+            </NavLink>
+
+            <NavLink
+              to="/notifications"
+              onClick={closeDrawer}
+              className={getNavLinkClass}
+            >
+              <ListItem className="flex gap-2 items-center text-indigo-800">
+                <MdOutlineNotificationsActive className="text-md" />
+                Notifications
+              </ListItem>
+            </NavLink>
 
             <NavLink
               to="/profile"
@@ -129,7 +154,7 @@ const SidebarComponent = ({ isDrawerOpen = false, closeDrawer }) => {
               className={getNavLinkClass}
             >
               <ListItem className="flex gap-2 items-center text-indigo-800">
-                <IoSettingsOutline className=" text-md" />
+                <IoSettingsOutline className="text-md" />
                 Settings
               </ListItem>
             </NavLink>

@@ -14,6 +14,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../common/Loader";
 import {
+  getUserById,
   updateUserRole,
   updateUserStatus,
 } from "../../features/user/userSlice";
@@ -36,33 +37,36 @@ const UpdateUserRole = () => {
   };
 
   const { id } = useParams();
-  const { allUsersInfor, isLoading, isError, isSuccess, message } = useSelector(
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { userById, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.user
   );
 
-  const { users } = allUsersInfor;
-  const foundUser = users?.find((user) => user._id === id);
-  // console.log(foundUser);
+  // console.log(userById);
 
   useEffect(() => {
-    if (foundUser) {
+    if (userById) {
       setSelectedUser({
-        role: foundUser?.personal_info.role || [],
-        status: foundUser?.personal_info.status,
+        role: userById?.personal_info?.role || [],
+        status: userById?.personal_info?.status,
       });
     }
-  }, [foundUser]);
+  }, [userById]);
 
-  const [userDetail, setUserDetail] = useState(null);
+  useEffect(() => {
+    dispatch(getUserById(id)).then((res) => {
+      dispatch(accessToken(res));
+    });
+  }, [dispatch]);
+
   const [selectedUser, setSelectedUser] = useState(initialState);
   const [openDialogSave, setOpenDialogSave] = useState(false);
   const [isRoleChanged, setIsRoleChanged] = useState(false);
   const [isStatusChanged, setIsStatusChanged] = useState(false);
   const [isSaveDisabled, setIsSaveDisabled] = useState(true);
   const { role, status } = selectedUser;
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const handleRoleChange = (e, index) => {
     const { value } = e.target;
@@ -145,25 +149,20 @@ const UpdateUserRole = () => {
   useEffect(() => {
     if (isError) {
       toast.error(message);
-      navigate(`/users/update_user/${foundUser._id}`);
+      navigate(`/users/update_user/${id}`);
     }
 
     if (isSuccess) {
       toast.success(message);
-      navigate(`/users/update_user/${foundUser._id}`);
-    }
-
-    if (users) {
-      setUserDetail(foundUser);
-      // setSelectedRole(foundUser?.personal_info.role);
+      navigate(`/users/update_user/${id}`);
     }
 
     const isChanged =
-      selectedUser.role !== foundUser?.personal_info.role ||
-      selectedUser.status !== foundUser?.personal_info.status;
+      selectedUser.role !== userById?.personal_info?.role ||
+      selectedUser.status !== userById?.personal_info?.status;
 
     setIsSaveDisabled(!isChanged);
-  }, [users, selectedUser, foundUser, isError, message, isSuccess, navigate]);
+  }, [selectedUser, userById, isError, message, isSuccess, navigate]);
 
   return (
     <Layout>
@@ -189,7 +188,7 @@ const UpdateUserRole = () => {
               <Card className="flex basis-1/2 gap-2 flex-col w-full items-center justify-start shadow-lg bg-indigo-50/40">
                 <CardHeader className="shrink-0 mt-8">
                   <Avatar
-                    src={userDetail?.personal_info.avatar}
+                    src={userById?.personal_info?.avatar}
                     alt="avatar"
                     size="xxl"
                     variant="rounded"
@@ -200,11 +199,11 @@ const UpdateUserRole = () => {
 
                 <CardBody className="text-center flex flex-col gap-2 p-2">
                   <h1 className="text-indigo-800 text-sm">
-                    {userDetail?.personal_info.name}
+                    {userById?.personal_info?.name}
                   </h1>
 
                   <p className="text-indigo-600 text-xs">
-                    {userDetail?.personal_info.email}
+                    {userById?.personal_info?.email}
                   </p>
 
                   {role?.map((r, index) => (
@@ -220,8 +219,8 @@ const UpdateUserRole = () => {
 
                 <div>
                   <SocialComponent
-                    social_links={userDetail?.social_links}
-                    joinedAt={userDetail?.joinedAt}
+                    social_links={userById?.social_links}
+                    joinedAt={userById?.joinedAt}
                   />
                 </div>
               </Card>
@@ -292,22 +291,22 @@ const UpdateUserRole = () => {
                 <div className="flex gap-1 flex-col flex-wrap">
                   <h1 className="text-sm text-indigo-800">Binusian ID:</h1>
                   <p className="text-sm text-indigo-500">
-                    {userDetail?.personal_info.binusian_id}
+                    {userById?.personal_info?.binusian_id}
                   </p>
                 </div>
 
                 <div className="flex gap-1 flex-col flex-wrap">
                   <h1 className="text-sm text-indigo-800">Program:</h1>
                   <p className="text-sm text-indigo-500">
-                    {userDetail?.personal_info.program}
+                    {userById?.personal_info?.program}
                   </p>
                 </div>
 
                 <div className="flex gap-1 flex-col flex-wrap">
                   <h1 className="text-sm text-indigo-800">Phone Number:</h1>
-                  {userDetail?.personal_info.phone.length ? (
+                  {userById?.personal_info?.phone.length ? (
                     <p className="text-sm text-indigo-500">
-                      {userDetail?.personal_info.phone}
+                      {userById?.personal_info?.phone}
                     </p>
                   ) : (
                     <p className="text-sm text-indigo-500">-</p>
@@ -316,9 +315,9 @@ const UpdateUserRole = () => {
 
                 <div className="flex gap-1 flex-col flex-wrap">
                   <h1 className="text-sm text-indigo-800">Address:</h1>
-                  {userDetail?.personal_info.address.length ? (
+                  {userById?.personal_info?.address.length ? (
                     <p className="text-sm text-indigo-500">
-                      {userDetail?.personal_info.address}
+                      {userById?.personal_info?.address}
                     </p>
                   ) : (
                     <p className="text-sm text-indigo-500">-</p>

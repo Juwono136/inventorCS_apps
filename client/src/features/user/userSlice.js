@@ -5,6 +5,7 @@ import tokenService from '../token/tokenService'
 const initialState = {
     userInfor: [],
     allUsersInfor: [],
+    userById: [],
     isLoading: false,
     isError: false,
     isSuccess: false,
@@ -17,6 +18,19 @@ export const getUserInfor = createAsyncThunk('user/infor', async (token, thunkAP
         const tokenData = await tokenService.accessToken(token)
 
         return await userService.getUserInfor(tokenData)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
+// get user infor by id
+export const getUserById = createAsyncThunk('user/fetchById', async (id, thunkAPI) => {
+    try {
+        const token = await tokenService.accessToken(id)
+
+        return await userService.getUserById(token, id)
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
 
@@ -101,6 +115,7 @@ export const userSlice = createSlice({
         userReset: (state) => {
             state.userInfor = []
             state.allUsersInfor = []
+            state.userById = []
             state.isLoading = false
             state.isError = false
             state.message = ""
@@ -123,7 +138,22 @@ export const userSlice = createSlice({
                 state.isError = true
                 state.message = action.payload
             })
-            // get all users infor
+            // get user infor by ID builder
+            .addCase(getUserById.pending, (state) => {
+                state.isLoading = true
+                state.isError = false
+                state.isSuccess = false
+            })
+            .addCase(getUserById.fulfilled, (state, action) => {
+                state.isLoading = false
+                state.userById = action.payload
+            })
+            .addCase(getUserById.rejected, (state, action) => {
+                state.isLoading = false
+                state.isError = true
+                state.message = action.payload
+            })
+            // get all users infor builder
             .addCase(getAllUsersInfor.pending, (state) => {
                 state.isLoading = true
                 state.isError = false

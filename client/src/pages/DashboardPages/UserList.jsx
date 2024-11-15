@@ -6,11 +6,11 @@ import SearchElement from "../../common/SearchElement";
 import { useSearchParams } from "react-router-dom";
 import Loader from "../../common/Loader";
 import ProgramCategories from "../../components/DashboardComponents/ProgramCategories";
-// import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
 import { getAllUsersInfor } from "../../features/user/userSlice";
-// import { accessToken } from "../../features/token/tokenSlice";
 import toast from "react-hot-toast";
 import UserTable from "../../components/DashboardComponents/UserTable";
+// import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
+// import { accessToken } from "../../features/token/tokenSlice";
 
 const UserList = ({
   sort,

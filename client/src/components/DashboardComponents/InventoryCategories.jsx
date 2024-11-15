@@ -47,7 +47,7 @@ const InventoryCategories = ({ categories, setFilterCategories, setPage }) => {
       <Accordion
         open={open === 1}
         icon={<Icon id={1} open={open} />}
-        className="w-full"
+        className="w-max md:w-full"
       >
         <AccordionHeader
           onClick={() => handleOpen(1)}

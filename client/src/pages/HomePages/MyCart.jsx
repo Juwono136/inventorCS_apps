@@ -9,7 +9,7 @@ import {
 } from "@material-tailwind/react";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import {
   createLoanTransaction,
   removeFromCart,
@@ -24,7 +24,7 @@ const MyCart = () => {
   const initialState = {
     purpose_of_loan: "",
     borrow_date: "",
-    return_date: "",
+    expected_return_date: "",
   };
 
   const [data, setData] = useState(initialState);
@@ -36,9 +36,10 @@ const MyCart = () => {
     (state) => state.loan
   );
 
-  const { purpose_of_loan, borrow_date, return_date } = data;
+  const { purpose_of_loan, borrow_date, expected_return_date } = data;
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -90,8 +91,13 @@ const MyCart = () => {
       toast.error(message);
     }
 
+    if (cartItems.length === 0) {
+      navigate("/");
+    }
+
     if (isSuccess) {
       toast.success(loanData.message);
+      navigate("/user-loan");
     }
   }, [user, isLoggedOut, isError, isSuccess, message, loanData]);
 
@@ -115,13 +121,13 @@ const MyCart = () => {
       </div>
 
       <DialogBody divider>
-        <div className="grid gap-4 md:m-4">
+        <div className="grid gap-4 md:m-2">
           <div className="space-y-2 text-sm">
             <div className="grid grid-cols-3 gap-2">
-              <span className="font-medium text-blue-800 w-full">
+              <span className="font-medium text-xs text-blue-800 w-full">
                 Borrower Name
               </span>
-              <span className="col-span-2 font-semibold text-gray-900">
+              <span className="col-span-2 font-semibold text-gray-900 text-xs">
                 : {userInfor.personal_info?.name}
               </span>
             </div>
@@ -129,10 +135,10 @@ const MyCart = () => {
 
           <div className="space-y-2 text-sm">
             <div className="grid grid-cols-3 gap-2">
-              <span className="font-medium text-blue-800 w-full">
+              <span className="font-medium text-xs text-blue-800 w-full">
                 Personal ID
               </span>
-              <span className="col-span-2 font-semibold text-gray-900">
+              <span className="col-span-2 font-semibold text-gray-900 text-xs">
                 : {userInfor.personal_info?.binusian_id}
               </span>
             </div>
@@ -140,8 +146,10 @@ const MyCart = () => {
 
           <div className="space-y-2 text-sm">
             <div className="grid grid-cols-3 gap-2">
-              <span className="font-medium text-blue-800 w-full">Email</span>
-              <span className="col-span-2 font-semibold text-gray-900">
+              <span className="font-medium text-xs text-blue-800 w-full">
+                Email
+              </span>
+              <span className="col-span-2 font-semibold text-gray-900 text-xs">
                 : {userInfor.personal_info?.email}
               </span>
             </div>
@@ -149,10 +157,10 @@ const MyCart = () => {
 
           <div className="space-y-2 text-sm">
             <div className="grid grid-cols-3 gap-2">
-              <span className="font-medium text-blue-800 w-full">
+              <span className="font-medium text-blue-800 w-full text-xs">
                 Home Address
               </span>
-              <span className="col-span-2 font-semibold text-gray-900">
+              <span className="col-span-2 font-semibold text-gray-900 text-xs ">
                 : {userInfor.personal_info?.address || "-"}
               </span>
             </div>
@@ -160,8 +168,10 @@ const MyCart = () => {
 
           <div className="space-y-2 text-sm">
             <div className="grid grid-cols-3 gap-2">
-              <span className="font-medium text-blue-800 w-full">Program</span>
-              <span className="col-span-2 font-semibold text-gray-900">
+              <span className="font-medium text-xs text-blue-800 w-full">
+                Program
+              </span>
+              <span className="col-span-2 font-semibold text-gray-900 text-xs">
                 : {userInfor.personal_info?.program || "-"}
               </span>
             </div>
@@ -169,8 +179,10 @@ const MyCart = () => {
 
           <div className="space-y-2 text-sm">
             <div className="grid grid-cols-3 gap-2">
-              <span className="font-medium text-blue-800 w-full">Phone</span>
-              <span className="col-span-2 font-semibold text-gray-900">
+              <span className="font-medium text-xs text-blue-800 w-full">
+                Phone
+              </span>
+              <span className="col-span-2 font-semibold text-gray-900 text-xs">
                 : {userInfor.personal_info?.phone || "-"}
               </span>
             </div>
@@ -182,7 +194,7 @@ const MyCart = () => {
             <div className="flex flex-col w-full">
               <label
                 htmlFor="borrow_date"
-                className="text-gray-800 font-semibold lg:text-sm text-xs"
+                className="text-gray-800  font-semibold lg:text-sm text-xs"
               >
                 Borrow Date:
               </label>
@@ -201,13 +213,13 @@ const MyCart = () => {
                 htmlFor="return_date"
                 className="text-gray-800 font-semibold lg:text-sm text-xs"
               >
-                Return Date:
+                Expected Return Date:
               </label>
               <input
                 type="date"
-                id="return_date"
-                name="return_date"
-                value={return_date}
+                id="expected_return_date"
+                name="expected_return_date"
+                value={expected_return_date}
                 onChange={handleChange}
                 className="block w-full rounded-md text-xs border-0 p-3 bg-indigo-300/30 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-700 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
@@ -235,11 +247,11 @@ const MyCart = () => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 my-4">
+        <div className="flex flex-col gap-2 my-4 overflow-y-auto">
           <h1 className="text-sm font-semibold text-blue-900">
             Borrowed items:
           </h1>
-          <table className="min-w-max md:w-full table-auto text-left">
+          <table className="min-w-max md:w-full table-auto text-left ">
             <thead className="sticky top-0 bg-blue-gray-50">
               <tr>
                 {TABLE_HEAD.map((head, index) => (

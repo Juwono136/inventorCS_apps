@@ -7,10 +7,7 @@ const BackButton = ({ link }) => {
   return (
     <>
       <a href={link}>
-        <Button
-          className="flex items-center my-3 capitalize bg-indigo-500"
-          size="sm"
-        >
+        <Button className="flex items-center mb-4 capitalize bg-indigo-500 text-xs py-2 px-3">
           <FaArrowLeft className="mr-1" />
           Back
         </Button>

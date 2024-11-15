@@ -15,6 +15,7 @@ const MoreInfoBorrowedItem = ({ open, handleOpenDialog, selectedItem }) => {
 
   const statusLoanColors = {
     Pending: "blue-gray",
+    "Ready to Pickup": "lime",
     Borrowed: "blue",
     "Partially Consumed": "purple",
     Consumed: "orange",

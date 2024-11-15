@@ -12,6 +12,15 @@ const getUserInfor = async (token) => {
     return response.data
 }
 
+// get user infor by ID
+const getUserById = async (token, userId) => {
+    const response = await axios.get(API_URL + `/users/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    })
+
+    return response.data
+}
+
 // get all user infor (admin)
 const getAllUsersInfor = async (token, params) => {
     const response = await axios.get(API_URL + "/all_infor", {
@@ -62,6 +71,7 @@ const updateUserStatus = async (data, token) => {
 const userService = {
     getUserInfor,
     getAllUsersInfor,
+    getUserById,
     updateUser,
     updateUserRole,
     updateUserStatus,

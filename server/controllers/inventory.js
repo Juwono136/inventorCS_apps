@@ -49,18 +49,33 @@ export const getAllInventories = async (req, res) => {
         const totalItems = await Inventories.countDocuments(searchQuery);
 
         res.json({
-            items: inventories,
-            categories: categoryOptions,
+            totalItems,
+            totalPages: Math.ceil(totalItems / limit),
             page: page + 1,
             limit: limit,
-            totalPages: Math.ceil(totalItems / limit),
-            totalItems,
+            categories: categoryOptions,
+            items: inventories,
         });
 
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
 };
+
+// get inventory by Id
+export const getInventoryById = async (req, res) => {
+    try {
+        const inventory = await Inventories.findById(req.params.id).select("-added_by")
+
+        if (!inventory) {
+            return res.status(404).json({ message: "Inventory not found" })
+        }
+
+        res.json(inventory)
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
 
 // create inventory
 export const createInventory = async (req, res) => {
@@ -120,7 +135,7 @@ export const createInventory = async (req, res) => {
             total_items,
             is_consumable,
             item_status,
-            added_by: req.user.id
+            added_by: req.user._id
         });
 
         res.json({ message: "Item created successfully", inventoryData });
@@ -194,7 +209,7 @@ export const updateInventory = async (req, res) => {
             item_status: item_status || existingInventory.item_status,
             draft: draft || existingInventory.draft,
             is_consumable: is_consumable || existingInventory.is_consumable,
-            author: req.user.id
+            author: req.user._id
         };
 
         const result = await Inventories.findByIdAndUpdate({ _id: inventoryId }, updatedInventory, { new: true });

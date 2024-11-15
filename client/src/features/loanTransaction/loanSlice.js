@@ -24,12 +24,90 @@ export const getAllLoanTransactions = createAsyncThunk('loan/all', async (token,
     }
 })
 
+// get loan transaction by id
+export const getLoanTransactionById = createAsyncThunk('loan/fetchById', async (id, thunkAPI) => {
+    try {
+        const token = await tokenService.accessToken(id)
+
+        return await loanService.getLoanTransactionById(token, id)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
+// get user's loan transaction
+export const getLoanTransactionsByUser = createAsyncThunk('loan/by_user', async (token, thunkAPI) => {
+    try {
+        const tokenData = await tokenService.accessToken(token)
+
+        return await loanService.getLoanTransactionsByUser(tokenData)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
 // create loan transaction
 export const createLoanTransaction = createAsyncThunk('loan/create', async (data, thunkAPI) => {
     try {
         const token = await tokenService.accessToken(data)
 
         return await loanService.createLoanTransaction(data, token)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
+// update loan status to ready to pickup
+export const updateStatusToReadyToPickup = createAsyncThunk('loan/ready_to_loan', async (data, thunkAPI) => {
+    try {
+        const token = await tokenService.accessToken(data)
+
+        return await loanService.updateStatusToReadyToPickup(data, token)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
+// update loan status to borrowed
+export const updateStatusToBorrowed = createAsyncThunk('loan/borrowed-status', async (data, thunkAPI) => {
+    try {
+        const token = await tokenService.accessToken(data)
+
+        return await loanService.updateStatusToBorrowed(data, token)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
+// confirm borrowed loan item by borrower
+export const confirmReceiveByBorrower = createAsyncThunk('/loan/confirm-received', async (data, thunkAPI) => {
+    try {
+        const token = await tokenService.accessToken(data)
+
+        return await loanService.confirmReceiveByBorrower(data, token)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
+// update loan status to returned
+export const updateStatusToReturned = createAsyncThunk('loan/returned-status', async (data, thunkAPI) => {
+    try {
+        const token = await tokenService.accessToken(data)
+
+        return await loanService.updateStatusToReturned(data, token)
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
 
@@ -72,16 +150,20 @@ export const loanSlice = createSlice({
         resetCart: (state) => {
             state.cartItems = [];
         },
+        loanReset: (state) => {
+            state.isLoading = false
+            state.isError = false
+            state.message = ""
+        }
     },
     extraReducers: (builder) => {
         builder
-            // get all loan transactions
+            // get all loan transactions builder
             .addCase(getAllLoanTransactions.pending, (state) => {
                 state.isLoading = true;
             })
             .addCase(getAllLoanTransactions.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.isSuccess = true;
                 state.loanData = action.payload;
             })
             .addCase(getAllLoanTransactions.rejected, (state, action) => {
@@ -89,6 +171,37 @@ export const loanSlice = createSlice({
                 state.isError = true;
                 state.message = action.payload;
             })
+
+            // get loan transcation by id builder
+            .addCase(getLoanTransactionById.pending, (state) => {
+                state.isLoading = true
+                state.isError = false
+                state.isSuccess = false
+            })
+            .addCase(getLoanTransactionById.fulfilled, (state, action) => {
+                state.isLoading = false
+                state.loanData = action.payload
+            })
+            .addCase(getLoanTransactionById.rejected, (state, action) => {
+                state.isLoading = false
+                state.isError = true
+                state.message = action.payload
+            })
+
+            // get user's loan transactions builder
+            .addCase(getLoanTransactionsByUser.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(getLoanTransactionsByUser.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.loanData = action.payload;
+            })
+            .addCase(getLoanTransactionsByUser.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+
             // create loan transaction builder
             .addCase(createLoanTransaction.pending, (state) => {
                 state.isLoading = true;
@@ -103,9 +216,69 @@ export const loanSlice = createSlice({
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;
-            });
+            })
+
+            // update loan status to ready to pickup
+            .addCase(updateStatusToReadyToPickup.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(updateStatusToReadyToPickup.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.loanData = action.payload;
+            })
+            .addCase(updateStatusToReadyToPickup.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+
+            // update loan status to borrowed builder
+            .addCase(updateStatusToBorrowed.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(updateStatusToBorrowed.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.loanData = action.payload;
+            })
+            .addCase(updateStatusToBorrowed.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+
+            // confirm borrowed loan item by borrower
+            .addCase(confirmReceiveByBorrower.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(confirmReceiveByBorrower.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.loanData = action.payload;
+            })
+            .addCase(confirmReceiveByBorrower.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+
+            // update loan status to returned builder
+            .addCase(updateStatusToReturned.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(updateStatusToReturned.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.loanData = action.payload;
+            })
+            .addCase(updateStatusToReturned.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
     },
 })
 
-export const { addToCart, removeFromCart, updateCartItemQuantity, resetCart } = loanSlice.actions;
+export const { addToCart, removeFromCart, updateCartItemQuantity, resetCart, loanReset } = loanSlice.actions;
 export default loanSlice.reducer;

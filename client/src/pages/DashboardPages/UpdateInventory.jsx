@@ -9,7 +9,10 @@ import { convertFileToBase64 } from "../../utils/convertToBase64";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
-import { updateInventory } from "../../features/inventory/inventorySlice";
+import {
+  getInventoryById,
+  updateInventory,
+} from "../../features/inventory/inventorySlice";
 import { accessToken } from "../../features/token/tokenSlice";
 
 const UpdateInventory = () => {
@@ -55,39 +58,42 @@ const UpdateInventory = () => {
   };
 
   const { id } = useParams();
-  const { inventories, isLoading, isError, isSuccess, message } = useSelector(
+  const { inventoryById, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.inventory
   );
 
-  const { items } = inventories;
-  const foundItem = items?.find((item) => item._id === id);
-  // console.log(foundItem);
-
   useEffect(() => {
-    if (foundItem) {
+    if (inventoryById) {
       setSelectedItem({
-        asset_id: foundItem?.asset_id,
-        asset_name: foundItem?.asset_name,
-        asset_img: foundItem?.asset_img,
-        serial_number: foundItem?.serial_number,
-        categories: foundItem?.categories[0],
-        item_status: foundItem?.item_status,
-        total_items: foundItem?.total_items,
-        location: foundItem?.location,
-        room_number: foundItem?.room_number,
-        cabinet: foundItem?.cabinet,
-        desc: foundItem?.desc,
-        is_consumable: foundItem?.is_consumable,
+        asset_id: inventoryById?.asset_id || "",
+        asset_name: inventoryById?.asset_name || "",
+        asset_img: inventoryById?.asset_img || "",
+        serial_number: inventoryById?.serial_number || "",
+        categories:
+          Array.isArray(inventoryById?.categories) &&
+          inventoryById.categories.length > 0
+            ? inventoryById.categories[0]
+            : "",
+        item_status: inventoryById?.item_status || "Available",
+        total_items: inventoryById?.total_items || 0,
+        location: inventoryById?.location || "",
+        room_number: inventoryById?.room_number || "",
+        cabinet: inventoryById?.cabinet || "",
+        desc: inventoryById?.desc || "",
+        is_consumable: inventoryById?.is_consumable || false,
       });
-    }
-  }, [foundItem]);
 
-  const [itemDetail, setItemDetail] = useState(null);
+      // Set image state separately if it exists
+      if (inventoryById?.asset_img) {
+        setImage(inventoryById.asset_img);
+      }
+    }
+  }, [inventoryById]);
+
   const [selectedItem, setSelectedItem] = useState(initialState);
-  const [image, setImage] = useState(selectedItem.asset_img);
+  const [image, setImage] = useState("");
   const [openDialogSave, setOpenDialogSave] = useState(false);
   const {
-    asset_id,
     asset_name,
     serial_number,
     categories,
@@ -128,7 +134,8 @@ const UpdateInventory = () => {
         const base64Image = await convertFileToBase64(file);
         setImage(base64Image);
       } catch (error) {
-        console.log("Error converting image:", error);
+        console.error("Error converting image:", error);
+        toast.error("Error uploading image. Please try again.");
       }
     }
   };
@@ -140,6 +147,7 @@ const UpdateInventory = () => {
       _id: id,
       ...selectedItem,
       asset_img: image || selectedItem.asset_img,
+      categories: [categories].filter(Boolean),
     };
 
     dispatch(updateInventory(updateData)).then((res) => {
@@ -158,10 +166,10 @@ const UpdateInventory = () => {
       toast.success(message);
     }
 
-    if (items) {
-      setItemDetail(foundItem);
+    if (id) {
+      dispatch(getInventoryById(id));
     }
-  }, [items, foundItem, isError, message, isSuccess]);
+  }, [isError, isSuccess, message, dispatch, id]);
 
   return (
     <Layout>
@@ -188,7 +196,7 @@ const UpdateInventory = () => {
                 <div className="flex flex-col gap-4 px-2 py-4 justify-center items-center w-full">
                   <img
                     className="h-96 md:h-full w-full rounded-lg object-cover object-center shadow-xl shadow-blue-gray-900/50"
-                    src={image || itemDetail?.asset_img}
+                    src={image || inventoryById?.asset_img}
                     alt="item image"
                   />
                   <label className="block py-2 w-[200px] relative cursor-pointer">
@@ -209,20 +217,20 @@ const UpdateInventory = () => {
                   <div className="flex gap-4 w-full flex-col-reverse lg:flex-row lg:justify-between lg:items-start justify-center items-center rounded-xl border border-indigo-100 bg-indigo-100/30 p-4 shadow-lg shadow-black/5 saturate-200 backdrop-blur-sm">
                     <div className="flex flex-col items-center justify-center lg:justify-start lg:items-start">
                       <h2 className="text-sm md:text-lg font-semibold bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-500 bg-clip-text text-transparent animate-gradient">
-                        {itemDetail?.asset_name}
+                        {inventoryById?.asset_name}
                       </h2>
                       <div className="flex flex-col py-2 gap-2 items-center lg:items-start">
                         {/* <h3 className="text-xs text-gray-700">CRE/02/GLASS</h3> */}
 
                         <Typography className="text-xs text-gray-700">
-                          Asset ID: {itemDetail?.asset_id}
+                          Asset ID: {inventoryById?.asset_id}
                         </Typography>
 
                         <Typography className="text-xs text-gray-700">
                           Serial Number:{" "}
-                          {!itemDetail?.serial_number.length
+                          {!inventoryById?.serial_number?.length
                             ? "-"
-                            : itemDetail?.serial_number}
+                            : inventoryById?.serial_number}
                         </Typography>
                       </div>
 

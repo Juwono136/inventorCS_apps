@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Navbar,
@@ -10,16 +10,27 @@ import {
   MenuItem,
   MenuList,
   ListItemPrefix,
+  Badge,
+  Typography,
 } from "@material-tailwind/react";
 import { HiMenuAlt2 } from "react-icons/hi";
-import { IoPersonCircleOutline } from "react-icons/io5";
+import {
+  IoPersonCircleOutline,
+  IoHome,
+  IoNotificationsOutline,
+  IoAlertCircleOutline,
+} from "react-icons/io5";
 import { CiPower } from "react-icons/ci";
-import { IoHome } from "react-icons/io5";
 import SidebarComponent from "./SidebarComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, reset } from "../../features/auth/authSlice";
 import DialogOpenComponent from "./DialogOpenComponent";
 import { userReset } from "../../features/user/userSlice";
+import {
+  getNotificationByUser,
+  markNotificationAsRead,
+} from "../../features/notification/notificationSlice";
+import { formatDistanceToNow } from "date-fns";
 
 const NavbarComponent = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -29,6 +40,10 @@ const NavbarComponent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const { user } = useSelector((state) => state.auth);
+  const { notification } = useSelector(
+    (state) => state.notification.notifications
+  );
   const { personal_info } = useSelector((state) => state.user.userInfor);
   const { avatar } = personal_info || "";
 
@@ -48,6 +63,24 @@ const NavbarComponent = () => {
     navigate("/signin");
   };
 
+  useEffect(() => {
+    dispatch(getNotificationByUser());
+  }, [dispatch]);
+
+  const handleNotificationClick = (id, loanId) => {
+    dispatch(markNotificationAsRead(id));
+
+    if (user.selectedRole === 2) {
+      navigate(`/user-loan/detail-loan/${loanId}`);
+    } else {
+      navigate(`/user-loan/detail/${loanId}`);
+    }
+  };
+
+  const unreadNotifications = Array.isArray(notification)
+    ? notification.filter((notif) => !notif.is_read).slice(0, 5)
+    : [];
+
   return (
     <>
       <Navbar className="sticky top-0 z-10 h-max max-w-full bg-gradient-to-r from-indigo-500 to-purple-800 px-4 py-3 rounded-none">
@@ -58,7 +91,7 @@ const NavbarComponent = () => {
             </IconButton>
             <Link
               to="/dashboard"
-              className="text-sm md:text-lg bg-gradient-to-r from-gray-100  to-blue-300 bg-clip-text text-transparent font-semibold mr-4 ml-2 cursor-pointer py-1.5 transition-all hover:text-gray-300"
+              className="text-xs md:text-lg bg-gradient-to-r from-gray-100  to-blue-300 bg-clip-text text-transparent font-semibold mr-4 ml-2 cursor-pointer py-1.5 transition-all hover:text-gray-300"
             >
               InventorCS Dashboard
             </Link>
@@ -66,14 +99,13 @@ const NavbarComponent = () => {
 
           <div className="flex items-center gap-2 mx-3">
             <div className="px-4 hidden md:flex">
-              <Link
-                to="/"
-                target={"_blank"}
+              <a
+                href="/"
                 className="flex items-center justify-center gap-2 bg-white text-indigo-500 text-xs font-semibold p-2 rounded-full transition-all hover:bg-indigo-100"
               >
                 <IoHome />
-                See Home Page
-              </Link>
+                Home Page
+              </a>
             </div>
 
             <Menu
@@ -114,6 +146,74 @@ const NavbarComponent = () => {
                   <ListItemPrefix className="text-sm text-red-500">
                     Sign Out
                   </ListItemPrefix>
+                </MenuItem>
+              </MenuList>
+            </Menu>
+
+            {/* notification menu */}
+            <Menu placement="bottom-end">
+              <Badge
+                color="red"
+                invisible={unreadNotifications?.length > 0 ? false : true}
+              >
+                <MenuHandler>
+                  <button className="bg-white rounded-full p-1.5 hover:bg-gray-300">
+                    <IoNotificationsOutline className="text-xl text-indigo-900 font-semibold" />
+                  </button>
+                </MenuHandler>
+              </Badge>
+              <MenuList className="flex flex-col gap-2 max-w-max m-2 md:w-1/2 md:m-0">
+                {unreadNotifications?.length > 0 ? (
+                  unreadNotifications?.map((notif) => (
+                    <MenuItem
+                      key={notif._id}
+                      onClick={() =>
+                        handleNotificationClick(
+                          notif._id,
+                          notif.loan_transaction._id
+                        )
+                      }
+                      className="flex items-start flex-col gap-4 py-2 pl-2 pr-8"
+                    >
+                      <div className="flex justify-center items-center gap-2">
+                        <div className="flex items-center justify-center">
+                          <IoAlertCircleOutline className="text-xl text-red-600" />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <Typography
+                            className={`text-xs md:text-sm text-gray-800 ${
+                              notif.is_read ? "" : "font-bold"
+                            }`}
+                          >
+                            {notif.message}
+                          </Typography>
+                          <Typography
+                            variant="small"
+                            color="gray"
+                            className="text-xs"
+                          >
+                            {formatDistanceToNow(new Date(notif.createdAt), {
+                              addSuffix: true,
+                            })}
+                          </Typography>
+                        </div>
+                      </div>
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem className="flex items-center justify-center py-2">
+                    <Typography variant="small" color="gray">
+                      No new notifications.
+                    </Typography>
+                  </MenuItem>
+                )}
+                <MenuItem>
+                  <a
+                    href="/notifications"
+                    className=" text-xs text-indigo-700 hover:underline"
+                  >
+                    See more notifications
+                  </a>
                 </MenuItem>
               </MenuList>
             </Menu>

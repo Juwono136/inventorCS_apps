@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Outlet, Link, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
 import {
   Navbar,
@@ -121,60 +121,69 @@ const NavbarComponent = () => {
         <div className="flex items-center justify-between text-blue-gray-900">
           <a
             href="/"
-            className="flex gap-2 items-center justify-center mx-4 cursor-pointer py-1.5 font-bold text-xl text-indigo-700 hover:text-indigo-900"
+            className="flex gap-2 items-center justify-center mx-4 cursor-pointer py-1.5 font-bold text-sm md:text-xl text-indigo-700 hover:text-indigo-900"
           >
-            <img src={logoImg} alt="logoImg" className="h-5 w-5" />
+            <img
+              src={logoImg}
+              alt="logoImg"
+              className="h-4 w-4 md:h-5 md:w-5"
+            />
             InventorCS
           </a>
           <div className="flex items-center gap-3">
             <div className="hidden md:block">{navList}</div>
 
-            <div className="flex md:flex-row flex-row-reverse items-center justify-center gap-3">
+            <div className="flex md:flex-row flex-row-reverse items-center justify-center gap-2">
               {user && isLoggedOut === false ? (
-                <Menu
-                  open={isMenuProfileOpen}
-                  handler={setIsMenuProfileOpen}
-                  placement="bottom-end"
-                >
-                  <MenuHandler>
-                    <Button
-                      variant="text"
-                      color="blue-gray"
-                      className="flex items-center rounded-full p-0"
-                    >
-                      <Avatar
-                        variant="circular"
-                        size="sm"
-                        alt="my_profile"
-                        withBorder={true}
+                <>
+                  <Menu
+                    open={isMenuProfileOpen}
+                    handler={setIsMenuProfileOpen}
+                    placement="bottom-end"
+                  >
+                    <MenuHandler>
+                      <Button
+                        variant="text"
                         color="blue-gray"
-                        className=" p-0.5"
-                        src={avatar}
-                      />
-                    </Button>
-                  </MenuHandler>
-                  <MenuList className="p-1" onClick={closeMenuProfile}>
-                    <MenuItem className="flex items-center gap-2 rounded">
-                      <LuLayoutDashboard className="h-4 w-4" strokeWidth={2} />
-                      <a href="/dashboard" className="text-sm">
-                        My Dashboard
-                      </a>
-                    </MenuItem>
+                        className="flex items-center rounded-full p-0"
+                      >
+                        <Avatar
+                          variant="circular"
+                          size="sm"
+                          alt="my_profile"
+                          withBorder={true}
+                          color="blue-gray"
+                          className=" p-0.5"
+                          src={avatar}
+                        />
+                      </Button>
+                    </MenuHandler>
+                    <MenuList className="p-1" onClick={closeMenuProfile}>
+                      <MenuItem className="flex items-center gap-2 rounded">
+                        <LuLayoutDashboard
+                          className="h-4 w-4"
+                          strokeWidth={2}
+                        />
+                        <a href="/dashboard" className="text-sm">
+                          My Dashboard
+                        </a>
+                      </MenuItem>
 
-                    <MenuItem
-                      onClick={handleOpenDialog}
-                      className="flex items-center gap-2 rounded hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
-                    >
-                      <CiPower
-                        className="h-4 w-4 text-red-500"
-                        strokeWidth={2}
-                      />
-                      <ListItemPrefix className="text-sm text-red-500">
-                        Sign Out
-                      </ListItemPrefix>
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
+                      <MenuItem
+                        onClick={handleOpenDialog}
+                        className="flex items-center gap-2 rounded hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
+                      >
+                        <CiPower
+                          className="h-4 w-4 text-red-500"
+                          strokeWidth={2}
+                        />
+                        <ListItemPrefix className="text-sm text-red-500">
+                          Sign Out
+                        </ListItemPrefix>
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
+                </>
               ) : (
                 <div className="flex items-center gap-x-1">
                   <a
@@ -192,7 +201,7 @@ const NavbarComponent = () => {
                 </div>
               )}
 
-              {!user && isLoggedOut ? (
+              {isLoggedOut ? (
                 ""
               ) : (
                 <button
@@ -200,7 +209,7 @@ const NavbarComponent = () => {
                   className="flex justify-center items-center gap-1"
                 >
                   <FaCartShopping className="text-indigo-700 text-xl transition ease-in-out hover:text-indigo-400" />
-                  <span className="bg-indigo-700 text-white text-sm rounded-full px-2 py-1">
+                  <span className="bg-indigo-700 text-white text-sm rounded-full px-1.5 py-0.5">
                     {cartCount}
                   </span>
                 </button>

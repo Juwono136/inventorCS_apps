@@ -5,8 +5,8 @@ const loanTransactionSchema = mongoose.Schema({
         type: String, // save user_id from users API (borrower)
         required: true
     },
-    admin_id: {
-        type: String, // save user_id from users API (admin/staff)
+    staff_id: {
+        type: String, // save user_id from users API (staff)
         default: null
     },
     borrowed_item: [{
@@ -35,16 +35,24 @@ const loanTransactionSchema = mongoose.Schema({
         required: true,
         default: null
     },
-    return_date: {
+    borrower_confirmed_date: {
+        type: Date,
+        default: null
+    },
+    expected_return_date: {
         type: Date,
         required: true,
+        default: null
+    },
+    return_date: {
+        type: Date,
         default: null
     },
     loan_status: {
         type: String,
         required: true,
         default: "Pending",
-        enum: ["Pending", "Borrowed", "Partially Consumed", "Consumed", "Returned", "Cancelled"]
+        enum: ["Pending", "Ready to Pickup", "Borrowed", "Partially Consumed", "Consumed", "Returned", "Cancelled"]
     }
 }, {
     timestamps: true

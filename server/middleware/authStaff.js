@@ -11,7 +11,7 @@ export const authStaff = async (req, res, next) => {
 
         const user = response.data;
 
-        if (!user.personal_info.role.includes(2) || !user.personal_info.role.includes(4)) { // 2 = staff for app 1, 4 = staff for app 2, ...
+        if (!user.personal_info.role.includes(2) && !user.personal_info.role.includes(4)) { // 2 = staff for app 1, 4 = staff for app 2, ...
             return res.status(403).json({ message: "Staff resources access denied." });
         }
 
