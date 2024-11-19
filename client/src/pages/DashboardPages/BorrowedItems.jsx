@@ -48,7 +48,9 @@ const BorrowedItems = () => {
         ...selectedData,
         ...borrower.personal_info,
         borrow_date: new Date(selectedData.borrow_date).toLocaleDateString(),
-        return_date: new Date(selectedData.return_date).toLocaleDateString(),
+        expected_return_date: new Date(
+          selectedData.expected_return_date
+        ).toLocaleDateString(),
       };
       setSelectedItem(itemDetails);
     }
@@ -147,7 +149,7 @@ const BorrowedItems = () => {
                         _id,
                         borrower_id,
                         borrow_date,
-                        return_date,
+                        expected_return_date,
                         loan_status,
                       },
                       index
@@ -222,7 +224,9 @@ const BorrowedItems = () => {
                           <td className={classes}>
                             <div className="flex items-center gap-3">
                               <h1 className="font-normal text-blue-gray-800 text-sm">
-                                {new Date(return_date).toLocaleDateString()}
+                                {new Date(
+                                  expected_return_date
+                                ).toLocaleDateString()}
                               </h1>
                             </div>
                           </td>

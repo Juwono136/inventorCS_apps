@@ -24,7 +24,7 @@ import { accessToken } from "../../features/token/tokenSlice";
 import Loader from "../../common/Loader";
 import { getUserById } from "../../features/user/userSlice";
 import { IoIosArrowDown } from "react-icons/io";
-import TimelineStatus from "../../common/TimelineStatus";
+import TimelineLoanStatus from "../../components/DashboardComponents/TimelineLoanStatus";
 
 function Icon({ id, open }) {
   return (
@@ -43,16 +43,6 @@ const LoanTransactionDetail = () => {
     (state) => state.loan
   );
   const { userById } = useSelector((state) => state.user);
-
-  const statusTimeline = [
-    "Pending",
-    "Ready to Pickup",
-    "Borrowed",
-    "Partially Consumed",
-    "Consumed",
-    "Returned",
-    "Cancelled",
-  ];
 
   const statusLoanColors = {
     Pending: "blue-gray",
@@ -304,8 +294,8 @@ const LoanTransactionDetail = () => {
                 </AccordionHeader>
 
                 <AccordionBody className="flex flex-col md:flex-row md:flex-wrap gap-2 md:gap-6">
-                  <TimelineStatus
-                    statusTimeline={statusTimeline}
+                  <TimelineLoanStatus
+                    loanData={loanData}
                     currentStatus={loanData?.loan_status}
                     updatedAt={loanData?.updatedAt}
                     statusColors={statusLoanColors}
@@ -376,7 +366,7 @@ const LoanTransactionDetail = () => {
           </div>
 
           {/* Button changeloan status */}
-          <div className="flex w-full items-center justify-center text-white mt-8">
+          <div className="flex w-full flex-col items-center justify-center text-white mt-8 gap-4">
             {loanData?.loan_status === "Pending" && (
               <Button
                 className="bg-gradient-to-r from-indigo-500 to-purple-800 text-xs py-3 px-6 rounded-lg capitalize"
@@ -404,6 +394,32 @@ const LoanTransactionDetail = () => {
                 Change status to Returned
               </Button>
             )}
+
+            <div className="flex w-full justify-center items-center">
+              <span className=" text-xs text-blue-800">
+                Borrower Confirm Date
+              </span>
+              <span className=" text-blue-900 text-xs">
+                :{" "}
+                {loanData?.borrower_confirmed_date
+                  ? new Date(
+                      loanData?.borrower_confirmed_date
+                    ).toLocaleDateString()
+                  : "-"}
+              </span>
+            </div>
+
+            <div className="flex w-full justify-center items-center">
+              <span className=" text-xs text-green-800">
+                Return Date Confirmation
+              </span>
+              <span className=" text-green-900 text-xs">
+                :{" "}
+                {loanData?.return_date
+                  ? new Date(loanData?.return_date).toLocaleDateString()
+                  : "-"}
+              </span>
+            </div>
           </div>
         </CardBody>
       </Card>

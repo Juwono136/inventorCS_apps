@@ -109,7 +109,7 @@ const MoreInfoBorrowedItem = ({ open, handleOpenDialog, selectedItem }) => {
               Return Date:
             </span>
             <span className="col-span-2 text-gray-900">
-              {selectedItem?.return_date}
+              {selectedItem?.expected_return_date}
             </span>
           </div>
 

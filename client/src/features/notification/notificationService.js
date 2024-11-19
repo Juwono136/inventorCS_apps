@@ -19,9 +19,18 @@ const markNotificationAsRead = async (notificationId, token) => {
     return response.data;
 };
 
+const markAllNotiticationAsRead = async (token) => {
+    const response = await axios.put(API_URL + "/mark_all_as_read", {}, {
+        headers: { Authorization: `Bearer ${token}` }
+    })
+
+    return response.data
+}
+
 const notificationService = {
     getNotificationByUser,
-    markNotificationAsRead
+    markNotificationAsRead,
+    markAllNotiticationAsRead
 };
 
 export default notificationService;

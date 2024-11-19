@@ -21,6 +21,7 @@ export const getNotificationByUser = async (req, res) => {
     try {
         const notification = await Notification.find({ user_id: { $in: [req.user._id] } })
             .populate('loan_transaction')
+            .sort({ createdAt: -1 })
             .exec();
 
         res.json({ message: "User notifications retrieved successfully.", notification })
@@ -40,6 +41,24 @@ export const markNotificationAsRead = async (req, res) => {
         }
 
         res.json({ message: "Notification marked as read", notification })
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+export const markAllNotiticationAsRead = async (req, res) => {
+    try {
+        const userId = req.user._id
+
+        const result = await Notification.updateMany(
+            { user_id: { $in: [userId] }, is_read: false },
+            { is_read: true }
+        );
+
+        res.json({
+            message: "All notifications marked as read.",
+            result
+        });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }

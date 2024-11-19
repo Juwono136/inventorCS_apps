@@ -7,58 +7,60 @@ import {
 } from "@material-tailwind/react";
 import { IoClose } from "react-icons/io5";
 
-const ConfirmDrawerComponent = ({
-  openBottom,
-  closeDrawerBottom,
-  itemReceived,
-  setItemReceived,
-  handleConfirm,
+const ConfirmDrawerReturned = ({
+  openReturned,
+  closeDrawerReturned,
+  itemReturned,
+  setItemReturned,
+  handleConfirmReturned,
 }) => {
   return (
-    <Dialog open={openBottom} onClose={closeDrawerBottom} size="xs">
+    <Dialog open={openReturned} onClose={closeDrawerReturned} size="xs">
       <div className="flex justify-center items-center flex-col rounded-lg bg-white p-6 shadow-2xl">
         <div className="mb-6 flex items-center justify-between w-full">
-          <Typography color="red" className="text-xl font-semibold">
-            Confirm Loan Item!
+          <Typography color="red" className="text-sm font-semibold">
+            Confirm Returned loan item!
           </Typography>
           <IconButton
             variant="text"
             color="blue-gray"
-            onClick={closeDrawerBottom}
+            onClick={closeDrawerReturned}
           >
             <IoClose className="text-lg" />
           </IconButton>
         </div>
         <Typography color="gray" className="mb-8 pr-4 font-semibold text-sm">
-          Please check the items you wish to borrow first. Have you received the
-          item you borrowed from our staff?
+          Have you returned the loan item that you borrowed from our staff
+          before?
         </Typography>
 
         <div className="mb-4 flex w-full justify-start">
           <label className="flex items-center">
             <input
               type="checkbox"
-              checked={itemReceived}
-              onChange={(e) => setItemReceived(e.target.checked)}
+              checked={itemReturned}
+              onChange={(e) => setItemReturned(e.target.checked)}
               className="mr-2"
             />
-            <p className="text-sm text-gray-900">I have received the items</p>
+            <p className="text-xs text-gray-900">
+              I've already returned the loan item
+            </p>
           </label>
         </div>
         <div className="flex gap-2">
           <Button
-            className="bg-gradient-to-r from-cyan-500 to-lime-800 text-xs py-3 px-6 rounded-lg capitalize"
-            onClick={(e) => handleConfirm(e, true)}
-            disabled={!itemReceived}
+            className="bg-gradient-to-r from-lime-500 to-green-800 text-xs py-3 px-6 rounded-lg capitalize"
+            onClick={(e) => handleConfirmReturned(e, true)}
+            disabled={!itemReturned}
           >
-            Yes, I received it
+            Yes, I Returned it
           </Button>
           <Button
             size="sm"
             color="red"
             className="capitalize"
             variant="outlined"
-            onClick={(e) => handleConfirm(e, false)}
+            onClick={(e) => handleConfirmReturned(e, false)}
           >
             No, I haven't
           </Button>
@@ -68,4 +70,4 @@ const ConfirmDrawerComponent = ({
   );
 };
 
-export default ConfirmDrawerComponent;
+export default ConfirmDrawerReturned;

@@ -74,6 +74,25 @@ const updateStatusToReturned = async (data, token) => {
     return response.data
 }
 
+// confirm loan item has already returned by borrower
+const confirmReturnedByBorrower = async (data, token) => {
+    const response = await axios.patch(API_URL + `/confirm_returned/${data._id}`, { item_returned: data.item_returned }, {
+        headers: { Authorization: `Bearer ${token}` }
+    })
+
+    return response.data
+}
+
+// cancel loan transaction by user
+const cancelLoanTransaction = async (data, token) => {
+    const response = await axios.patch(API_URL + `/cancelled_loan/${data._id}`, data, {
+        headers: { Authorization: `Bearer ${token}` }
+    })
+
+    return response.data
+}
+
+
 const loanService = {
     getAllLoanTransactions,
     getLoanTransactionsByUser,
@@ -82,7 +101,9 @@ const loanService = {
     updateStatusToReadyToPickup,
     updateStatusToBorrowed,
     confirmReceiveByBorrower,
-    updateStatusToReturned
+    updateStatusToReturned,
+    confirmReturnedByBorrower,
+    cancelLoanTransaction
 }
 
 export default loanService

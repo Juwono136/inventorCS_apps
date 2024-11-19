@@ -13,16 +13,20 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
+  cancelLoanTransaction,
   confirmReceiveByBorrower,
+  confirmReturnedByBorrower,
   getLoanTransactionsByUser,
   loanReset,
 } from "../../features/loanTransaction/loanSlice";
 import { IoIosArrowDown } from "react-icons/io";
 import toast from "react-hot-toast";
-import TimelineStatus from "../../common/TimelineStatus";
 import ConfirmDrawerComponent from "../../components/DashboardComponents/ConfirmDrawerComponent";
 import { accessToken } from "../../features/token/tokenSlice";
 import Loader from "../../common/Loader";
+import ConfirmDrawerReturned from "../../components/DashboardComponents/ConfirmDrawerReturned";
+import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
+import TimelineLoanStatus from "../../components/DashboardComponents/TimelineLoanStatus";
 
 function Icon({ id, open }) {
   return (
@@ -59,6 +63,9 @@ const LoanTransactionByUser = () => {
 
   const [open, setOpen] = useState(0);
   const [openBottom, setOpenBottom] = useState(false);
+  const [openCancelLoan, setOpenCancelLoan] = useState(false);
+  const [openReturned, setOpenReturned] = useState(false);
+  const [itemReturned, setItemReturned] = useState(false);
   const [itemReceived, setItemReceived] = useState(false);
   const handleOpen = (value) => setOpen(open === value ? 0 : value);
 
@@ -77,6 +84,11 @@ const LoanTransactionByUser = () => {
   const openDrawerBottom = () => setOpenBottom(true);
   const closeDrawerBottom = () => setOpenBottom(false);
 
+  const openDrawerReturned = () => setOpenReturned(true);
+  const closeDrawerReturned = () => setOpenReturned(false);
+
+  const handleOpenCancelLoan = () => setOpenCancelLoan(!openCancelLoan);
+
   const handleConfirm = (e, item_received) => {
     e.preventDefault();
     const data = {
@@ -89,6 +101,35 @@ const LoanTransactionByUser = () => {
     });
 
     setOpenBottom(!openBottom);
+  };
+
+  const handleConfirmReturned = (e, item_returned) => {
+    e.preventDefault();
+
+    const data = {
+      _id: id,
+      item_returned: item_returned,
+    };
+
+    dispatch(confirmReturnedByBorrower(data)).then((res) => {
+      dispatch(accessToken(res));
+    });
+
+    setOpenReturned(!openReturned);
+  };
+
+  const handleCancelLoan = (e) => {
+    e.preventDefault();
+
+    const data = {
+      _id: id,
+    };
+
+    dispatch(cancelLoanTransaction(data)).then((res) => {
+      dispatch(accessToken(res));
+    });
+
+    setOpenCancelLoan(!openCancelLoan);
   };
 
   useEffect(() => {
@@ -285,8 +326,8 @@ const LoanTransactionByUser = () => {
                 </AccordionHeader>
 
                 <AccordionBody className="flex flex-col md:flex-row md:flex-wrap gap-2 md:gap-6">
-                  <TimelineStatus
-                    statusTimeline={statusTimeline}
+                  <TimelineLoanStatus
+                    loanData={foundLoan}
                     currentStatus={foundLoan?.loan_status}
                     updatedAt={foundLoan?.updatedAt}
                     statusColors={statusLoanColors}
@@ -379,8 +420,19 @@ const LoanTransactionByUser = () => {
               <Button
                 className="bg-gradient-to-r from-cyan-500 to-lime-800 text-xs py-3 px-6 rounded-lg capitalize"
                 onClick={openDrawerBottom}
+                disabled={foundLoan?.borrower_confirmed_date ? true : false}
               >
                 Confirm loan items
+              </Button>
+            )}
+
+            {foundLoan?.loan_status === "Returned" && (
+              <Button
+                className="bg-gradient-to-r from-lime-500 to-green-800 text-xs py-3 px-6 rounded-lg capitalize"
+                onClick={openDrawerReturned}
+                disabled={foundLoan?.return_date ? true : false}
+              >
+                Confirm loan item has already returned
               </Button>
             )}
 
@@ -388,7 +440,7 @@ const LoanTransactionByUser = () => {
               <span className=" text-xs text-blue-800">
                 Borrower Confirm Date
               </span>
-              <span className=" text-gray-900 text-xs">
+              <span className=" text-blue-900 text-xs">
                 :{" "}
                 {foundLoan?.borrower_confirmed_date
                   ? new Date(
@@ -397,6 +449,27 @@ const LoanTransactionByUser = () => {
                   : "-"}
               </span>
             </div>
+
+            <div className="flex w-full justify-center items-center">
+              <span className=" text-xs text-green-800">
+                Returned Date Confirmation
+              </span>
+              <span className=" text-green-900 text-xs">
+                :{" "}
+                {foundLoan?.return_date
+                  ? new Date(foundLoan?.return_date).toLocaleDateString()
+                  : "-"}
+              </span>
+            </div>
+
+            {foundLoan?.loan_status === "Pending" && (
+              <Button
+                className="bg-gradient-to-r from-red-500 to-red-800 text-xs py-3 px-6 rounded-lg capitalize"
+                onClick={handleOpenCancelLoan}
+              >
+                Cancel Loan
+              </Button>
+            )}
           </div>
         </CardBody>
       </Card>
@@ -408,6 +481,24 @@ const LoanTransactionByUser = () => {
         itemReceived={itemReceived}
         setItemReceived={setItemReceived}
         handleConfirm={handleConfirm}
+      />
+
+      {/* Drawer componen for confirm returned the loan item */}
+      <ConfirmDrawerReturned
+        openReturned={openReturned}
+        closeDrawerReturned={closeDrawerReturned}
+        itemReturned={itemReturned}
+        setItemReturned={setItemReturned}
+        handleConfirmReturned={handleConfirmReturned}
+      />
+
+      {/* Cancel loan transaction dialog component */}
+      <DialogOpenComponent
+        openDialog={openCancelLoan}
+        handleFunc={handleCancelLoan}
+        handleOpenDialog={handleOpenCancelLoan}
+        message="Are you sure want to cancel this loan transaction?"
+        btnText="Yes"
       />
     </div>
   );

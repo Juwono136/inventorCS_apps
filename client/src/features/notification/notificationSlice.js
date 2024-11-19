@@ -33,6 +33,17 @@ export const markNotificationAsRead = createAsyncThunk('notification/mark_as_rea
     }
 });
 
+// mark all notification as read
+export const markAllNotiticationAsRead = createAsyncThunk('notification/mark_all_as_read', async (token, thunkAPI) => {
+    try {
+        const tokenData = await tokenService.accessToken(token);
+        return await notificationService.markAllNotiticationAsRead(tokenData)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
+        return thunkAPI.rejectWithValue(message);
+    }
+})
+
 export const notificationSlice = createSlice({
     name: 'notification',
     initialState,
@@ -78,6 +89,22 @@ export const notificationSlice = createSlice({
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;
+            })
+
+            // mark all notification as read
+            .addCase(markAllNotiticationAsRead.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(markAllNotiticationAsRead.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.notifications = action.payload
+                state.message = action.payload.message
+            })
+            .addCase(markAllNotiticationAsRead.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload
             });
     }
 });

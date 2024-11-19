@@ -5,14 +5,17 @@ import { FaRegClock } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getNotificationByUser,
+  markAllNotiticationAsRead,
   markNotificationAsRead,
 } from "../../features/notification/notificationSlice";
 import { formatDistanceToNow } from "date-fns";
 import Loader from "../../common/Loader";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { accessToken } from "../../features/token/tokenSlice";
 
 const UserNotifications = () => {
-  const { notification, isLoading } = useSelector(
+  const { notification, isLoading, isSuccess, isError, message } = useSelector(
     (state) => state.notification.notifications
   );
 
@@ -31,32 +34,51 @@ const UserNotifications = () => {
     }
   };
 
+  const handleMarkAllNotifAsRead = async (e) => {
+    e.preventDefault();
+    dispatch(markAllNotiticationAsRead());
+
+    dispatch(getNotificationByUser());
+  };
+
+  const unreadCount = Array.isArray(notification)
+    ? notification.filter((notif) => !notif.is_read).length
+    : 0;
+
+  const displayCount = unreadCount > 99 ? "99+" : unreadCount;
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+
+    if (isSuccess) {
+      toast.success(message);
+    }
+  }, [isError, isSuccess, message]);
+
   useEffect(() => {
     dispatch(getNotificationByUser());
-  }, [dispatch]);
+  }, []);
 
   return (
     <Layout>
       <div className="md:mx-8">
         <div className="flex justify-between items-center">
           <h3 className="text-base text-center md:text-left font-bold text-indigo-500/60 pointer-events-non sm:text-xl ">
-            Notifications
+            Notifications {unreadCount > 0 && `(${displayCount})`}
           </h3>
 
-          <button className="text-xs text-gray-800 hover:underline">
-            Mark all as read
+          <button
+            className="text-xs text-gray-800 font-semibold hover:underline"
+            onClick={handleMarkAllNotifAsRead}
+            disabled={isLoading}
+          >
+            {isLoading ? "Processing..." : "Mark all as read"}
           </button>
         </div>
 
         <hr className="w-full border-indigo-100 my-4" />
-
-        {/* {!Array.isArray(notification) && notification?.length < 0 ? (
-          <div className="flex items-center justify-center py-2 bg-gray-300 rounded-full">
-            <p className="text-sm">There is no notification.</p>
-          </div>
-        ) : (
-          ""
-        )} */}
 
         {isLoading ? (
           <div className="flex justify-center">

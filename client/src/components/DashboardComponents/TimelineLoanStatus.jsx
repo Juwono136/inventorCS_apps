@@ -10,16 +10,30 @@ import {
 import { FaDotCircle } from "react-icons/fa";
 import { format } from "date-fns";
 
-const TimelineStatus = ({
-  statusTimeline,
+const TimelineLoanStatus = ({
+  loanData,
   currentStatus,
   updatedAt,
   statusColors,
 }) => {
-  const relevantStatuses = statusTimeline.slice(
-    0,
-    statusTimeline.indexOf(currentStatus) + 1
+  let relevantStatuses = ["Pending", "Ready to Pickup"];
+
+  const allConsumable = loanData?.borrowed_item?.every(
+    (item) => item.is_consumable
   );
+  const partiallyConsumable = loanData?.borrowed_item?.some(
+    (item) => item.is_consumable
+  );
+
+  if (loanData?.loan_status === "Cancelled") {
+    relevantStatuses.push("Cancelled");
+  } else if (allConsumable) {
+    relevantStatuses.push("Consumed");
+  } else if (partiallyConsumable) {
+    relevantStatuses.push("Partially Consumed", "Returned");
+  } else {
+    relevantStatuses.push("Borrowed", "Returned");
+  }
 
   return (
     <>
@@ -64,4 +78,4 @@ const TimelineStatus = ({
   );
 };
 
-export default TimelineStatus;
+export default TimelineLoanStatus;

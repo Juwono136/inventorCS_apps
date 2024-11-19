@@ -102,12 +102,38 @@ export const confirmReceiveByBorrower = createAsyncThunk('/loan/confirm-received
     }
 })
 
+// confirm loan item has already returned by borrower
+export const confirmReturnedByBorrower = createAsyncThunk('/loan/confirm-returned', async (data, thunkAPI) => {
+    try {
+        const token = await tokenService.accessToken(data)
+
+        return await loanService.confirmReturnedByBorrower(data, token)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
 // update loan status to returned
 export const updateStatusToReturned = createAsyncThunk('loan/returned-status', async (data, thunkAPI) => {
     try {
         const token = await tokenService.accessToken(data)
 
         return await loanService.updateStatusToReturned(data, token)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
+// cancel loan transaction by user
+export const cancelLoanTransaction = createAsyncThunk('loan/cancelled-loan', async (data, thunkAPI) => {
+    try {
+        const token = await tokenService.accessToken(data)
+
+        return await loanService.cancelLoanTransaction(data, token)
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
 
@@ -218,7 +244,7 @@ export const loanSlice = createSlice({
                 state.message = action.payload;
             })
 
-            // update loan status to ready to pickup
+            // update loan status to ready to pickup builder
             .addCase(updateStatusToReadyToPickup.pending, (state) => {
                 state.isLoading = true;
             })
@@ -248,7 +274,7 @@ export const loanSlice = createSlice({
                 state.message = action.payload;
             })
 
-            // confirm borrowed loan item by borrower
+            // confirm borrowed loan item by borrower builder
             .addCase(confirmReceiveByBorrower.pending, (state) => {
                 state.isLoading = true;
             })
@@ -258,6 +284,21 @@ export const loanSlice = createSlice({
                 state.loanData = action.payload;
             })
             .addCase(confirmReceiveByBorrower.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+
+            // confirm loan item has already returned builder
+            .addCase(confirmReturnedByBorrower.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(confirmReturnedByBorrower.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.loanData = action.payload;
+            })
+            .addCase(confirmReturnedByBorrower.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;
@@ -273,6 +314,21 @@ export const loanSlice = createSlice({
                 state.loanData = action.payload;
             })
             .addCase(updateStatusToReturned.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+
+            // cancel loan transaction by user builder
+            .addCase(cancelLoanTransaction.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(cancelLoanTransaction.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.loanData = action.payload;
+            })
+            .addCase(cancelLoanTransaction.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;
