@@ -39,14 +39,16 @@ export const getUserById = createAsyncThunk('user/fetchById', async (id, thunkAP
 })
 
 // get all users infor
-export const getAllUsersInfor = createAsyncThunk('user/all_users', async ({ token, page, sort, program, search }, thunkAPI) => {
+export const getAllUsersInfor = createAsyncThunk('user/all_users', async ({ token, page, sort, program, search, all }, thunkAPI) => {
     try {
         const params = {
-            page,
-            sort: `${sort.sort},${sort.order}`,
+            page: all ? undefined : page, // ignore `page` if `all=true`
+            sort: sort ? `${sort.sort},${sort.order}` : undefined,
             program,
-            search
-        }
+            search,
+            all: all || undefined, // add parameter `all` if true
+        };
+
         const tokenData = await tokenService.accessToken(token)
 
         return await userService.getAllUsersInfor(tokenData, params)
@@ -118,6 +120,12 @@ export const userSlice = createSlice({
             state.userById = []
             state.isLoading = false
             state.isError = false
+            state.message = ""
+        },
+        userResetMessage: (state) => {
+            state.isLoading = false
+            state.isError = false
+            state.isSuccess = false
             state.message = ""
         }
     },
@@ -245,5 +253,5 @@ export const userSlice = createSlice({
     }
 })
 
-export const { userReset } = userSlice.actions
+export const { userReset, userResetMessage } = userSlice.actions
 export default userSlice.reducer

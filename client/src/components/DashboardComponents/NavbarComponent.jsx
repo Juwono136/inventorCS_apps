@@ -83,7 +83,7 @@ const NavbarComponent = () => {
 
   return (
     <>
-      <Navbar className="sticky top-0 z-10 h-max max-w-full bg-gradient-to-r from-indigo-500 to-purple-800 px-4 py-3 rounded-none">
+      <Navbar className="sticky top-0 z-10 h-max max-w-full bg-gradient-to-r from-indigo-500 to-purple-800 px-2 py-3 rounded-none">
         <div className="flex flex-wrap items-center justify-between gap-y-4 text-white">
           <div className="flex items-center justify-center gap-2">
             <IconButton variant="text" size="lg" onClick={openDrawer}>

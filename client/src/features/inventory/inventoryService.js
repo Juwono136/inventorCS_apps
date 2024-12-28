@@ -9,11 +9,19 @@ const getAllInventories = async (params) => {
     return response.data
 }
 
-// get inventory by id
-const getInventoryById = async (token, inventoryId) => {
-    const response = await axios.get(API_URL + `/inventories/${inventoryId}`, {
-        headers: { Authorization: `Bearer ${token}` }
+// get all inventories based on user program
+const getInventoriesByProgram = async (token, params) => {
+    const response = await axios.get(API_URL + '/all_inventories_by_program', {
+        headers: { Authorization: `Bearer ${token}` },
+        params
     })
+
+    return response.data
+}
+
+// get inventory by id
+const getInventoryById = async (inventoryId) => {
+    const response = await axios.get(API_URL + `/inventories/${inventoryId}`)
 
     return response.data
 }
@@ -47,6 +55,7 @@ const updateInventory = async (data, token) => {
 
 const inventoryService = {
     getAllInventories,
+    getInventoriesByProgram,
     getInventoryById,
     createInventory,
     updateInventory,

@@ -1,34 +1,41 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import NavbarComponent from "./components/HomeComponents/NavbarComponent";
-import Home from "./pages/HomePages/HomeLayout";
-import Signin from "./pages/AuthPages/Signin";
-import Singup from "./pages/AuthPages/Singup";
-import ForgotPassword from "./pages/AuthPages/ForgotPassword";
-import ResetPassword from "./pages/AuthPages/ResetPassword";
-import ActivationEmail from "./pages/AuthPages/ActivationEmail";
-import NotFound from "./common/NotFound";
-import Dashboard from "./pages/DashboardPages/Dashboard";
-import { Toaster } from "react-hot-toast";
-import Inventories from "./pages/DashboardPages/Inventories";
-import BorrowedItems from "./pages/DashboardPages/BorrowedItems";
-import UserList from "./pages/DashboardPages/UserList";
-import MyProfile from "./pages/DashboardPages/MyProfile";
-import MySettings from "./pages/DashboardPages/MySettings";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllUsersInfor, getUserInfor } from "./features/user/userSlice";
-import { accessToken } from "./features/token/tokenSlice";
-import UpdateUserRole from "./pages/DashboardPages/updateUserRole";
+import { Toaster } from "react-hot-toast";
+
+// pages
+import Home from "./pages/HomePages/HomeLayout";
+import SigninPage from "./pages/AuthPages/SigninPage";
+import SingupPage from "./pages/AuthPages/SingupPage";
+import ForgotPasswordPage from "./pages/AuthPages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/AuthPages/ResetPasswordPage";
+import ActivationEmailPage from "./pages/AuthPages/ActivationEmailPage";
+import DashboardPage from "./pages/DashboardPages/DashboardPage";
+import InventoriesPage from "./pages/DashboardPages/InventoriesPage";
+import BorrowedItemsPage from "./pages/DashboardPages/BorrowedItemsPage";
+import UserListPage from "./pages/DashboardPages/UserListPage";
+import MyProfilePage from "./pages/DashboardPages/MyProfilePage";
+import MySettingsPage from "./pages/DashboardPages/MySettingsPage";
+import UpdateUserRolePage from "./pages/DashboardPages/UpdateUserRolePage";
+import SelecteRolePage from "./pages/AuthPages/SelecteRolePage";
+import AddInventoryPage from "./pages/DashboardPages/AddInventoryPage";
+import UpdateInventoryPage from "./pages/DashboardPages/UpdateInventoryPage";
+import MyCartPage from "./pages/HomePages/MyCartPage";
+import LoanTransactionByUserPage from "./pages/DashboardPages/LoanTransactionByUserPage";
+import UserLoanTransactionPage from "./pages/DashboardPages/UserLoanTransactionPage";
+import LoanTransactionDetailPage from "./pages/DashboardPages/LoanTransactionDetailPage";
+import UserNotificationsPage from "./pages/DashboardPages/UserNotificationsPage";
+
+// components
+import NavbarComponent from "./components/HomeComponents/NavbarComponent";
+import NotFound from "./common/NotFound";
 import ProtectedUserRoutes from "./common/ProtectedUserRoutes";
+import InventoryDetailComponent from "./components/HomeComponents/InventoryDetailComponent";
+
+// features
+import { getUserInfor } from "./features/user/userSlice";
+import { accessToken } from "./features/token/tokenSlice";
 import { getAllInventories } from "./features/inventory/inventorySlice";
-import SelecteRole from "./pages/AuthPages/SelecteRole";
-import AddInventory from "./pages/DashboardPages/AddInventory";
-import UpdateInventory from "./pages/DashboardPages/UpdateInventory";
-import MyCart from "./pages/HomePages/MyCart";
-import LoanTransactionByUser from "./pages/DashboardPages/LoanTransactionByUser";
-import UserLoanTransaction from "./pages/DashboardPages/UserLoanTransaction";
-import LoanTransactionDetail from "./pages/DashboardPages/LoanTransactionDetail";
-import UserNotifications from "./pages/DashboardPages/UserNotifications";
 
 function App() {
   const [sortUser, setSortUser] = useState({
@@ -43,8 +50,7 @@ function App() {
   const [categories, setCategories] = useState("");
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const { user, isLoggedOut } = useSelector((state) => state.auth);
-  const { userInfor } = useSelector((state) => state.user);
+  const { user, userInfor, isLoggedOut } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
 
@@ -57,48 +63,77 @@ function App() {
   }, [isLoggedOut, dispatch, user]);
 
   useEffect(() => {
-    if (user?.selectedRole === 1 || user?.selectedRole === 2) {
-      dispatch(getAllUsersInfor({ page, sort: sortUser, program, search }));
-    }
-
-    // setSearchParams({ page, search, sort: sort.sort, order: sort.order });
-  }, [dispatch, userInfor, page, sortUser, program, search]);
-
-  useEffect(() => {
     dispatch(
       getAllInventories({ page, sort: sortInventory, categories, search })
     );
-  }, [dispatch, page, sortInventory, categories, search]);
+  }, [page, sortInventory, categories, search]);
+
+  // useEffect(() => {
+  //   if (user?.selectedRole === 1 || user?.selectedRole === 2) {
+  //     dispatch(getAllUsersInfor({ page, sort: sortUser, program, search }));
+  //   }
+
+  //   // setSearchParams({ page, search, sort: sort.sort, order: sort.order });
+  // }, [dispatch, userInfor, page, sortUser, program, search]);
 
   return (
     <>
       <Toaster />
       <BrowserRouter>
         <Routes>
+          {/* Not found routes */}
           <Route path="*" element={<NotFound />} />
 
+          {/* Home page routes */}
           <Route path="/" element={<NavbarComponent />}>
-            <Route index element={<Home />} />
-            <Route path="signin" element={<Signin />} />
-            <Route path="signup" element={<Singup />} />
-            <Route path="forgot" element={<ForgotPassword />} />
-            <Route path="user/activate/:token" element={<ActivationEmail />} />
+            <Route
+              index
+              element={
+                <Home
+                  sort={sortInventory}
+                  setSort={setSortInventory}
+                  categories={categories}
+                  setCategories={setCategories}
+                  page={page}
+                  setPage={setPage}
+                  search={search}
+                  setSearch={setSearch}
+                />
+              }
+            />
+            <Route path="mycarts" element={<MyCartPage />} />
 
-            {/* loan transaction */}
-            <Route path="mycarts" element={<MyCart />} />
+            {/* Auth page routes */}
+            <Route path="signin" element={<SigninPage />} />
+            <Route path="signup" element={<SingupPage />} />
+            <Route path="forgot" element={<ForgotPasswordPage />} />
+            <Route
+              path="user/activate/:token"
+              element={<ActivationEmailPage />}
+            />
+
+            {/* inventory routes */}
+            <Route
+              path="item_detail/:id"
+              element={<InventoryDetailComponent />}
+            />
           </Route>
 
-          <Route path="select-role" element={<SelecteRole />} />
+          {/* Auth page routes */}
+          <Route path="select-role" element={<SelecteRolePage />} />
+          <Route path="user/reset/:token" element={<ResetPasswordPage />} />
 
-          <Route path="user/reset/:token" element={<ResetPassword />} />
+          {/* Dashboard routes */}
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="profile" element={<MyProfilePage />} />
+          <Route path="settings" element={<MySettingsPage />} />
 
-          <Route path="dashboard" element={<Dashboard />} />
-
+          {/* inventory routes */}
           <Route
             path="inventories"
             element={
               <ProtectedUserRoutes allowedRoles={[2]}>
-                <Inventories
+                <InventoriesPage
                   sort={sortInventory}
                   setSort={setSortInventory}
                   categories={categories}
@@ -111,39 +146,71 @@ function App() {
               </ProtectedUserRoutes>
             }
           />
-
           <Route
             path="add_inventory"
             element={
               <ProtectedUserRoutes allowedRoles={[2]}>
-                <AddInventory />
+                <AddInventoryPage />
               </ProtectedUserRoutes>
             }
           />
-
           <Route
             path="inventories/update_inventory/:id"
             element={
               <ProtectedUserRoutes allowedRoles={[2]}>
-                <UpdateInventory />
+                <UpdateInventoryPage />
               </ProtectedUserRoutes>
             }
           />
 
+          {/* Loan transaction routes */}
           <Route
             path="borrowed-item"
             element={
               <ProtectedUserRoutes allowedRoles={[2]}>
-                <BorrowedItems />
+                <BorrowedItemsPage />
+              </ProtectedUserRoutes>
+            }
+          />
+          <Route
+            path="user-loan"
+            element={
+              <ProtectedUserRoutes allowedRoles={[0, 1, 2]}>
+                <UserLoanTransactionPage />
+              </ProtectedUserRoutes>
+            }
+          />
+          <Route
+            path="user-loan/detail/:id"
+            element={
+              <ProtectedUserRoutes allowedRoles={[0, 1, 2]}>
+                <LoanTransactionByUserPage />
+              </ProtectedUserRoutes>
+            }
+          />
+          <Route
+            path="/user-loan/detail-loan/:id"
+            element={
+              <ProtectedUserRoutes allowedRoles={[2]}>
+                <LoanTransactionDetailPage />
+              </ProtectedUserRoutes>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedUserRoutes allowedRoles={[0, 1, 2]}>
+                <UserNotificationsPage />
               </ProtectedUserRoutes>
             }
           />
 
+          {/* User routes */}
           <Route
             path="users"
             element={
               <ProtectedUserRoutes allowedRoles={[1]}>
-                <UserList
+                <UserListPage
                   sort={sortUser}
                   setSort={setSortUser}
                   program={program}
@@ -156,54 +223,14 @@ function App() {
               </ProtectedUserRoutes>
             }
           />
-
           <Route
             path="users/update_user/:id"
             element={
               <ProtectedUserRoutes allowedRoles={[1]}>
-                <UpdateUserRole />
+                <UpdateUserRolePage />
               </ProtectedUserRoutes>
             }
           />
-
-          <Route
-            path="user-loan"
-            element={
-              <ProtectedUserRoutes allowedRoles={[0, 1, 2]}>
-                <UserLoanTransaction />
-              </ProtectedUserRoutes>
-            }
-          />
-
-          <Route
-            path="user-loan/detail/:id"
-            element={
-              <ProtectedUserRoutes allowedRoles={[0, 1, 2]}>
-                <LoanTransactionByUser />
-              </ProtectedUserRoutes>
-            }
-          />
-
-          <Route
-            path="/user-loan/detail-loan/:id"
-            element={
-              <ProtectedUserRoutes allowedRoles={[2]}>
-                <LoanTransactionDetail />
-              </ProtectedUserRoutes>
-            }
-          />
-
-          <Route
-            path="/notifications"
-            element={
-              <ProtectedUserRoutes allowedRoles={[0, 1, 2]}>
-                <UserNotifications />
-              </ProtectedUserRoutes>
-            }
-          />
-
-          <Route path="profile" element={<MyProfile />} />
-          <Route path="settings" element={<MySettings />} />
         </Routes>
       </BrowserRouter>
     </>

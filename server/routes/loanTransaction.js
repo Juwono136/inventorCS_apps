@@ -1,12 +1,13 @@
 import express from "express";
 import { auth } from "../middleware/auth.js";
 import { authStaff } from "../middleware/authStaff.js";
+import { checkUserProgram } from "../middleware/checkUserProgram.js";
 import { cancelLoanTransaction, confirmReceiveByBorrower, confirmReturnedByBorrower, createLoanTransaction, getAllLoanTransactions, getLoanTransactionById, getLoanTransactionsByUser, updateStatusToBorrowed, updateStatusToReadyToPickup, updateStatusToReturned } from "../controllers/loanTransaction.js";
 
 const router = express.Router()
 
 router.get("/user_loan", auth, getLoanTransactionsByUser)
-router.get("/all_loan", auth, authStaff, getAllLoanTransactions)
+router.get("/all_loan", auth, authStaff, checkUserProgram, getAllLoanTransactions)
 router.get("/loanTransactions/:id", auth, authStaff, getLoanTransactionById)
 
 router.post("/create_loan", auth, createLoanTransaction)

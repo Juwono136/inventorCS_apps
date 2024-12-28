@@ -2,14 +2,36 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import loanService from "./loanService"
 import tokenService from "../token/tokenService"
 
+// load cart from local storage
+const loadCartFromLocalStorage = () => {
+    try {
+        const serializedCart = localStorage.getItem("cartItems");
+        return serializedCart ? JSON.parse(serializedCart) : [];
+    } catch (error) {
+        console.error("Error loading cart from local storage:", error);
+        return [];
+    }
+};
+
+// save cart to local storage
+const saveCartToLocalStorage = (cartItems) => {
+    try {
+        const serializedCart = JSON.stringify(cartItems);
+        localStorage.setItem("cartItems", serializedCart);
+    } catch (error) {
+        console.error("Error saving cart to local storage:", error);
+    }
+};
+
 const initialState = {
-    cartItems: [],
+    cartItems: loadCartFromLocalStorage(),
     loanData: null,
     isLoading: false,
     isError: false,
     isSuccess: false,
     message: '',
 };
+
 
 // get all loan transaction
 export const getAllLoanTransactions = createAsyncThunk('loan/all', async (token, thunkAPI) => {
@@ -150,15 +172,16 @@ export const loanSlice = createSlice({
             const existingItem = state.cartItems.find(i => i._id === item._id);
 
             if (existingItem) {
-                if (existingItem.quantity < item.total_items) {
-                    existingItem.quantity += 1;
-                }
+                existingItem.quantity += 1;
             } else {
                 state.cartItems.push({ ...item, quantity: 1 });
             }
+            saveCartToLocalStorage(state.cartItems);
         },
         removeFromCart: (state, action) => {
             state.cartItems = state.cartItems.filter(item => item._id !== action.payload);
+            // state.cartItems = []
+            saveCartToLocalStorage(state.cartItems);
         },
         updateCartItemQuantity: (state, action) => {
             const { _id, quantity } = action.payload;
@@ -171,10 +194,12 @@ export const loanSlice = createSlice({
                 } else {
                     item.quantity = quantity;
                 }
+                saveCartToLocalStorage(state.cartItems);
             }
         },
         resetCart: (state) => {
             state.cartItems = [];
+            saveCartToLocalStorage(state.cartItems);
         },
         loanReset: (state) => {
             state.isLoading = false

@@ -28,8 +28,8 @@ const HeroComponent = () => {
           >
             Binus University International
           </Typography>
-          <Typography variant="h3" className="text-indigo-900">
-            Computer Science Inventory Center
+          <Typography variant="h4" className="text-indigo-900">
+            Computer Science and Creative Art Inventory Center
           </Typography>
 
           {user && isLoggedOut === false ? (

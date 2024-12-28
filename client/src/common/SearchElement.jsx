@@ -49,7 +49,7 @@ const SearchElement = ({ setSearch }) => {
         <label htmlFor="user_search" className="sr-only">
           Search
         </label>
-        <div className="relative w-full md:w-[350px] ">
+        <div className="relative w-full md:w-[350px]">
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <CiSearch className="text-base text-gray-800" />
           </div>

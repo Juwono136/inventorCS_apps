@@ -1,6 +1,5 @@
 import React from "react";
 import { Button } from "@material-tailwind/react";
-import { Link } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 
 const BackButton = ({ link }) => {

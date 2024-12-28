@@ -29,12 +29,31 @@ export const getAllInventories = createAsyncThunk('inventory/all', async ({ page
     }
 })
 
+// get all inventories based on user program
+export const getInventoriesByProgram = createAsyncThunk('inventory/all_by_user_program', async ({ token, page, sort, categories, search }, thunkAPI) => {
+    try {
+        const params = {
+            page,
+            sort: `${sort.sort},${sort.order}`,
+            categories,
+            search
+        }
+
+        const tokenData = await tokenService.accessToken(token)
+
+        return await inventoryService.getInventoriesByProgram(tokenData, params)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
 // get inventory by id
 export const getInventoryById = createAsyncThunk('inventory/fetchById', async (id, thunkAPI) => {
     try {
-        const token = await tokenService.accessToken(id)
 
-        return await inventoryService.getInventoryById(token, id)
+        return await inventoryService.getInventoryById(id)
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
 
@@ -108,6 +127,22 @@ export const inventorySlice = createSlice({
                 // state.isSuccess = true
             })
             .addCase(getAllInventories.rejected, (state, action) => {
+                state.isLoading = false
+                state.isError = true
+                state.message = action.payload
+            })
+            // get all inventories based on user program builder
+            .addCase(getInventoriesByProgram.pending, (state) => {
+                state.isLoading = true
+                state.isError = false
+                state.isSuccess = false
+            })
+            .addCase(getInventoriesByProgram.fulfilled, (state, action) => {
+                state.isLoading = false
+                state.inventories = action.payload
+                // state.isSuccess = true
+            })
+            .addCase(getInventoriesByProgram.rejected, (state, action) => {
                 state.isLoading = false
                 state.isError = true
                 state.message = action.payload

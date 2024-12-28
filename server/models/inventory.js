@@ -24,6 +24,10 @@ const inventorySchema = mongoose.Schema({
         required: true,
         default: []
     },
+    item_program: {
+        type: String,
+        required: true,
+    },
     desc: {
         type: String,
         maxlength: 500,
@@ -32,18 +36,22 @@ const inventorySchema = mongoose.Schema({
     },
     location: {
         type: String,
+        required: true,
         default: ""
     },
     room_number: {
         type: String,
+        required: true,
         default: "",
     },
     cabinet: {
         type: String,
+        required: true,
         default: "",
     },
     total_items: {
         type: Number,
+        required: true,
         default: 0
     },
     total_likes: {
@@ -66,6 +74,7 @@ const inventorySchema = mongoose.Schema({
     },
     is_consumable: {
         type: Boolean,
+        required: true,
         default: false
     }
 }, {

@@ -1,6 +1,10 @@
 import mongoose, { Schema } from "mongoose";
 
 const loanTransactionSchema = mongoose.Schema({
+    transaction_id: {
+        type: String,
+        required: true,
+    },
     borrower_id: {
         type: String, // save user_id from users API (borrower)
         required: true
@@ -23,6 +27,10 @@ const loanTransactionSchema = mongoose.Schema({
         is_consumable: {
             type: Boolean,
             required: true
+        },
+        item_program: {
+            type: String,
+            required: true,
         }
     }],
     purpose_of_loan: {
@@ -57,5 +65,6 @@ const loanTransactionSchema = mongoose.Schema({
 }, {
     timestamps: true
 })
+
 
 export default mongoose.model('LoanTransactions', loanTransactionSchema)

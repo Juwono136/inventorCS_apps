@@ -23,7 +23,7 @@ import logoImg from "../../assets/images/logo.png";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, reset } from "../../features/auth/authSlice";
 import DialogOpenComponent from "../DashboardComponents/DialogOpenComponent";
-import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 const NavbarComponent = () => {
   const [openNav, setOpenNav] = useState(false);
@@ -72,14 +72,6 @@ const NavbarComponent = () => {
     navigate("/signin");
   };
 
-  const handleCartClick = () => {
-    if (cartItems.length === 0) {
-      toast.error("Your cart is empty! Add items to your cart before viewing.");
-      return;
-    }
-    navigate("/mycarts");
-  };
-
   const navList = (
     <ul className="mt-2 mb-4 flex flex-col gap-2 md:mb-0 md:mt-0 md:flex-row md:items-center md:gap-6">
       <Typography
@@ -117,11 +109,11 @@ const NavbarComponent = () => {
 
   return (
     <>
-      <Navbar className="sticky top-0 h-max max-w-full z-50 rounded-none px-4 py-2 lg:px-8 lg:py-4">
+      <Navbar className="sticky top-0 h-max max-w-full z-50 rounded-none px-2 py-2 lg:px-8 lg:py-4">
         <div className="flex items-center justify-between text-blue-gray-900">
           <a
             href="/"
-            className="flex gap-2 items-center justify-center mx-4 cursor-pointer py-1.5 font-bold text-sm md:text-xl text-indigo-700 hover:text-indigo-900"
+            className="flex gap-2 items-center justify-center mx-4 md:mx-1 cursor-pointer py-1.5 font-bold text-sm md:text-xl text-indigo-700 hover:text-indigo-900"
           >
             <img
               src={logoImg}
@@ -204,15 +196,19 @@ const NavbarComponent = () => {
               {isLoggedOut ? (
                 ""
               ) : (
-                <button
-                  onClick={handleCartClick}
+                <a
+                  href="/mycarts"
                   className="flex justify-center items-center gap-1"
                 >
-                  <FaCartShopping className="text-indigo-700 text-xl transition ease-in-out hover:text-indigo-400" />
-                  <span className="bg-indigo-700 text-white text-sm rounded-full px-1.5 py-0.5">
-                    {cartCount}
-                  </span>
-                </button>
+                  <FaCartShopping className="text-indigo-700 text-2xl transition ease-in-out hover:text-indigo-400" />
+                  {cartCount === 0 ? (
+                    ""
+                  ) : (
+                    <span className="bg-indigo-700 text-white text-sm rounded-full px-1.5 py-0.5">
+                      {cartCount}
+                    </span>
+                  )}
+                </a>
               )}
             </div>
             <IconButton

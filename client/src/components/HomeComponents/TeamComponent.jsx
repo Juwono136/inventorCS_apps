@@ -1,6 +1,6 @@
 import React from "react";
 import { Typography } from "@material-tailwind/react";
-import TeamCard from "./TeamCard";
+import TeamCardComponent from "./TeamCardComponent";
 
 const members = [
   {
@@ -71,7 +71,7 @@ const TeamComponent = () => {
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {members.map((props, key) => (
-            <TeamCard key={key} {...props} />
+            <TeamCardComponent key={key} {...props} />
           ))}
         </div>
       </div>

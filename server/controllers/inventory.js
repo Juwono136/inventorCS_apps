@@ -1,5 +1,4 @@
 import Inventories from "../models/inventory.js";
-// import moment from 'moment';
 import { nanoid } from 'nanoid';
 
 // get All inventories info
@@ -62,6 +61,73 @@ export const getAllInventories = async (req, res) => {
     }
 };
 
+// get inventory based on user program
+export const getInventoriesByProgram = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) - 1 || 0;
+        const limit = parseInt(req.query.limit) || 10;
+        const search = req.query.search || "";
+        let sort = req.query.sort || "asset_name";
+        let categories = req.query.categories || "All";
+
+        const categoryOptions = ["Creative Tools", "Game Board", "IOT", "IOT Parts", "PC & Laptop", "Peripheral", "Others"];
+
+        const userData = req.userData;
+
+        const searchQuery = {
+            draft: false,
+            item_program: userData.personal_info.program,
+            $or: [
+                { asset_id: { $regex: search, $options: "i" } },
+                { asset_name: { $regex: search, $options: "i" } },
+                { serial_number: { $regex: search, $options: "i" } },
+                { desc: { $regex: search, $options: "i" } },
+                { location: { $regex: search, $options: "i" } },
+                { room_number: { $regex: search, $options: "i" } },
+                { cabinet: { $regex: search, $options: "i" } }
+            ]
+        };
+
+        if (categories.toLowerCase() !== "all") {
+            categories = categories.split(",").map(cat => cat.toLowerCase());
+            searchQuery.categories = { $in: categories };
+        }
+
+        req.query.sort ? (sort = req.query.sort.split(",")) : (sort = [sort]);
+
+        let sortBy = {};
+        if (sort[1]) {
+            sortBy[sort[0]] = sort[1];
+        } else {
+            sortBy[sort[0]] = "asc";
+        }
+
+        const inventories = await Inventories.find(searchQuery)
+            .sort(sortBy)
+            .skip(page * limit)
+            .limit(limit)
+            .lean()
+
+        if (!inventories) {
+            return res.status(404).json({ message: "Inventory not found" })
+        }
+
+        const totalItems = await Inventories.countDocuments(searchQuery);
+
+        res.json({
+            totalItems,
+            totalPages: Math.ceil(totalItems / limit),
+            page: page + 1,
+            limit: limit,
+            categories: categoryOptions,
+            items: inventories,
+        });
+
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 // get inventory by Id
 export const getInventoryById = async (req, res) => {
     try {
@@ -80,11 +146,11 @@ export const getInventoryById = async (req, res) => {
 // create inventory
 export const createInventory = async (req, res) => {
     try {
-        const { asset_id, asset_name, asset_img, serial_number, categories, desc, location, room_number, cabinet, total_items, is_consumable, item_status } = req.body;
+        const { asset_id, asset_name, asset_img, serial_number, categories, desc, location, room_number, cabinet, total_items, is_consumable } = req.body;
 
         const newAssetId = nanoid(15);
 
-        if (!asset_name || !categories || !desc || !location || !room_number || !cabinet || !total_items || !is_consumable || !item_status) {
+        if (!asset_name || !asset_img || !categories || !desc || !location || !room_number || !cabinet || !total_items || !is_consumable) {
             return res.status(400).json({ message: "Please fill in the required fields." });
         }
 
@@ -122,11 +188,14 @@ export const createInventory = async (req, res) => {
             ? categories.map(category => category.toLowerCase())
             : [];
 
+        const userData = req.userData;
+
         const inventoryData = await Inventories.create({
             asset_id: newAssetId,
             asset_name,
             asset_img,
             serial_number: serial_number || "",
+            item_program: userData.personal_info.program || "",
             desc,
             categories: formattedCategories,
             location,
@@ -134,7 +203,6 @@ export const createInventory = async (req, res) => {
             cabinet,
             total_items,
             is_consumable,
-            item_status,
             added_by: req.user._id
         });
 
@@ -221,19 +289,19 @@ export const updateInventory = async (req, res) => {
 }
 
 // delete inventory
-export const deleteInventory = async (req, res) => {
-    try {
-        const inventory = await Inventories.findByIdAndDelete(req.params.id)
+// export const deleteInventory = async (req, res) => {
+//     try {
+//         const inventory = await Inventories.findByIdAndDelete(req.params.id)
 
-        if (!inventory) {
-            return res.status(404).json({ message: "Inventory not found." })
-        }
+//         if (!inventory) {
+//             return res.status(404).json({ message: "Inventory not found." })
+//         }
 
-        res.json({ message: "Inventory item deleted." })
-    } catch (error) {
-        return res.status(500).json({ message: error.message });
-    }
-}
+//         res.json({ message: "Inventory item deleted." })
+//     } catch (error) {
+//         return res.status(500).json({ message: error.message });
+//     }
+// }
 
 // draft inventory (soft delete)
 // export const draftInventory = async (req, res) => {

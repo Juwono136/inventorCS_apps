@@ -20,9 +20,15 @@ export const createLoanTransaction = async (req, res) => {
         // Handle borrow_date validation and formatting
         let formattedBorrowDate = new Date(borrow_date);
         let formattedReturnDate = new Date(expected_return_date);
+        let today = new Date();
+        today.setHours(0, 0, 0, 0);
 
         if (isNaN(formattedBorrowDate.getTime()) || isNaN(formattedReturnDate.getTime())) {
             return res.status(400).json({ message: "Invalid date format." });
+        }
+
+        if (formattedBorrowDate < today) {
+            return res.status(400).json({ message: "Borrow date cannot be earlier than today." });
         }
 
         if (formattedReturnDate <= formattedBorrowDate) {
@@ -30,6 +36,7 @@ export const createLoanTransaction = async (req, res) => {
         }
 
         const borrowedItems = [];
+        // const userData = req.userData
 
         // Validasi setiap item
         for (const item of borrowed_item) {
@@ -37,6 +44,10 @@ export const createLoanTransaction = async (req, res) => {
 
             if (!inventory_id || !quantity || quantity <= 0 || typeof quantity !== 'number') {
                 return res.status(400).json({ message: "Please specify a valid inventory_id and quantity for each item." });
+            }
+
+            if (quantity > 5) {
+                return res.status(400).json({ message: `Sorry, The quantity for each item cannot exceed 5.` });
             }
 
             const inventory = await Inventories.findById(inventory_id);
@@ -59,43 +70,67 @@ export const createLoanTransaction = async (req, res) => {
             borrowedItems.push({
                 inventory_id,
                 quantity,
-                is_consumable: inventory.is_consumable
+                is_consumable: inventory.is_consumable,
+                item_program: inventory.item_program
             });
 
             inventory.total_items -= quantity;
             await inventory.save();
         }
 
-        const newLoanTransaction = await LoanTransactions.create({
-            borrower_id: req.user._id,
-            borrowed_item: borrowedItems,
-            purpose_of_loan,
-            borrow_date: formattedBorrowDate,
-            expected_return_date: formattedReturnDate,
+        // Group items by their program
+        const itemsByProgram = borrowedItems.reduce((acc, item) => {
+            if (!acc[item.item_program]) {
+                acc[item.item_program] = [];
+            }
+            acc[item.item_program].push(item);
+            return acc;
+        }, {});
+
+        // Create separate loan transactions for each program group
+        const loanTransactions = await Promise.all(
+            Object.entries(itemsByProgram).map(async ([program, items]) => {
+                // send notification to staff based on their program 
+                const staffMembers = await getStaffs(req);
+                const staffIds = staffMembers
+                    .filter(staff => staff.personal_info.program === program)
+                    .map(staff => staff._id);
+
+                const newLoanTransaction = await LoanTransactions.create({
+                    borrower_id: req.user._id,
+                    borrowed_item: items,
+                    purpose_of_loan,
+                    borrow_date: formattedBorrowDate,
+                    expected_return_date: formattedReturnDate,
+                });
+
+                try {
+                    await createNotification(staffIds, newLoanTransaction._id, `Loan request from ${req.user.personal_info.name} with Transaction ID: ${formattedTransactionId} is pending approval.`);
+                } catch (notificationError) {
+                    console.error(`Failed to create notification for staff members: ${notificationError.message}`);
+                }
+
+                // send email to specific user
+                const staffEmails = staffMembers
+                    .filter(staff => staff.personal_info.program === program)
+                    .map(staff => staff.personal_info.email);
+
+                const url = `${CLIENT_URL}/user-loan/detail-loan/${newLoanTransaction._id}`
+                const emailSubject = "New Loan Request Submitted"
+                const emailTitle = "Loan Transaction Request Created"
+                const emailText = `New Loan request from ${req.user.personal_info.name} with Transaction ID: ${formattedTransactionId} is pending approval.`
+                const btnEmailText = "View Loan Item Details"
+
+                sendMail(staffEmails, url, emailSubject, emailTitle, emailText, btnEmailText);
+
+                return newLoanTransaction;
+            })
+        );
+
+        res.json({
+            message: "Loan items created successfully.",
+            loanTransactions
         });
-
-        // send notification to staff 
-        const staffMembers = await getStaffs(req);
-        const staffIds = staffMembers.map(staff => staff._id);
-
-        try {
-            await createNotification(staffIds, newLoanTransaction._id, `Loan request from ${req.user.personal_info.name} with Transaction ID: ${newLoanTransaction._id} is pending approval.`);
-        } catch (notificationError) {
-            console.error(`Failed to create notification for staff members: ${notificationError.message}`);
-        }
-
-        // send email to specific user
-        const staffEmails = staffMembers.map(staff => staff.personal_info.email)
-        const url = `${CLIENT_URL}/user-loan/detail-loan/${newLoanTransaction._id}`
-        const emailSubject = "New Loan Request Submitted"
-        const emailTitle = "Loan Transaction Request Created"
-        const emailText = `New Loan request from ${req.user.personal_info.name} with Transaction ID: ${newLoanTransaction._id} is pending approval.`
-        const btnEmailText = "View Loan Item Details"
-
-        sendMail(staffEmails, url, emailSubject, emailTitle, emailText, btnEmailText);
-
-        res.json({ message: "Loan item created successfully.", newLoanTransaction });
-
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
@@ -548,7 +583,10 @@ export const cancelLoanTransaction = async (req, res) => {
 // get all transactions
 export const getAllLoanTransactions = async (req, res) => {
     try {
-        const loanTransactions = await LoanTransactions.find()
+        const userData = req.userData;
+        const loanTransactions = await LoanTransactions.find({
+            "borrowed_item.item_program": userData.personal_info.program
+        })
             .populate('borrowed_item.inventory_id', 'asset_name asset_id serial_number')
             .exec();
 
