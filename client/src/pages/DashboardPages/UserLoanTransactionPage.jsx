@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from "react";
-import Layout from "./Layout";
-import { Typography, Chip } from "@material-tailwind/react";
+import { useDispatch, useSelector } from "react-redux";
 import { QRCode } from "react-qrcode-logo";
+import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
+
+// icons and material-tailwind
+import { Typography, Chip } from "@material-tailwind/react";
 import { FaArrowRight } from "react-icons/fa";
 import { FaRegCopy } from "react-icons/fa6";
 import { LuClipboardCheck } from "react-icons/lu";
-import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { getLoanTransactionsByUser } from "../../features/loanTransaction/loanSlice";
+
+// components
+import Layout from "./Layout";
 import Loader from "../../common/Loader";
-import toast from "react-hot-toast";
+
+// features
+import { getLoanTransactionsByUser } from "../../features/loanTransaction/loanSlice";
 
 const UserLoanTransactionPage = () => {
   const { loanData, isLoading } = useSelector((state) => state.loan);
@@ -44,7 +50,7 @@ const UserLoanTransactionPage = () => {
       ) : loanData?.loanTransactions?.length === 0 ? (
         <div className="text-center text-gray-500">
           <p className="text-sm text-gray-700 bg-gray-300 rounded-full p-2">
-            No loan transactions.
+            There is no loan transactions.
           </p>
 
           <p className="mt-8 text-sm text-indigo-900">

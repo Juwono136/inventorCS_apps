@@ -1,4 +1,6 @@
 import React from "react";
+
+// components
 import HeroComponent from "../../components/HomeComponents/HeroComponent";
 import InventoriesSummaryComponent from "../../components/HomeComponents/InventoriesSummaryComponent";
 import TeamComponent from "../../components/HomeComponents/TeamComponent";

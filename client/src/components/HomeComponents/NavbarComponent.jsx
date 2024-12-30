@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
+import { useDispatch, useSelector } from "react-redux";
+
+// icons and material-tailwind
 import {
   Navbar,
   Collapse,
@@ -20,10 +23,12 @@ import { IoCloseOutline } from "react-icons/io5";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { CiPower } from "react-icons/ci";
 import logoImg from "../../assets/images/logo.png";
-import { useDispatch, useSelector } from "react-redux";
-import { logout, reset } from "../../features/auth/authSlice";
+
+// components
 import DialogOpenComponent from "../DashboardComponents/DialogOpenComponent";
-import { Link } from "react-router-dom";
+
+// features
+import { logout, reset } from "../../features/auth/authSlice";
 
 const NavbarComponent = () => {
   const [openNav, setOpenNav] = useState(false);

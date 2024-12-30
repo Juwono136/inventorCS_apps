@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { Chip } from "@material-tailwind/react";
-import { useDispatch, useSelector } from "react-redux";
-import { addToCart } from "../../features/loanTransaction/loanSlice";
-import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
+// icons and material-tailwind
+import { Chip } from "@material-tailwind/react";
 import { BsPatchCheck } from "react-icons/bs";
+
+// components
 import Loader from "../../common/Loader";
 
 const InventoryCardComponent = ({
@@ -13,10 +15,7 @@ const InventoryCardComponent = ({
   title,
   total_items,
   status,
-  serial_number,
-  desc,
   categories,
-  is_consumable,
   item_program,
 }) => {
   const { user, isLoggedOut } = useSelector((state) => state.auth);

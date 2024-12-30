@@ -1,4 +1,6 @@
 import React from "react";
+
+// icons and material-tailwind
 import { Card, CardBody, Avatar, Typography } from "@material-tailwind/react";
 
 const TeamCardComponent = ({ img, name, title }) => {

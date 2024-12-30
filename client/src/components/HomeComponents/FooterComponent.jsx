@@ -1,6 +1,10 @@
 import React from "react";
+
+// icons and material-tailwind
 import { Typography } from "@material-tailwind/react";
 import LogoImg from "../../assets/images/logo.png";
+
+// components
 import SocialMenu from "../../common/SocialMenu";
 
 const FooterComponent = () => {

@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+
+// icons and material-tailwind
 import { CiSearch } from "react-icons/ci";
 import { IoClose } from "react-icons/io5";
 

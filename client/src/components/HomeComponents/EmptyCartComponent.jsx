@@ -1,4 +1,6 @@
 import React from "react";
+
+// icons and material-tailwind
 import EmptyCartIcon from "../../assets/images/empty-cart.png";
 
 const EmptyCartComponent = () => {

@@ -1,4 +1,7 @@
 import React from "react";
+import { format } from "date-fns";
+
+// icons and material-tailwind
 import {
   Timeline,
   TimelineItem,
@@ -8,7 +11,6 @@ import {
   Chip,
 } from "@material-tailwind/react";
 import { FaDotCircle } from "react-icons/fa";
-import { format } from "date-fns";
 
 const TimelineLoanStatusComponent = ({
   loanData,

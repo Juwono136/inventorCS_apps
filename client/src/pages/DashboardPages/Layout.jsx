@@ -1,8 +1,10 @@
 import React from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+
+// components
 import SidebarComponent from "../../components/DashboardComponents/SidebarComponent";
 import NavbarComponent from "../../components/DashboardComponents/NavbarComponent";
-import { useSelector } from "react-redux";
-import { Navigate, useLocation } from "react-router-dom";
 import Loader from "../../common/Loader";
 
 const Layout = ({ children }) => {

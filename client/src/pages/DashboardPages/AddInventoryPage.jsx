@@ -1,19 +1,25 @@
 import React, { useEffect, useState } from "react";
 import Layout from "./Layout";
 import { useDispatch, useSelector } from "react-redux";
-import BackButton from "../../common/BackButton";
-import { Button } from "@material-tailwind/react";
-import Loader from "../../common/Loader";
 import { useNavigate } from "react-router-dom";
-import { convertFileToBase64 } from "../../utils/convertToBase64";
+import toast from "react-hot-toast";
+
+// icons and material-tailwind
+import { Button } from "@material-tailwind/react";
+import { IoCloudUploadOutline } from "react-icons/io5";
+
+// components
+import Loader from "../../common/Loader";
+import BackButton from "../../common/BackButton";
 import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
+
+// features
+import { convertFileToBase64 } from "../../utils/convertToBase64";
 import {
   createInventory,
   inventoryReset,
 } from "../../features/inventory/inventorySlice";
 import { accessToken } from "../../features/token/tokenSlice";
-import toast from "react-hot-toast";
-import { IoCloudUploadOutline } from "react-icons/io5";
 
 const AddInventoryPage = () => {
   const characterLimit = 500;

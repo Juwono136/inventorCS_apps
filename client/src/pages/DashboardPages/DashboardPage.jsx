@@ -1,4 +1,6 @@
 import React from "react";
+
+// components
 import Layout from "./Layout";
 
 const DashboardPage = () => {

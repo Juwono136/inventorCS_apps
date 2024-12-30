@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
-import { reset, selectRole } from "../../features/auth/authSlice";
 import toast from "react-hot-toast";
+
+// icons and material-tailwind
 import {
   Card,
   CardHeader,
@@ -12,7 +13,12 @@ import {
   Button,
 } from "@material-tailwind/react";
 import { LuUsers } from "react-icons/lu";
+
+// components
 import Loader from "../../common/Loader";
+
+// features
+import { reset, selectRole } from "../../features/auth/authSlice";
 
 const SelecteRolePage = () => {
   const { user, isError, message, isLoggedOut, isLoading } = useSelector(

@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Chip } from "@material-tailwind/react";
-import FooterComponent from "./FooterComponent";
-import { BsPatchCheck } from "react-icons/bs";
-import { FaPlus } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { getInventoryById } from "../../features/inventory/inventorySlice";
 import toast from "react-hot-toast";
-import { addToCart } from "../../features/loanTransaction/loanSlice";
+
+// icons and material-tailwind
+import { Chip } from "@material-tailwind/react";
+import { BsPatchCheck } from "react-icons/bs";
+import { FaPlus } from "react-icons/fa";
+
+// components
+import FooterComponent from "./FooterComponent";
 import Loader from "../../common/Loader";
 import FullScreenImage from "../../common/FullScreenImage";
+
+// features
+import { getInventoryById } from "../../features/inventory/inventorySlice";
+import { addToCart } from "../../features/loanTransaction/loanSlice";
 
 const InventoryDetailComponent = () => {
   const { id } = useParams();

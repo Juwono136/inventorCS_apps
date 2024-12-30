@@ -1,15 +1,19 @@
 import React, { useEffect } from "react";
-import Layout from "./Layout";
 import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
+import toast from "react-hot-toast";
+
+// components
+import Layout from "./Layout";
+import UserTableComponent from "../../components/DashboardComponents/UserTableComponent";
 import Pagination from "../../common/Pagination";
 import SearchElement from "../../common/SearchElement";
-import { useSearchParams } from "react-router-dom";
 import Loader from "../../common/Loader";
-import { getAllUsersInfor } from "../../features/user/userSlice";
-import toast from "react-hot-toast";
-import UserTableComponent from "../../components/DashboardComponents/UserTableComponent";
 import FilterCheckBox from "../../common/FilterCheckBox";
 // import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
+
+// features
+import { getAllUsersInfor } from "../../features/user/userSlice";
 // import { accessToken } from "../../features/token/tokenSlice";
 
 const UserListPage = ({
@@ -29,7 +33,6 @@ const UserListPage = ({
     "Role",
     "Status",
     "Joined At",
-    "",
   ];
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -43,23 +46,6 @@ const UserListPage = ({
   const { users, totalPage, limit, totalUsers } = allUsersInfor;
 
   const dispatch = useDispatch();
-
-  // const handleOpenDialogDelete = (id) => {
-  //   setOpenDialogDelete(!openDialogDelete);
-  //   setDeleteUserId(id);
-  // };
-
-  // const handleDeleteUser = (e, id) => {
-  //   e.preventDefault();
-
-  //   dispatch(deleteUser(id)).then((res) => {
-  //     dispatch(accessToken(res));
-  //     setPage(1);
-  //     setSearchParams({ page: 1, search });
-  //   });
-
-  //   setOpenDialogDelete(!openDialogDelete);
-  // };
 
   const handleSearch = (term) => {
     setSearch(term);
@@ -86,11 +72,13 @@ const UserListPage = ({
     if (isSuccess) {
       toast.success(message);
     }
+  }, [setPage, setSearchParams, search, sort, isError, isSuccess, message]);
 
-    if (user?.selectedRole === 1 || user?.selectedRole === 2) {
+  useEffect(() => {
+    if (user?.selectedRole === 1) {
       dispatch(getAllUsersInfor({ page, sort, program, search }));
     }
-  }, [setPage, setSearchParams, search, sort, isError, isSuccess, message]);
+  }, [dispatch, userInfor, page, sort, program, search]);
 
   // handle sort
   const handleSort = (column) => {
@@ -111,6 +99,23 @@ const UserListPage = ({
       setSort({ sort: selectedSortField, order: newOrder });
     }
   };
+
+  // const handleOpenDialogDelete = (id) => {
+  //   setOpenDialogDelete(!openDialogDelete);
+  //   setDeleteUserId(id);
+  // };
+
+  // const handleDeleteUser = (e, id) => {
+  //   e.preventDefault();
+
+  //   dispatch(deleteUser(id)).then((res) => {
+  //     dispatch(accessToken(res));
+  //     setPage(1);
+  //     setSearchParams({ page: 1, search });
+  //   });
+
+  //   setOpenDialogDelete(!openDialogDelete);
+  // };
 
   return (
     <Layout>

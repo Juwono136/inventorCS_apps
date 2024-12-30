@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
-import Layout from "./Layout";
-import BackButton from "../../common/BackButton";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
+
+// icons and material-tailwind
 import {
   Avatar,
   Button,
@@ -9,10 +12,15 @@ import {
   CardHeader,
   Chip,
 } from "@material-tailwind/react";
+
+// components
+import Layout from "./Layout";
 import SocialComponent from "../../components/DashboardComponents/SocialComponent";
-import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
+import BackButton from "../../common/BackButton";
 import Loader from "../../common/Loader";
+
+// features
 import {
   getUserById,
   updateUserRole,
@@ -20,8 +28,6 @@ import {
   userResetMessage,
 } from "../../features/user/userSlice";
 import { accessToken } from "../../features/token/tokenSlice";
-import toast from "react-hot-toast";
-import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
 
 const UpdateUserRolePage = () => {
   const roleMap = {

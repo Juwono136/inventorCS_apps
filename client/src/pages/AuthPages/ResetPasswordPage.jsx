@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
-import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import { reset, resetPassword } from "../../features/auth/authSlice";
+
+// icons and material-tailwind
+import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
+
+// components
 import Loader from "../../common/Loader";
+
+// features
+import { reset, resetPassword } from "../../features/auth/authSlice";
 
 const ResetPasswordPage = () => {
   const [showPassword, setShowPassword] = useState(false);

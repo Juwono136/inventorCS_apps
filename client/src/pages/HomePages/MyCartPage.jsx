@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import toast from "react-hot-toast";
 import { Navigate, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
+// components
+import TransactionCartComponent from "../../components/HomeComponents/TransactionCartComponent";
+import EmptyCartComponent from "../../components/HomeComponents/EmptyCartComponent";
+import InventoryCardComponent from "../../components/HomeComponents/InventoryCardComponent";
+import FooterComponent from "../../components/HomeComponents/FooterComponent";
+import Loader from "../../common/Loader";
+import ScrollUp from "../../common/ScrollUp";
+
+// features
 import {
   createLoanTransaction,
   loanReset,
   removeFromCart,
   updateCartItemQuantity,
 } from "../../features/loanTransaction/loanSlice";
-import Loader from "../../common/Loader";
 import { accessToken } from "../../features/token/tokenSlice";
-import TransactionCartComponent from "../../components/HomeComponents/TransactionCartComponent";
-import EmptyCartComponent from "../../components/HomeComponents/EmptyCartComponent";
-import InventoryCardComponent from "../../components/HomeComponents/InventoryCardComponent";
-import FooterComponent from "../../components/HomeComponents/FooterComponent";
-import ScrollUp from "../../common/ScrollUp";
 
 const MyCartPage = () => {
   const initialState = {

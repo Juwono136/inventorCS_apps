@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+
+// icons and material-tailwind
 import { IoClose } from "react-icons/io5";
 
 const FullScreenImage = ({ src, alt, className, children }) => {

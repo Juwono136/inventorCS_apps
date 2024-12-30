@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { getFullDay } from "../../common/Date";
+
+// icons and material-tailwind
 import {
   FaYoutube,
   FaInstagram,

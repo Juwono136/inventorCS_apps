@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Button, IconButton } from "@material-tailwind/react";
 import { useSearchParams } from "react-router-dom";
+
+// icons and material-tailwind
+import { Button, IconButton } from "@material-tailwind/react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 const Pagination = ({ totalPage, page, setPage, bgColor }) => {

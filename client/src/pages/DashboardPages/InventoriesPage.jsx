@@ -1,17 +1,23 @@
 import React, { useEffect } from "react";
-import Layout from "./Layout";
-import { IoIosAddCircleOutline } from "react-icons/io";
-import { Button } from "@material-tailwind/react";
-import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
+
+// icons and material-tailwind
+import { Button } from "@material-tailwind/react";
+import { IoIosAddCircleOutline } from "react-icons/io";
+
+// components
+import Layout from "./Layout";
+import InventoriesTableComponent from "../../components/DashboardComponents/InventoriesTableComponent";
 import SearchElement from "../../common/SearchElement";
 import Pagination from "../../common/Pagination";
-import InventoriesTableComponent from "../../components/DashboardComponents/InventoriesTableComponent";
 import Loader from "../../common/Loader";
+import FilterCheckBox from "../../common/FilterCheckBox";
+
+// features
 import { getInventoriesByProgram } from "../../features/inventory/inventorySlice";
 import { accessToken } from "../../features/token/tokenSlice";
-import FilterCheckBox from "../../common/FilterCheckBox";
 
 const InventoriesPage = ({
   sort,

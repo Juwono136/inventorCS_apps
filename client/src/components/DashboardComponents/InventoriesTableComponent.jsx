@@ -1,11 +1,17 @@
 import React from "react";
+
+// icons and material-tailwind
 import { Avatar, Chip } from "@material-tailwind/react";
 import { RxCaretSort } from "react-icons/rx";
 import { useNavigate } from "react-router-dom";
 import { useDragScroll } from "../../utils/handleMouseDrag";
 // import { FaRegTrashAlt } from "react-icons/fa";
 // import { useDispatch } from "react-redux";
+
+// components
 // import DialogOpenComponent from "./DialogOpenComponent";
+
+// features
 // import { deleteInventory } from "../../features/inventory/inventorySlice";
 // import { accessToken } from "../../features/token/tokenSlice";
 

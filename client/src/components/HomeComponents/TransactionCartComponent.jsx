@@ -1,17 +1,12 @@
 import React, { useState } from "react";
-import {
-  Avatar,
-  Button,
-  Card,
-  IconButton,
-  Typography,
-} from "@material-tailwind/react";
 import DatePicker from "react-tailwindcss-datepicker";
+
+// icons and material-tailwind
+import { Button, IconButton, Typography } from "@material-tailwind/react";
 import { BsPatchCheck } from "react-icons/bs";
 import { FaRegTrashCan } from "react-icons/fa6";
 
 const TransactionCartComponent = ({
-  userInfor,
   cartItems,
   handleChange,
   handleCreateLoan,

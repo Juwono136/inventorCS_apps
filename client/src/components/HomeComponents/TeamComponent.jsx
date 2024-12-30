@@ -1,5 +1,9 @@
 import React from "react";
+
+// icons and material-tailwind
 import { Typography } from "@material-tailwind/react";
+
+// components
 import TeamCardComponent from "./TeamCardComponent";
 
 const members = [

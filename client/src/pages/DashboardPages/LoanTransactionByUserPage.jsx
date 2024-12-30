@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import BackButton from "../../common/BackButton";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+
+// icons and material-tailwind
 import {
   Card,
   CardBody,
@@ -10,8 +14,17 @@ import {
   AccordionBody,
   Button,
 } from "@material-tailwind/react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { IoIosArrowDown } from "react-icons/io";
+
+// components
+import ConfirmDrawerComponent from "../../components/DashboardComponents/ConfirmDrawerComponent";
+import ConfirmDrawerReturnedComponent from "../../components/DashboardComponents/ConfirmDrawerReturnedComponent";
+import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
+import TimelineLoanStatusComponent from "../../components/DashboardComponents/TimelineLoanStatusComponent";
+import BackButton from "../../common/BackButton";
+import Loader from "../../common/Loader";
+
+// features
 import {
   cancelLoanTransaction,
   confirmReceiveByBorrower,
@@ -19,14 +32,7 @@ import {
   getLoanTransactionsByUser,
   loanReset,
 } from "../../features/loanTransaction/loanSlice";
-import { IoIosArrowDown } from "react-icons/io";
-import toast from "react-hot-toast";
-import ConfirmDrawerComponent from "../../components/DashboardComponents/ConfirmDrawerComponent";
 import { accessToken } from "../../features/token/tokenSlice";
-import Loader from "../../common/Loader";
-import ConfirmDrawerReturnedComponent from "../../components/DashboardComponents/ConfirmDrawerReturnedComponent";
-import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
-import TimelineLoanStatusComponent from "../../components/DashboardComponents/TimelineLoanStatusComponent";
 
 function Icon({ id, open }) {
   return (

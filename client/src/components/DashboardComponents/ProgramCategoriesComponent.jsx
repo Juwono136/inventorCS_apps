@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { IoIosArrowDown } from "react-icons/io";
-import { FaFilter } from "react-icons/fa";
+
+// icons and material-tailwind
 import {
   Accordion,
   AccordionHeader,
   AccordionBody,
 } from "@material-tailwind/react";
+import { IoIosArrowDown } from "react-icons/io";
+import { FaFilter } from "react-icons/fa";
 
 function Icon({ id, open }) {
   return (

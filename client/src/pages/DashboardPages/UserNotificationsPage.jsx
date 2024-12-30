@@ -1,17 +1,23 @@
 import React, { useEffect } from "react";
-import Layout from "./Layout";
+import { useDispatch, useSelector } from "react-redux";
+import { formatDistanceToNow } from "date-fns";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
+// icons and material-tailwind
 import { IoAlertCircleOutline } from "react-icons/io5";
 import { FaRegClock } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
+
+// components
+import Layout from "./Layout";
+import Loader from "../../common/Loader";
+
+// features
 import {
   getNotificationByUser,
   markAllNotiticationAsRead,
   markNotificationAsRead,
 } from "../../features/notification/notificationSlice";
-import { formatDistanceToNow } from "date-fns";
-import Loader from "../../common/Loader";
-import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
 
 const UserNotificationsPage = () => {
   const { notification, isLoading, isSuccess, isError, message } = useSelector(

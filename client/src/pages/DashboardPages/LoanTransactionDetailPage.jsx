@@ -1,4 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+
+// icons and material-tailwind
 import {
   Button,
   Card,
@@ -9,8 +14,14 @@ import {
   AccordionHeader,
   AccordionBody,
 } from "@material-tailwind/react";
-import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { IoIosArrowDown } from "react-icons/io";
+
+// components
+import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
+import TimelineLoanStatusComponent from "../../components/DashboardComponents/TimelineLoanStatusComponent";
+import Loader from "../../common/Loader";
+
+// features
 import {
   getLoanTransactionById,
   loanReset,
@@ -18,13 +29,8 @@ import {
   updateStatusToReadyToPickup,
   updateStatusToReturned,
 } from "../../features/loanTransaction/loanSlice";
-import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
-import toast from "react-hot-toast";
 import { accessToken } from "../../features/token/tokenSlice";
-import Loader from "../../common/Loader";
 import { getUserById } from "../../features/user/userSlice";
-import { IoIosArrowDown } from "react-icons/io";
-import TimelineLoanStatusComponent from "../../components/DashboardComponents/TimelineLoanStatusComponent";
 
 function Icon({ id, open }) {
   return (

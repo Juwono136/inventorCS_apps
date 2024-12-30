@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from "react";
-import Layout from "./Layout";
+import { useDispatch, useSelector } from "react-redux";
+
+// icons and material-tailwind
 import {
   Card,
   CardHeader,
   Typography,
-  Button,
   CardBody,
   Chip,
   Input,
 } from "@material-tailwind/react";
 import { CiSearch } from "react-icons/ci";
-import { HiArrowDownTray } from "react-icons/hi2";
+
+// components
+import Layout from "./Layout";
 import MoreInfoBorrowedItemComponent from "../../components/DashboardComponents/MoreInfoBorrowedItemComponent";
-import { useDispatch, useSelector } from "react-redux";
-import { getAllLoanTransactions } from "../../features/loanTransaction/loanSlice";
 import Loader from "../../common/Loader";
+
+// features
+import { getAllLoanTransactions } from "../../features/loanTransaction/loanSlice";
 import { getAllUsersInfor } from "../../features/user/userSlice";
 
 const BorrowedItemsPage = () => {

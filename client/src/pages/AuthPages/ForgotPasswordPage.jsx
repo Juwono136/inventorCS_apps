@@ -2,8 +2,12 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
-import { forgotPassword, reset } from "../../features/auth/authSlice";
+
+// components
 import Loader from "../../common/Loader";
+
+// features
+import { forgotPassword, reset } from "../../features/auth/authSlice";
 
 const ForgotPasswordPage = () => {
   const [data, setData] = useState({

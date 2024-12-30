@@ -1,14 +1,9 @@
 import React from "react";
-import {
-  Avatar,
-  Chip,
-  IconButton,
-  Tooltip,
-  Typography,
-} from "@material-tailwind/react";
-import { BsPencilSquare } from "react-icons/bs";
+
+// icons and material-tailwind
+import { Avatar, Chip, Typography } from "@material-tailwind/react";
 import { TbArrowsSort } from "react-icons/tb";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 // import { FaRegTrashAlt } from "react-icons/fa";
 
 const UserTableComponent = ({
@@ -30,6 +25,8 @@ const UserTableComponent = ({
     if (role === 2) return "Staff";
     return null;
   };
+
+  const navigate = useNavigate();
 
   return (
     <table className="min-w-max md:w-full table-auto text-left">
@@ -77,8 +74,16 @@ const UserTableComponent = ({
           const isLast = index === users.length - 1;
           const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
 
+          const handleRowClick = () => {
+            navigate(`update_user/${_id}`);
+          };
+
           return (
-            <tr key={name} className="hover:bg-gray-200">
+            <tr
+              key={name}
+              className="hover:bg-gray-200 hover:cursor-pointer"
+              onClick={handleRowClick}
+            >
               <td className={classes}>
                 <div className="flex flex-col">
                   <Typography
@@ -167,7 +172,7 @@ const UserTableComponent = ({
                   {new Date(joinedAt).toLocaleDateString()}
                 </Typography>
               </td>
-              <td className={classes}>
+              {/* <td className={classes}>
                 <Link to={`update_user/${_id}`}>
                   <Tooltip content="Edit User">
                     <IconButton variant="text">
@@ -176,7 +181,7 @@ const UserTableComponent = ({
                   </Tooltip>
                 </Link>
 
-                {/* <Tooltip content="Delete User">
+                <Tooltip content="Delete User">
                   <IconButton
                     variant="text"
                     color="red"
@@ -184,8 +189,8 @@ const UserTableComponent = ({
                   >
                     <FaRegTrashAlt className="h-4 w-4" />
                   </IconButton>
-                </Tooltip> */}
-              </td>
+                </Tooltip>
+              </td> */}
             </tr>
           );
         })}

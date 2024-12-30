@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
-import { reset, signup } from "../../features/auth/authSlice";
-import Loader from "../../common/Loader";
 import { Navigate } from "react-router-dom";
+
+// icons and material-tailwind
+import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
+
+// components
+import Loader from "../../common/Loader";
+
+// features
+import { reset, signup } from "../../features/auth/authSlice";
 
 const SingupPage = () => {
   const programMenu = [

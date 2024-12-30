@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from "react";
-import Layout from "./Layout";
-import { Avatar, Button, Chip } from "@material-tailwind/react";
-import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
+
+// icons and material-tailwind
+import { Avatar, Button, Chip } from "@material-tailwind/react";
+import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
+
+// components
+import Layout from "./Layout";
 import SocialComponent from "../../components/DashboardComponents/SocialComponent";
 import Loader from "../../common/Loader";
 import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
+
+// features
 import { convertFileToBase64 } from "../../utils/convertToBase64";
 import { getUserInfor, updateUser } from "../../features/user/userSlice";
 import { accessToken } from "../../features/token/tokenSlice";
@@ -158,7 +164,9 @@ const MyProfilePage = () => {
       <hr className="w-full border-indigo-100 my-4" />
 
       {isLoading ? (
-        <Loader />
+        <div className="flex justify-center">
+          <Loader />
+        </div>
       ) : (
         <div className="flex flex-col items-start px-5 my-3 w-full shadow-sm shadow-gray-300 rounded-md">
           <form

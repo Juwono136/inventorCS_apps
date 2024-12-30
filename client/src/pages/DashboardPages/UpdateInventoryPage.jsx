@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from "react";
-import Layout from "./Layout";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { QRCode } from "react-qrcode-logo";
+import toast from "react-hot-toast";
+
+// icons and material-tailwind
+import { Button, Chip, Typography } from "@material-tailwind/react";
+
+// components
+import Layout from "./Layout";
+import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
 import Loader from "../../common/Loader";
 import BackButton from "../../common/BackButton";
-import { Button, Chip, Typography } from "@material-tailwind/react";
-import { QRCode } from "react-qrcode-logo";
+
+// features
 import { convertFileToBase64 } from "../../utils/convertToBase64";
-import toast from "react-hot-toast";
-import { useNavigate, useParams } from "react-router-dom";
-import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
 import {
   getInventoryById,
   updateInventory,

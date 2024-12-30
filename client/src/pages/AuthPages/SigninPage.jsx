@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { Navigate } from "react-router-dom";
-import { reset, signin } from "../../features/auth/authSlice";
+
+// icons and material-tailwind
+import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
+
+// components
 import Loader from "../../common/Loader";
+
+// features
+import { reset, signin } from "../../features/auth/authSlice";
 
 const SigninPage = () => {
   const [showPassword, setShowPassword] = useState(false);

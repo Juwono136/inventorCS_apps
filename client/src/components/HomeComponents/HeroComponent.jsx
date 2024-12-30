@@ -1,10 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+
+// icons and material-tailwind
 import { Button, Typography } from "@material-tailwind/react";
 import { IoIosArrowDown } from "react-icons/io";
 import HeroImg from "../../assets/images/heroImg.png";
+
+// components
 import SocialMenu from "../../common/SocialMenu";
-import { useSelector } from "react-redux";
 
 const HeroComponent = () => {
   const { user, isLoggedOut } = useSelector((state) => state.auth);

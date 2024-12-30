@@ -1,12 +1,14 @@
 import React, { useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
+// icons and material-tailwind
 import {
   IconButton,
   List,
   ListItem,
   Drawer,
   Card,
-  Dialog,
 } from "@material-tailwind/react";
 import { IoClose, IoSettingsOutline } from "react-icons/io5";
 import { FaPowerOff } from "react-icons/fa";
@@ -18,10 +20,13 @@ import {
 import { BsCartCheck } from "react-icons/bs";
 import { LuUserCog } from "react-icons/lu";
 import { CgProfile } from "react-icons/cg";
-import { useDispatch, useSelector } from "react-redux";
-import { logout, reset } from "../../features/auth/authSlice";
 import logoImg from "../../assets/images/logo.png";
+
+// components
 import DialogOpenComponent from "./DialogOpenComponent";
+
+// features
+import { logout, reset } from "../../features/auth/authSlice";
 import { userReset } from "../../features/user/userSlice";
 
 const SidebarComponent = ({ isDrawerOpen = false, closeDrawer }) => {

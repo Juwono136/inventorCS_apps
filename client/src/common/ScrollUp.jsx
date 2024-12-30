@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+
+// icons and material-tailwind
 import { FaArrowUp } from "react-icons/fa";
 
 const ScrollUp = () => {

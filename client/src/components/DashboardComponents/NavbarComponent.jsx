@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { formatDistanceToNow } from "date-fns";
+
+// icons and material-tailwind
 import {
   Navbar,
   IconButton,
@@ -21,16 +25,18 @@ import {
   IoAlertCircleOutline,
 } from "react-icons/io5";
 import { CiPower } from "react-icons/ci";
+
+// components
 import SidebarComponent from "./SidebarComponent";
-import { useDispatch, useSelector } from "react-redux";
-import { logout, reset } from "../../features/auth/authSlice";
 import DialogOpenComponent from "./DialogOpenComponent";
+
+// features
+import { logout, reset } from "../../features/auth/authSlice";
 import { userReset } from "../../features/user/userSlice";
 import {
   getNotificationByUser,
   markNotificationAsRead,
 } from "../../features/notification/notificationSlice";
-import { formatDistanceToNow } from "date-fns";
 
 const NavbarComponent = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -63,10 +69,6 @@ const NavbarComponent = () => {
     navigate("/signin");
   };
 
-  useEffect(() => {
-    dispatch(getNotificationByUser());
-  }, [dispatch]);
-
   const handleNotificationClick = (id, loanId) => {
     dispatch(markNotificationAsRead(id));
 
@@ -76,6 +78,10 @@ const NavbarComponent = () => {
       navigate(`/user-loan/detail/${loanId}`);
     }
   };
+
+  useEffect(() => {
+    dispatch(getNotificationByUser());
+  }, [dispatch]);
 
   const unreadNotifications = Array.isArray(notification)
     ? notification.filter((notif) => !notif.is_read).slice(0, 5)

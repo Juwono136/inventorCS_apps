@@ -1,8 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaArrowRight } from "react-icons/fa";
-import InventoryCardComponent from "./InventoryCardComponent";
 import { useSelector } from "react-redux";
+
+// icons and material-tailwind
+import { FaArrowRight } from "react-icons/fa";
+
+// components
+import InventoryCardComponent from "./InventoryCardComponent";
 import Loader from "../../common/Loader";
 
 const InventoriesSummaryComponent = () => {

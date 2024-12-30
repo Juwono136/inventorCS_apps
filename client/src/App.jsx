@@ -34,7 +34,6 @@ import InventoryDetailComponent from "./components/HomeComponents/InventoryDetai
 
 // features
 import { getUserInfor } from "./features/user/userSlice";
-import { accessToken } from "./features/token/tokenSlice";
 import { getAllInventories } from "./features/inventory/inventorySlice";
 
 function App() {
@@ -50,15 +49,13 @@ function App() {
   const [categories, setCategories] = useState("");
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const { user, userInfor, isLoggedOut } = useSelector((state) => state.auth);
+  const { user, isLoggedOut } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (!isLoggedOut && user) {
-      dispatch(getUserInfor()).then((res) => {
-        dispatch(accessToken(res));
-      });
+      dispatch(getUserInfor());
     }
   }, [isLoggedOut, dispatch, user]);
 
@@ -67,14 +64,6 @@ function App() {
       getAllInventories({ page, sort: sortInventory, categories, search })
     );
   }, [page, sortInventory, categories, search]);
-
-  // useEffect(() => {
-  //   if (user?.selectedRole === 1 || user?.selectedRole === 2) {
-  //     dispatch(getAllUsersInfor({ page, sort: sortUser, program, search }));
-  //   }
-
-  //   // setSearchParams({ page, search, sort: sort.sort, order: sort.order });
-  // }, [dispatch, userInfor, page, sortUser, program, search]);
 
   return (
     <>
