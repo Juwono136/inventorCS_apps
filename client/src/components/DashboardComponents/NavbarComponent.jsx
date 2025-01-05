@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { formatDistanceToNow } from "date-fns";
+import toast from "react-hot-toast";
 
 // icons and material-tailwind
 import {
@@ -24,6 +25,7 @@ import {
   IoNotificationsOutline,
   IoAlertCircleOutline,
 } from "react-icons/io5";
+import { FiUsers } from "react-icons/fi";
 import { CiPower } from "react-icons/ci";
 
 // components
@@ -31,17 +33,20 @@ import SidebarComponent from "./SidebarComponent";
 import DialogOpenComponent from "./DialogOpenComponent";
 
 // features
-import { logout, reset } from "../../features/auth/authSlice";
+import { logout, reset, selectRole } from "../../features/auth/authSlice";
 import { userReset } from "../../features/user/userSlice";
 import {
   getNotificationByUser,
   markNotificationAsRead,
 } from "../../features/notification/notificationSlice";
+import DialogChangeRoleComponent from "./DialogChangeRoleComponent";
 
 const NavbarComponent = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isMenuProfileOpen, setIsMenuProfileOpen] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openDialogLogout, setOpenDialogLogout] = useState(false);
+  const [openDialogChangeRole, setOpenDialogChangeRole] = useState(false);
+  const [selectedRole, setSelectedRole] = useState(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -52,13 +57,38 @@ const NavbarComponent = () => {
   );
   const { personal_info } = useSelector((state) => state.user.userInfor);
   const { avatar } = personal_info || "";
+  const roles = user?.userRoles || [];
+  const roleOptions = {
+    0: "User",
+    1: "Admin",
+    2: "Staff",
+  };
 
   const openDrawer = () => setIsDrawerOpen(true);
   const closeDrawer = () => setIsDrawerOpen(false);
   const closeMenuProfile = () => setIsMenuProfileOpen(false);
 
-  const handleOpenDialog = () => {
-    setOpenDialog(!openDialog);
+  const handleOpenDialogLogout = () => {
+    setOpenDialogLogout(!openDialogLogout);
+  };
+
+  const handleDialogChangeRole = () => {
+    setOpenDialogChangeRole(!openDialogChangeRole);
+  };
+
+  const handleRoleSelect = (role) => {
+    const selectedRole = parseInt(role);
+    setSelectedRole(selectedRole);
+  };
+
+  const handleChangeRole = (e) => {
+    e.preventDefault();
+
+    const userId = user?.id;
+    dispatch(selectRole({ userId, selectedRole }));
+
+    navigate("/dashboard");
+    toast.success(`Role has been Changed to: ${roleOptions[selectedRole]}`);
   };
 
   const handleLogout = (e) => {
@@ -99,7 +129,7 @@ const NavbarComponent = () => {
               to="/dashboard"
               className="text-xs md:text-lg bg-gradient-to-r from-gray-100  to-blue-300 bg-clip-text text-transparent font-semibold mr-4 ml-2 cursor-pointer py-1.5 transition-all hover:text-gray-300"
             >
-              InventorCS Dashboard
+              Dashboard
             </Link>
           </div>
 
@@ -144,8 +174,20 @@ const NavbarComponent = () => {
                   </Link>
                 </MenuItem>
 
+                {roles.length > 1 ? (
+                  <MenuItem
+                    className="flex items-center gap-2 rounded"
+                    onClick={() => handleDialogChangeRole("xs")}
+                  >
+                    <FiUsers className="h-4 w-4" strokeWidth={2} />
+                    <p className="text-sm">Change role as...</p>
+                  </MenuItem>
+                ) : (
+                  ""
+                )}
+
                 <MenuItem
-                  onClick={() => handleOpenDialog("xs")}
+                  onClick={() => handleOpenDialogLogout("xs")}
                   className="flex items-center gap-2 rounded hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
                 >
                   <CiPower className="h-4 w-4 text-red-500" strokeWidth={2} />
@@ -228,13 +270,24 @@ const NavbarComponent = () => {
       </Navbar>
       <SidebarComponent isDrawerOpen={isDrawerOpen} closeDrawer={closeDrawer} />
 
-      {/* Dialog logout button */}
+      {/* Dialog logout */}
       <DialogOpenComponent
-        openDialog={openDialog}
+        openDialog={openDialogLogout}
         handleFunc={handleLogout}
-        handleOpenDialog={handleOpenDialog}
+        handleOpenDialog={handleOpenDialogLogout}
         message="Are you sure you want to log out?"
         btnText="Logout"
+      />
+
+      {/* Dialog change role */}
+      <DialogChangeRoleComponent
+        openDialogChangeRole={openDialogChangeRole}
+        handleDialogChangeRole={handleDialogChangeRole}
+        handleChangeRole={handleChangeRole}
+        handleRoleSelect={handleRoleSelect}
+        roles={roles}
+        roleOptions={roleOptions}
+        selectedRole={selectedRole}
       />
     </>
   );

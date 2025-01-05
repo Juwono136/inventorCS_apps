@@ -11,7 +11,6 @@ export const accessToken = createAsyncThunk('token/refresh_token', async (token,
             thunkAPI.dispatch(logout());
             return thunkAPI.rejectWithValue('Refresh token expired. Please login!');
         }
-
         return response;
     } catch (error) {
         const message =
@@ -27,21 +26,22 @@ export const accessToken = createAsyncThunk('token/refresh_token', async (token,
 const tokenSlice = createSlice({
     name: 'token',
     initialState: {
-        value: null
+        value: null,
     },
     reducers: {
         setToken: (state, action) => {
-            state.value = action.payload
-        }
+            state.value = action.payload;
+        },
     },
     extraReducers: (builder) => {
-        builder
-            .addCase(accessToken.fulfilled, (state, action) => {
-                state.value = action.payload
-            })
-    }
-})
+        builder.addCase(accessToken.fulfilled, (state, action) => {
+            state.value = action.payload;
+        });
+    },
+});
 
 export const { setToken } = tokenSlice.actions;
 export default tokenSlice.reducer;
 
+// TokenService.js
+// Ensure your tokenService contains the appropriate `accessToken` method
