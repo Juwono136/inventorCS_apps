@@ -10,8 +10,9 @@ import { IoCloudUploadOutline } from "react-icons/io5";
 
 // components
 import Loader from "../../common/Loader";
-import BackButton from "../../common/BackButton";
 import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
+import DynamicBreadcrumbs from "../../common/DynamicBreadcrumbs";
+import UseDocumentTitle from "../../common/UseDocumentTitle";
 
 // features
 import { convertFileToBase64 } from "../../utils/convertToBase64";
@@ -22,6 +23,8 @@ import {
 import { accessToken } from "../../features/token/tokenSlice";
 
 const AddInventoryPage = () => {
+  UseDocumentTitle("Add Inventory");
+
   const characterLimit = 500;
 
   // const statusMenu = ["Available", "Maintenance", "Lost", "Damaged"];
@@ -172,14 +175,11 @@ const AddInventoryPage = () => {
 
   return (
     <Layout>
+      <DynamicBreadcrumbs />
       {isLoading ? (
         <Loader />
       ) : (
         <>
-          <div className="flex items-center">
-            <BackButton link="/inventories" />
-          </div>
-
           <div className="flex w-full justify-between items-center">
             <h3 className="text-base font-bold text-indigo-500/60 pointer-events-none sm:text-xl">
               Add an Inventory

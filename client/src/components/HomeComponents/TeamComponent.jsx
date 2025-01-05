@@ -8,44 +8,24 @@ import TeamCardComponent from "./TeamCardComponent";
 
 const members = [
   {
-    img: `https://www.material-tailwind.com/img/avatar1.jpg`,
-    name: "Ryan Samuel",
-    title: "Co-Founder",
+    img: `https://api.dicebear.com/9.x/adventurer-neutral/svg?seed=Ryan`,
+    name: "Ida Bagus Kerthyayana Manuaba",
+    title: "Computer Science",
   },
   {
-    img: `https://www.material-tailwind.com/img/avatar2.jpg`,
-    name: "Ryan Samuel",
-    title: "Co-Founder",
+    img: `https://api.dicebear.com/9.x/adventurer-neutral/svg?seed=Brian`,
+    name: "Juwono",
+    title: "Computer Science",
   },
   {
-    img: `https://www.material-tailwind.com/img/avatar5.jpg`,
-    name: "Nora Hazel",
-    title: "UI/UX Designer",
+    img: `https://api.dicebear.com/9.x/adventurer-neutral/svg?seed=Adrian`,
+    name: "Wilbert Wirawan Ichwan",
+    title: "Computer Science",
   },
   {
-    img: `https://www.material-tailwind.com/img/avatar4.jpg`,
-    name: "Otto Gonzalez",
-    title: "Marketing Specialist",
-  },
-  {
-    img: `https://www.material-tailwind.com/img/avatar6.jpg`,
-    name: "Emma Roberts",
-    title: "UI Designer",
-  },
-  {
-    img: `https://www.material-tailwind.com/img/avatar3.jpg`,
-    name: "William Pearce",
-    title: "Web Developer",
-  },
-  {
-    img: "https://www.material-tailwind.com/image/avatar7.svg",
-    name: "Bruce Mars",
-    title: "UI/UX Designer",
-  },
-  {
-    img: "https://www.material-tailwind.com/image/avatar8.svg",
-    name: "Annie Sprrat",
-    title: "Marketing Specialist",
+    img: `https://api.dicebear.com/9.x/adventurer-neutral/svg?seed=Andrea`,
+    name: "Brilian Yudha",
+    title: "Computer Science",
   },
 ];
 
@@ -62,8 +42,11 @@ const TeamComponent = () => {
             color="blue-gray"
             className="my-2 !text-2xl lg:!text-4xl bg-gradient-to-r from-blue-400 via-purple-500 to-blue-800 bg-clip-text text-transparent animate-gradient"
           >
-            Computer Science Program - BIU
+            Binus University International (BUI)
           </Typography>
+          <h4 className="my-2 text-sm font-semibold bg-gradient-to-r from-indigo-400 via-purple-500 to-blue-800 bg-clip-text text-transparent animate-gradient">
+            School of Computer and Creative Art (SoCCA)
+          </h4>
           {/* <Typography
             variant="lead"
             className="mx-auto w-full !text-gray-500 max-w-4xl"

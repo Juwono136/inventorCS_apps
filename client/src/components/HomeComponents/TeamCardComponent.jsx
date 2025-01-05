@@ -16,14 +16,13 @@ const TeamCardComponent = ({ img, name, title }) => {
         />
         <Typography
           variant="h5"
-          color="blue-gray"
-          className="!font-medium text-lg"
+          className="!font-medium text-sm text-indigo-800"
         >
           {name}
         </Typography>
         <Typography
           color="blue-gray"
-          className="mb-2 !text-base !font-semibold text-gray-600"
+          className="mb-2 text-sm !font-semibold text-gray-600"
         >
           {title}
         </Typography>

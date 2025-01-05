@@ -14,6 +14,8 @@ const TransactionCartComponent = ({
   handleRevomeCartItem,
   purpose_of_loan,
 }) => {
+  const characterLimit = 500;
+
   const [borrowDate, setBorrowDate] = useState({ startDate: null });
   const [expectedReturnDate, setExpectedReturnDate] = useState({
     startDate: null,
@@ -66,7 +68,11 @@ const TransactionCartComponent = ({
                     </h2>
                   </div>
 
-                  <h2 className="text-base text-indigo-900">{title}</h2>
+                  <a href={`/item_detail/${_id}`} className="w-max">
+                    <h2 className="text-base text-indigo-900 hover:underline">
+                      {title}
+                    </h2>
+                  </a>
                   <p className="text-xs font-semibold text-purple-900">
                     Item left:{" "}
                     <span className="text-purple-00 bg-purple-100 px-1.5 py-1 rounded-md">
@@ -166,7 +172,7 @@ const TransactionCartComponent = ({
               Purpose of Loan:
             </label>
             <textarea
-              maxLength={500}
+              maxLength={characterLimit}
               name="purpose_of_loan"
               id="purpose_of_loan"
               cols="30"
@@ -176,6 +182,11 @@ const TransactionCartComponent = ({
               placeholder="Write the Purpose of loan here..."
               onChange={(e) => handleChange("purpose_of_loan", e.target.value)}
             ></textarea>
+
+            <p className="mb-1 text-gray-600 text-xs text-right">
+              {characterLimit - purpose_of_loan.length}/{characterLimit}{" "}
+              characters left
+            </p>
           </div>
 
           <Button

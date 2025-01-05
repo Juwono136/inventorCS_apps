@@ -25,16 +25,17 @@ import LoanTransactionByUserPage from "./pages/DashboardPages/LoanTransactionByU
 import UserLoanTransactionPage from "./pages/DashboardPages/UserLoanTransactionPage";
 import LoanTransactionDetailPage from "./pages/DashboardPages/LoanTransactionDetailPage";
 import UserNotificationsPage from "./pages/DashboardPages/UserNotificationsPage";
+import InventoryDetailPage from "./pages/HomePages/InventoryDetailPage";
 
 // components
 import NavbarComponent from "./components/HomeComponents/NavbarComponent";
 import NotFound from "./common/NotFound";
 import ProtectedUserRoutes from "./common/ProtectedUserRoutes";
-import InventoryDetailComponent from "./components/HomeComponents/InventoryDetailComponent";
 
 // features
 import { getUserInfor } from "./features/user/userSlice";
 import { getAllInventories } from "./features/inventory/inventorySlice";
+import InventoryListPage from "./pages/HomePages/InventoryListPage";
 
 function App() {
   const [sortUser, setSortUser] = useState({
@@ -75,21 +76,7 @@ function App() {
 
           {/* Home page routes */}
           <Route path="/" element={<NavbarComponent />}>
-            <Route
-              index
-              element={
-                <Home
-                  sort={sortInventory}
-                  setSort={setSortInventory}
-                  categories={categories}
-                  setCategories={setCategories}
-                  page={page}
-                  setPage={setPage}
-                  search={search}
-                  setSearch={setSearch}
-                />
-              }
-            />
+            <Route index element={<Home />} />
             <Route path="mycarts" element={<MyCartPage />} />
 
             {/* Auth page routes */}
@@ -102,9 +89,22 @@ function App() {
             />
 
             {/* inventory routes */}
+            <Route path="item_detail/:id" element={<InventoryDetailPage />} />
+
             <Route
-              path="item_detail/:id"
-              element={<InventoryDetailComponent />}
+              path="inventory-list"
+              element={
+                <InventoryListPage
+                  sort={sortInventory}
+                  setSort={setSortInventory}
+                  categories={categories}
+                  setCategories={setCategories}
+                  page={page}
+                  setPage={setPage}
+                  search={search}
+                  setSearch={setSearch}
+                />
+              }
             />
           </Route>
 
@@ -136,7 +136,7 @@ function App() {
             }
           />
           <Route
-            path="add_inventory"
+            path="inventories/add_inventory"
             element={
               <ProtectedUserRoutes allowedRoles={[2]}>
                 <AddInventoryPage />

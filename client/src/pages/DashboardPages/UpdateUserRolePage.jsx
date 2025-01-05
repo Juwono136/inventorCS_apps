@@ -19,6 +19,7 @@ import SocialComponent from "../../components/DashboardComponents/SocialComponen
 import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
 import BackButton from "../../common/BackButton";
 import Loader from "../../common/Loader";
+import UseDocumentTitle from "../../common/UseDocumentTitle";
 
 // features
 import {
@@ -30,6 +31,8 @@ import {
 import { accessToken } from "../../features/token/tokenSlice";
 
 const UpdateUserRolePage = () => {
+  UseDocumentTitle("Update User");
+
   const roleMap = {
     0: "User",
     1: "Admin",

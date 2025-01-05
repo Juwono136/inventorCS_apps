@@ -8,6 +8,7 @@ import TransactionCartComponent from "../../components/HomeComponents/Transactio
 import EmptyCartComponent from "../../components/HomeComponents/EmptyCartComponent";
 import InventoryCardComponent from "../../components/HomeComponents/InventoryCardComponent";
 import FooterComponent from "../../components/HomeComponents/FooterComponent";
+import UseDocumentTitle from "../../common/UseDocumentTitle";
 import Loader from "../../common/Loader";
 import ScrollUp from "../../common/ScrollUp";
 
@@ -21,6 +22,8 @@ import {
 import { accessToken } from "../../features/token/tokenSlice";
 
 const MyCartPage = () => {
+  UseDocumentTitle("My Cart");
+
   const initialState = {
     purpose_of_loan: "",
     borrow_date: { startDate: null, endDate: null },
@@ -156,10 +159,17 @@ const MyCartPage = () => {
           </h4>
         ) : (
           <div className="flex flex-col m-3 md:mx-3">
-            <div className="my-4 w-full">
+            <div className="flex my-4 w-full justify-between items-center">
               <h2 className="text-xl md:text-2xl bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent animate-gradient">
                 Latest inventory
               </h2>
+
+              <a
+                href="/inventory-list"
+                className="text-xs text-white py-2 px-3 bg-indigo-500 rounded-md hover:underline hover:bg-indigo-400 transition-all"
+              >
+                See more
+              </a>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6 bg-indigo-200/20 p-6 rounded-md shadow-md">
               {sortedItems?.slice(0, 5).map((item, i) => (

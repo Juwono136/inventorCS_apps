@@ -10,6 +10,8 @@ import Pagination from "../../common/Pagination";
 import SearchElement from "../../common/SearchElement";
 import Loader from "../../common/Loader";
 import FilterCheckBox from "../../common/FilterCheckBox";
+import DynamicBreadcrumbs from "../../common/DynamicBreadcrumbs";
+import UseDocumentTitle from "../../common/UseDocumentTitle";
 // import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
 
 // features
@@ -26,6 +28,8 @@ const UserListPage = ({
   search,
   setSearch,
 }) => {
+  UseDocumentTitle("User List");
+
   const TABLE_HEAD = [
     "No.",
     "Member Info",
@@ -119,6 +123,7 @@ const UserListPage = ({
 
   return (
     <Layout>
+      <DynamicBreadcrumbs />
       <h3 className="text-base font-bold text-indigo-500/60 pointer-events-none sm:text-xl">
         Users List
       </h3>

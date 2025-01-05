@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 // icons and material-tailwind
@@ -63,13 +62,13 @@ const InventoriesSummaryComponent = () => {
 
       {items?.length !== 0 && (
         <div className="my-6">
-          <Link
-            to="/inventory-list"
+          <a
+            href="/inventory-list"
             className="flex items-center gap-3 mt-3 bg-indigo-600 text-white text-sm px-3 py-2 rounded-lg hover:shadow-lg transition transform hover:scale-105"
           >
             See more
             <FaArrowRight />
-          </Link>
+          </a>
         </div>
       )}
     </div>

@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 // icons and material-tailwind
@@ -33,37 +32,43 @@ const HeroComponent = () => {
             Binus University International
           </Typography>
           <Typography variant="h4" className="text-indigo-900">
-            Computer Science and Creative Art Inventory Center
+            School of Computer and Creative Art Inventory Center
           </Typography>
 
           {user && isLoggedOut === false ? (
-            <Typography className="mt-2 mb-6 !text-base font-semibold text-indigo-900">
-              Welcome,{" "}
-              {userInfor?.personal_info?.name.replace(/\b\w/g, (char) =>
-                char.toUpperCase()
-              )}{" "}
-              🖖
-            </Typography>
+            <>
+              <Typography className="mt-6 !text-base font-semibold text-indigo-900">
+                Welcome,{" "}
+                {userInfor?.personal_info?.name.replace(/\b\w/g, (char) =>
+                  char.toUpperCase()
+                )}{" "}
+                🖖
+              </Typography>
+
+              <p className="text-xs font-semibold text-gray-800 mb-1 mt-2">
+                Let's explore our inventories!
+              </p>
+            </>
           ) : (
             <>
-              <Typography className="mt-2 mb-6 !text-base font-normal text-gray-200">
+              <Typography className="mt-2 mb-4 text-sm font-normal text-gray-100">
                 Please register your account to borrow our inventory.
               </Typography>
 
-              <Link to="/signup">
+              <a href="/signup">
                 <Button className="flex-shrink-0 bg-indigo-600 rounded-full">
                   Register now
                 </Button>
-              </Link>
+              </a>
+
+              <div className="my-6">
+                <p className="text-sm font-semibold text-gray-800 mb-1">
+                  Follow Us 👇
+                </p>
+                <SocialMenu />
+              </div>
             </>
           )}
-
-          <div className="my-6">
-            <p className="text-sm font-semibold text-gray-800 mb-1">
-              Follow Us 👇
-            </p>
-            <SocialMenu />
-          </div>
         </div>
       </div>
 

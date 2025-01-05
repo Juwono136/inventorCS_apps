@@ -13,11 +13,15 @@ import { LuClipboardCheck } from "react-icons/lu";
 // components
 import Layout from "./Layout";
 import Loader from "../../common/Loader";
+import DynamicBreadcrumbs from "../../common/DynamicBreadcrumbs";
+import UseDocumentTitle from "../../common/UseDocumentTitle";
 
 // features
 import { getLoanTransactionsByUser } from "../../features/loanTransaction/loanSlice";
 
 const UserLoanTransactionPage = () => {
+  UseDocumentTitle("My Loan Transactions");
+
   const { loanData, isLoading } = useSelector((state) => state.loan);
 
   const dispatch = useDispatch();
@@ -38,6 +42,7 @@ const UserLoanTransactionPage = () => {
 
   return (
     <Layout>
+      <DynamicBreadcrumbs />
       <h3 className="text-base text-center md:text-left font-bold text-indigo-500/60 pointer-events-none sm:text-xl">
         My Loan Transactions
       </h3>

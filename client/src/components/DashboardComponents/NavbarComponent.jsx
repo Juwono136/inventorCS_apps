@@ -129,7 +129,7 @@ const NavbarComponent = () => {
               to="/dashboard"
               className="text-xs md:text-lg bg-gradient-to-r from-gray-100  to-blue-300 bg-clip-text text-transparent font-semibold mr-4 ml-2 cursor-pointer py-1.5 transition-all hover:text-gray-300"
             >
-              Dashboard
+              InventorCS
             </Link>
           </div>
 

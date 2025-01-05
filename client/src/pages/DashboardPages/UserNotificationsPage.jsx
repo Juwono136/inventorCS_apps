@@ -11,6 +11,8 @@ import { FaRegClock } from "react-icons/fa";
 // components
 import Layout from "./Layout";
 import Loader from "../../common/Loader";
+import DynamicBreadcrumbs from "../../common/DynamicBreadcrumbs";
+import UseDocumentTitle from "../../common/UseDocumentTitle";
 
 // features
 import {
@@ -20,6 +22,8 @@ import {
 } from "../../features/notification/notificationSlice";
 
 const UserNotificationsPage = () => {
+  UseDocumentTitle("Notifications");
+
   const { notification, isLoading, isSuccess, isError, message } = useSelector(
     (state) => state.notification.notifications
   );
@@ -68,6 +72,7 @@ const UserNotificationsPage = () => {
 
   return (
     <Layout>
+      <DynamicBreadcrumbs />
       <div className="md:mx-8">
         <div className="flex justify-between items-center">
           <h3 className="text-base text-center md:text-left font-bold text-indigo-500/60 pointer-events-non sm:text-xl ">

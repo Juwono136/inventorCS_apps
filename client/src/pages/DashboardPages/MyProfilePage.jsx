@@ -11,6 +11,8 @@ import Layout from "./Layout";
 import SocialComponent from "../../components/DashboardComponents/SocialComponent";
 import Loader from "../../common/Loader";
 import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
+import DynamicBreadcrumbs from "../../common/DynamicBreadcrumbs";
+import UseDocumentTitle from "../../common/UseDocumentTitle";
 
 // features
 import { convertFileToBase64 } from "../../utils/convertToBase64";
@@ -18,6 +20,8 @@ import { getUserInfor, updateUser } from "../../features/user/userSlice";
 import { accessToken } from "../../features/token/tokenSlice";
 
 const MyProfilePage = () => {
+  UseDocumentTitle("My Profile");
+
   const characterLimit = 250;
 
   const addressMenu = [
@@ -158,6 +162,7 @@ const MyProfilePage = () => {
 
   return (
     <Layout>
+      <DynamicBreadcrumbs />
       <h3 className="text-base text-center md:text-left font-bold text-indigo-500/60 pointer-events-non sm:text-xl ">
         My Profile
       </h3>

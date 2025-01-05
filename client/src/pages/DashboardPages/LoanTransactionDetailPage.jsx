@@ -20,6 +20,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
 import TimelineLoanStatusComponent from "../../components/DashboardComponents/TimelineLoanStatusComponent";
 import Loader from "../../common/Loader";
+import UseDocumentTitle from "../../common/UseDocumentTitle";
 
 // features
 import {
@@ -43,6 +44,8 @@ function Icon({ id, open }) {
 }
 
 const LoanTransactionDetailPage = () => {
+  UseDocumentTitle("Loan Transaction detail");
+
   const TABLE_HEAD = ["No", "Item Name", "Quantity", "Is Consumable?"];
 
   const { loanData, isError, isSuccess, message, isLoading } = useSelector(

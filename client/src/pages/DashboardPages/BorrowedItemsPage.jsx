@@ -16,12 +16,16 @@ import { CiSearch } from "react-icons/ci";
 import Layout from "./Layout";
 import MoreInfoBorrowedItemComponent from "../../components/DashboardComponents/MoreInfoBorrowedItemComponent";
 import Loader from "../../common/Loader";
+import DynamicBreadcrumbs from "../../common/DynamicBreadcrumbs";
+import UseDocumentTitle from "../../common/UseDocumentTitle";
 
 // features
 import { getAllLoanTransactions } from "../../features/loanTransaction/loanSlice";
 import { getAllUsersInfor } from "../../features/user/userSlice";
 
 const BorrowedItemsPage = () => {
+  UseDocumentTitle("Borrowed Item");
+
   const TABLE_HEAD = [
     "No.",
     "Binusian ID",
@@ -77,6 +81,7 @@ const BorrowedItemsPage = () => {
 
   return (
     <Layout>
+      <DynamicBreadcrumbs />
       <h3 className="text-base font-bold text-indigo-500/60 pointer-events-none sm:text-xl mb-2 md:mb-0">
         Borrowed Items List
       </h3>

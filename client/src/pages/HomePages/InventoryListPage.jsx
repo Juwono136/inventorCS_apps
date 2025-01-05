@@ -3,25 +3,17 @@ import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 
-// icons and material-tailwind
-import { Button } from "@material-tailwind/react";
-import { IoIosAddCircleOutline } from "react-icons/io";
-
 // components
-import Layout from "./Layout";
-import InventoriesTableComponent from "../../components/DashboardComponents/InventoriesTableComponent";
-import SearchElement from "../../common/SearchElement";
-import Pagination from "../../common/Pagination";
-import Loader from "../../common/Loader";
-import FilterCheckBox from "../../common/FilterCheckBox";
-import DynamicBreadcrumbs from "../../common/DynamicBreadcrumbs";
+import InventoryCardComponent from "../../components/HomeComponents/InventoryCardComponent";
+import FooterComponent from "../../components/HomeComponents/FooterComponent";
 import UseDocumentTitle from "../../common/UseDocumentTitle";
+import SearchElement from "../../common/SearchElement";
+import FilterCheckBox from "../../common/FilterCheckBox";
+import Loader from "../../common/Loader";
+import Pagination from "../../common/Pagination";
+import ScrollUp from "../../common/ScrollUp";
 
-// features
-import { getInventoriesByProgram } from "../../features/inventory/inventorySlice";
-import { accessToken } from "../../features/token/tokenSlice";
-
-const InventoriesPage = ({
+const InventoryListPage = ({
   sort,
   setSort,
   categories,
@@ -31,18 +23,8 @@ const InventoriesPage = ({
   search,
   setSearch,
 }) => {
-  UseDocumentTitle("Inventories List");
+  UseDocumentTitle("Our Inventories");
 
-  const TABLE_HEAD = [
-    "No.",
-    "Item Info",
-    "Item Location",
-    "Item Cabinet",
-    "Item Category",
-    "Total Items",
-    "Item Status",
-    "Is Consumable?",
-  ];
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page")) || 1;
 
@@ -58,14 +40,6 @@ const InventoriesPage = ({
     setSearchParams({ ...searchParams, search: term });
     setPage(1);
   };
-
-  useEffect(() => {
-    dispatch(getInventoriesByProgram({ page, sort, categories, search })).then(
-      (res) => {
-        dispatch(accessToken(res));
-      }
-    );
-  }, [page, sort, categories, search]);
 
   useEffect(() => {
     // get the page number from the URL parameters when the component mounts
@@ -109,30 +83,23 @@ const InventoriesPage = ({
     }
   };
 
+  const sortedItems = items
+    ? [...items].sort(
+        (a, b) => new Date(b.publishedAt) - new Date(a.publishedAt)
+      )
+    : [];
+
   return (
-    <Layout>
-      <DynamicBreadcrumbs />
-      <div className="flex w-full flex-col md:flex-row justify-between md:items-center">
-        <h3 className="text-base font-bold text-indigo-500/60 pointer-events-none sm:text-xl mb-2 md:mb-0">
+    <div className="flex flex-col mx-6 my-6 md:mx-8">
+      <div className="flex w-full justify-between items-center">
+        <h2 className="text-base md:text-xl bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent animate-gradient">
           Inventories List
-        </h3>
-
-        <div className="flex gap-2 w-max flex-col md:flex-row justify-center md:items-center">
-          <a href="inventories/add_inventory">
-            <Button
-              className="flex items-center capitalize bg-purple-500"
-              size="sm"
-            >
-              <IoIosAddCircleOutline className="mr-1 text-lg" />
-              Add Inventory
-            </Button>
-          </a>
-        </div>
+        </h2>
       </div>
-      <hr className="w-full border-indigo-100 my-4" />
 
-      <div className="flex gap-4 flex-col">
-        <div className="flex basis-1/5 flex-col md:flex-row gap-4">
+      <div className="flex flex-col w-full gap-4 my-6">
+        {/* search and filter section */}
+        <div className="flex flex-col md:flex-row w-full gap-4">
           <SearchElement setSearch={handleSearch} />
 
           <FilterCheckBox
@@ -145,24 +112,33 @@ const InventoriesPage = ({
           />
         </div>
 
-        <div className="basis-4/5 overflow-x-auto md:w-full">
+        {/* inventory list section */}
+        <div className="w-full mt-4">
           {isLoading ? (
-            <div className="flex justify-center">
-              <Loader />
-            </div>
+            <Loader />
+          ) : items?.length === 0 ? (
+            <h4 className="p-3 text-base text-center font-semibold text-red-900">
+              Sorry, Inventory not found.
+            </h4>
           ) : (
-            <InventoriesTableComponent
-              items={items}
-              TABLE_HEAD={TABLE_HEAD}
-              handleSort={handleSort}
-            />
+            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
+              {sortedItems?.map((item, i) => (
+                <InventoryCardComponent
+                  key={i}
+                  itemId={item._id}
+                  image={item.asset_img}
+                  title={item.asset_name}
+                  serial_number={item.serial_number}
+                  total_items={item.total_items}
+                  status={item.item_status}
+                  categories={item.categories}
+                  desc={item.desc}
+                  is_consumable={item.is_consumable}
+                  item_program={item.item_program}
+                />
+              ))}
+            </div>
           )}
-        </div>
-
-        <div className="flex">
-          <p className="text-xs text-blue-gray-800">
-            Total Items: {totalItems}
-          </p>
         </div>
 
         {/* pagination */}
@@ -171,14 +147,17 @@ const InventoriesPage = ({
             totalPage={search ? Math.ceil(totalItems / limit) : totalPages}
             page={page}
             setPage={setPage}
-            bgColor="blue"
+            bgColor="indigo"
           />
         ) : (
           ""
         )}
       </div>
-    </Layout>
+
+      <FooterComponent />
+      <ScrollUp />
+    </div>
   );
 };
 
-export default InventoriesPage;
+export default InventoryListPage;

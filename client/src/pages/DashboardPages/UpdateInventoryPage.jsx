@@ -12,6 +12,7 @@ import Layout from "./Layout";
 import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
 import Loader from "../../common/Loader";
 import BackButton from "../../common/BackButton";
+import UseDocumentTitle from "../../common/UseDocumentTitle";
 
 // features
 import { convertFileToBase64 } from "../../utils/convertToBase64";
@@ -22,6 +23,8 @@ import {
 import { accessToken } from "../../features/token/tokenSlice";
 
 const UpdateInventoryPage = () => {
+  UseDocumentTitle("Update Inventory");
+
   const characterLimit = 500;
 
   const categoryMenu = [

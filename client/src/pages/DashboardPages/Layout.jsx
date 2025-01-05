@@ -6,6 +6,8 @@ import { useSelector } from "react-redux";
 import SidebarComponent from "../../components/DashboardComponents/SidebarComponent";
 import NavbarComponent from "../../components/DashboardComponents/NavbarComponent";
 import Loader from "../../common/Loader";
+import FooterDashboardComponent from "../../components/DashboardComponents/FooterDashboardComponent";
+import ScrollUp from "../../common/ScrollUp";
 
 const Layout = ({ children }) => {
   const { user, isLoggedOut, isLoading } = useSelector((state) => state.auth);
@@ -24,13 +26,19 @@ const Layout = ({ children }) => {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <SidebarComponent />
-      <div className="flex flex-col flex-grow overflow-hidden">
-        <NavbarComponent />
-        <main className="flex-grow overflow-x-auto px-6 py-4">{children}</main>
+    <>
+      <div className="flex h-screen overflow-hidden">
+        <SidebarComponent />
+        <div className="flex flex-col flex-grow overflow-hidden">
+          <NavbarComponent />
+          <main className="flex-grow overflow-x-auto px-6 py-4">
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+      <FooterDashboardComponent />
+      <ScrollUp />
+    </>
   );
 };
 

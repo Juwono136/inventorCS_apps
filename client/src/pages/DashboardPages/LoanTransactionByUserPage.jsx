@@ -23,6 +23,7 @@ import DialogOpenComponent from "../../components/DashboardComponents/DialogOpen
 import TimelineLoanStatusComponent from "../../components/DashboardComponents/TimelineLoanStatusComponent";
 import BackButton from "../../common/BackButton";
 import Loader from "../../common/Loader";
+import UseDocumentTitle from "../../common/UseDocumentTitle";
 
 // features
 import {
@@ -45,6 +46,8 @@ function Icon({ id, open }) {
 }
 
 const LoanTransactionByUserPage = () => {
+  UseDocumentTitle("Loan Transaction by User");
+
   const TABLE_HEAD = ["No", "Item Name", "Quantity", "Is Consumable?"];
 
   const statusTimeline = [
