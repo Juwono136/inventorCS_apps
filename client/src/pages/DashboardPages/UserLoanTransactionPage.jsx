@@ -61,7 +61,7 @@ const UserLoanTransactionPage = () => {
           <p className="mt-8 text-sm text-indigo-900">
             Want to borrow an item?{" "}
             <a
-              href="/"
+              href="/inventory-list"
               className="text-blue-gray-900 underline hover:font-semibold"
             >
               Click here.

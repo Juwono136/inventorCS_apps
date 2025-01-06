@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 // pages
 import Home from "./pages/HomePages/HomeLayout";
@@ -36,6 +36,7 @@ import ProtectedUserRoutes from "./common/ProtectedUserRoutes";
 import { getUserInfor } from "./features/user/userSlice";
 import { getAllInventories } from "./features/inventory/inventorySlice";
 import InventoryListPage from "./pages/HomePages/InventoryListPage";
+import { accessToken } from "./features/token/tokenSlice";
 
 function App() {
   const [sortUser, setSortUser] = useState({
@@ -56,7 +57,9 @@ function App() {
 
   useEffect(() => {
     if (!isLoggedOut && user) {
-      dispatch(getUserInfor());
+      dispatch(getUserInfor()).then((res) => {
+        dispatch(accessToken(res));
+      });
     }
   }, [isLoggedOut, dispatch, user]);
 

@@ -31,7 +31,7 @@ const FooterComponent = () => {
           <li>
             <Typography
               as="a"
-              href="#inventories"
+              href="/inventory-list"
               className="font-semibold transition-colors text-gray-700 hover:text-gray-900"
             >
               Inventories

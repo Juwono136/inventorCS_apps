@@ -85,14 +85,9 @@ const NavbarComponent = () => {
         color="blue-gray"
         className="p-1 font-normal"
       >
-        <HashLink
-          smooth
-          to="/inventory-list"
-          className="flex items-center"
-          onClick={() => handleNavigation("inventories")}
-        >
+        <a href="/inventory-list" className="flex items-center">
           Inventories
-        </HashLink>
+        </a>
       </Typography>
       <Typography
         as="li"

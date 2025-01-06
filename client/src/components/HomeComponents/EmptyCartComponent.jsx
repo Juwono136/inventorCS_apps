@@ -21,7 +21,7 @@ const EmptyCartComponent = () => {
           </p>
 
           <a
-            href="/"
+            href="/inventory-list"
             className="w-max flex justify-center items-center px-6 py-3 bg-indigo-500 rounded-md text-xs font-semibold text-white hover:bg-indigo-700 transition-all"
           >
             Start Borrowing

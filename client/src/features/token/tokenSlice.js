@@ -1,14 +1,15 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import tokenService from './tokenService';
-import { logout } from '../auth/authSlice';
+import { logout, reset } from '../auth/authSlice';
 
 // access token
 export const accessToken = createAsyncThunk('token/refresh_token', async (token, thunkAPI) => {
     try {
         const response = await tokenService.accessToken(token);
 
-        if (response.status === 400) {
+        if (!response) {
             thunkAPI.dispatch(logout());
+            thunkAPI.dispatch(reset())
             return thunkAPI.rejectWithValue('Refresh token expired. Please login!');
         }
         return response;
@@ -19,6 +20,7 @@ export const accessToken = createAsyncThunk('token/refresh_token', async (token,
             error.toString();
 
         thunkAPI.dispatch(logout());
+        thunkAPI.dispatch(reset());
         return thunkAPI.rejectWithValue(message);
     }
 });
