@@ -7,6 +7,16 @@ import { getUserById } from '../utils/getUserById.js';
 
 const { CLIENT_URL } = process.env
 
+// generate unique transaction_id
+const generateTransactionId = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Ensure two-digit month
+    const day = String(now.getDate()).padStart(2, '0'); // Ensure two-digit day
+    const timeStamp = now.getTime(); // Milliseconds since epoch
+    return `INV/${year}${month}${day}/BUI/SOCCA/${timeStamp}`;
+}
+
 // create loan transaction
 export const createLoanTransaction = async (req, res) => {
     try {
@@ -90,6 +100,9 @@ export const createLoanTransaction = async (req, res) => {
         // Create separate loan transactions for each program group
         const loanTransactions = await Promise.all(
             Object.entries(itemsByProgram).map(async ([program, items]) => {
+                // Generate unique transaction ID
+                const transactionId = generateTransactionId();
+
                 // send notification to staff based on their program 
                 const staffMembers = await getStaffs(req);
                 const staffIds = staffMembers
@@ -97,6 +110,7 @@ export const createLoanTransaction = async (req, res) => {
                     .map(staff => staff._id);
 
                 const newLoanTransaction = await LoanTransactions.create({
+                    transaction_id: transactionId,
                     borrower_id: req.user._id,
                     borrowed_item: items,
                     purpose_of_loan,
@@ -105,7 +119,7 @@ export const createLoanTransaction = async (req, res) => {
                 });
 
                 try {
-                    await createNotification(staffIds, newLoanTransaction._id, `Loan request from ${req.user.personal_info.name} with Transaction ID: ${formattedTransactionId} is pending approval.`);
+                    await createNotification(staffIds, newLoanTransaction._id, `Loan request from ${req.user.personal_info.name} with Transaction ID: ${transactionId} is pending approval.`);
                 } catch (notificationError) {
                     console.error(`Failed to create notification for staff members: ${notificationError.message}`);
                 }
@@ -118,7 +132,7 @@ export const createLoanTransaction = async (req, res) => {
                 const url = `${CLIENT_URL}/user-loan/detail-loan/${newLoanTransaction._id}`
                 const emailSubject = "New Loan Request Submitted"
                 const emailTitle = "Loan Transaction Request Created"
-                const emailText = `New Loan request from ${req.user.personal_info.name} with Transaction ID: ${formattedTransactionId} is pending approval.`
+                const emailText = `New Loan request from ${req.user.personal_info.name} with Transaction ID: ${transactionId} is pending approval.`
                 const btnEmailText = "View Loan Item Details"
 
                 sendMail(staffEmails, url, emailSubject, emailTitle, emailText, btnEmailText);

@@ -22,7 +22,7 @@ import AddInventoryPage from "./pages/DashboardPages/AddInventoryPage";
 import UpdateInventoryPage from "./pages/DashboardPages/UpdateInventoryPage";
 import MyCartPage from "./pages/HomePages/MyCartPage";
 import LoanTransactionByUserPage from "./pages/DashboardPages/LoanTransactionByUserPage";
-import UserLoanTransactionPage from "./pages/DashboardPages/UserLoanTransactionPage";
+import MyLoanTransactionPage from "./pages/DashboardPages/MyLoanTransactionPage";
 import LoanTransactionDetailPage from "./pages/DashboardPages/LoanTransactionDetailPage";
 import UserNotificationsPage from "./pages/DashboardPages/UserNotificationsPage";
 import InventoryDetailPage from "./pages/HomePages/InventoryDetailPage";
@@ -168,7 +168,7 @@ function App() {
             path="user-loan"
             element={
               <ProtectedUserRoutes allowedRoles={[0, 1, 2]}>
-                <UserLoanTransactionPage />
+                <MyLoanTransactionPage />
               </ProtectedUserRoutes>
             }
           />

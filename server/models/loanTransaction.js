@@ -4,6 +4,7 @@ const loanTransactionSchema = mongoose.Schema({
     transaction_id: {
         type: String,
         required: true,
+        unique: true
     },
     borrower_id: {
         type: String, // save user_id from users API (borrower)

@@ -19,8 +19,18 @@ import UseDocumentTitle from "../../common/UseDocumentTitle";
 // features
 import { getLoanTransactionsByUser } from "../../features/loanTransaction/loanSlice";
 
-const UserLoanTransactionPage = () => {
+const MyLoanTransactionPage = () => {
   UseDocumentTitle("My Loan Transactions");
+
+  const statusLoanColors = {
+    Pending: "blue-gray",
+    "Ready to Pickup": "lime",
+    Borrowed: "blue",
+    "Partially Consumed": "purple",
+    Consumed: "orange",
+    Returned: "green",
+    Cancelled: "red",
+  };
 
   const { loanData, isLoading } = useSelector((state) => state.loan);
 
@@ -75,15 +85,6 @@ const UserLoanTransactionPage = () => {
               { _id, borrow_date, expected_return_date, loan_status },
               index
             ) => {
-              const statusLoanColors = {
-                Pending: "blue-gray",
-                "Ready to Pickup": "lime",
-                Borrowed: "blue",
-                "Partially Consumed": "purple",
-                Consumed: "orange",
-                Returned: "green",
-                Cancelled: "red",
-              };
               return (
                 <div
                   className="flex gap-2 w-full flex-col items-center rounded-xl border border-indigo-100 bg-indigo-100/30 p-4 shadow-lg shadow-black/5 saturate-200 backdrop-blur-sm"
@@ -159,4 +160,4 @@ const UserLoanTransactionPage = () => {
   );
 };
 
-export default UserLoanTransactionPage;
+export default MyLoanTransactionPage;

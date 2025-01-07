@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 // icons and material-tailwind
@@ -13,19 +13,24 @@ import {
   Button,
 } from "@material-tailwind/react";
 import { LuUsers } from "react-icons/lu";
+import { CiPower } from "react-icons/ci";
 
 // components
+import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
 import Loader from "../../common/Loader";
 
 // features
-import { reset, selectRole } from "../../features/auth/authSlice";
+import { logout, reset, selectRole } from "../../features/auth/authSlice";
+import { userReset } from "../../features/user/userSlice";
 
 const SelecteRolePage = () => {
   const { user, isError, message, isLoggedOut, isLoading } = useSelector(
     (state) => state.auth
   );
   const [selectedRole, setSelectedRole] = useState(null);
+  const [openDialogLogout, setOpenDialogLogout] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const roles = user?.role || [];
   const roleOptions = {
@@ -48,6 +53,18 @@ const SelecteRolePage = () => {
     toast.success("🖖Welcome!");
   };
 
+  const handleOpenDialogLogout = () => {
+    setOpenDialogLogout(!openDialogLogout);
+  };
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    dispatch(logout());
+    dispatch(reset());
+    dispatch(userReset());
+    navigate("/signin");
+  };
+
   useEffect(() => {
     if (isError) {
       toast.error(message);
@@ -68,7 +85,18 @@ const SelecteRolePage = () => {
   }
 
   return (
-    <div className="flex items-center justify-center h-screen mx-6 md:mx-0">
+    <div className="relative flex items-center justify-center h-screen mx-6 md:mx-0">
+      <div className="absolute top-0 right-0 my-6 mx-0 md:mx-8 text-white">
+        <Button
+          variant="gradient"
+          color="red"
+          className="flex gap-1 px-3 py-2"
+          onClick={() => handleOpenDialogLogout("xs")}
+        >
+          <CiPower className="h-4 w-4" strokeWidth={2} />
+          Log out
+        </Button>
+      </div>
       <Card className="w-96">
         <CardHeader
           variant="gradient"
@@ -117,6 +145,15 @@ const SelecteRolePage = () => {
           </Button>
         </CardFooter>
       </Card>
+
+      {/* Dialog logout */}
+      <DialogOpenComponent
+        openDialog={openDialogLogout}
+        handleFunc={handleLogout}
+        handleOpenDialog={handleOpenDialogLogout}
+        message="Are you sure you want to log out?"
+        btnText="Logout"
+      />
     </div>
   );
 };
