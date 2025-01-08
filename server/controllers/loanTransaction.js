@@ -579,7 +579,7 @@ export const cancelLoanTransaction = async (req, res) => {
         const staffMembers = await getStaffs(req);
         const staffIds = staffMembers.map(staff => staff._id);
 
-        const staffMessage = `Loan transaction with ID: ${loanTransaction._id} has been marked as "Cancelled" by ${req.user.personal_info.name}.`;
+        const staffMessage = `Loan transaction with ID: ${loanTransaction.transaction_id} has been marked as "Cancelled" by ${req.user.personal_info.name}.`;
 
         try {
             // Send notification to staff members

@@ -8,6 +8,7 @@ export const getStaffs = async (req) => {
                 Authorization: token,
             },
         })
+
         return response.data
     } catch (error) {
         throw new Error(error);

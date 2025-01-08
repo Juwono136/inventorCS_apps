@@ -29,7 +29,7 @@ const MyLoanTransactionPage = () => {
     Cancelled: "red",
   };
 
-  const { loanData, isLoading, isError, isSuccess, message } = useSelector(
+  const { loanData, isLoading, isError, message } = useSelector(
     (state) => state.loan
   );
   const [openCancelLoan, setOpenCancelLoan] = useState(false);
@@ -49,7 +49,12 @@ const MyLoanTransactionPage = () => {
       _id: id,
     };
 
-    dispatch(cancelLoanTransaction(data));
+    dispatch(cancelLoanTransaction(data))
+      .unwrap()
+      .then((res) => {
+        toast.success(res.message);
+        dispatch(getLoanTransactionsByUser());
+      });
 
     setOpenCancelLoan(!openCancelLoan);
   };
@@ -63,16 +68,13 @@ const MyLoanTransactionPage = () => {
   };
 
   useEffect(() => {
+    dispatch(getLoanTransactionsByUser());
+
     if (isError) {
       toast.error(message);
-    }
-
-    if (isSuccess) {
       dispatch(loanReset());
     }
-
-    dispatch(getLoanTransactionsByUser());
-  }, [isError, isSuccess, message]);
+  }, [dispatch, isError, message]);
 
   return (
     <Layout>

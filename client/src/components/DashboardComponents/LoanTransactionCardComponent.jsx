@@ -152,7 +152,7 @@ const LoanTransactionCardComponent = ({
                       )}
 
                     {borrowed_item?.length > 1 && (
-                      <div className="text-xs text-gray-600 italic">
+                      <div className="text-xs font-semibold text-gray-600 italic">
                         and {borrowed_item.length - 1} more borrowed item
                         {borrowed_item.length - 1 > 1 ? "s" : ""}
                       </div>
