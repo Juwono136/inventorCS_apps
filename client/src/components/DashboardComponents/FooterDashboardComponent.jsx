@@ -7,7 +7,7 @@ import SocialMenu from "../../common/SocialMenu";
 
 const FooterDashboardComponent = () => {
   return (
-    <footer className="w-full bg-white p-12">
+    <footer className="w-full bg-white p-6">
       <hr className="w-full border-indigo-100" />
 
       <div className="flex gap-1 w-full mb-8 flex-col items-center justify-center bg-white text-center">

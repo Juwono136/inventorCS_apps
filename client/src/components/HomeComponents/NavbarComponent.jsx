@@ -22,6 +22,7 @@ import { FiMenu } from "react-icons/fi";
 import { IoCloseOutline } from "react-icons/io5";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { CiPower } from "react-icons/ci";
+import { MdAddShoppingCart } from "react-icons/md";
 import logoImg from "../../assets/images/logo.png";
 
 // components
@@ -158,6 +159,13 @@ const NavbarComponent = () => {
                         />
                         <a href="/dashboard" className="text-sm">
                           My Dashboard
+                        </a>
+                      </MenuItem>
+
+                      <MenuItem className="flex items-center gap-2 rounded">
+                        <MdAddShoppingCart className="h-4 w-4" />
+                        <a href="/user-loan" className="text-sm">
+                          My Transactions
                         </a>
                       </MenuItem>
 

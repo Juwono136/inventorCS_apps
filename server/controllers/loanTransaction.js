@@ -601,7 +601,7 @@ export const getAllLoanTransactions = async (req, res) => {
         const loanTransactions = await LoanTransactions.find({
             "borrowed_item.item_program": userData.personal_info.program
         })
-            .populate('borrowed_item.inventory_id', 'asset_name asset_id serial_number')
+            .populate('borrowed_item.inventory_id', '_id asset_name asset_id serial_number asset_img')
             .exec();
 
         res.json({ loanTransactions });
@@ -614,7 +614,7 @@ export const getAllLoanTransactions = async (req, res) => {
 export const getLoanTransactionById = async (req, res) => {
     try {
         const loanTransaction = await LoanTransactions.findById(req.params.id)
-            .populate('borrowed_item.inventory_id', 'asset_name asset_id serial_number')
+            .populate('borrowed_item.inventory_id', '_id asset_name asset_id serial_number asset_img')
             .exec()
 
         if (!loanTransaction) {
@@ -633,7 +633,7 @@ export const getLoanTransactionsByUser = async (req, res) => {
         const userId = req.user._id;
 
         const loanTransactions = await LoanTransactions.find({ borrower_id: userId })
-            .populate('borrowed_item.inventory_id', 'asset_name asset_id serial_number')
+            .populate('borrowed_item.inventory_id', '_id asset_name asset_id serial_number asset_img')
             .exec();
 
         res.json({ loanTransactions });
