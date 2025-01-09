@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 
 // pages
 import Home from "./pages/HomePages/HomeLayout";
@@ -23,7 +23,7 @@ import UpdateInventoryPage from "./pages/DashboardPages/UpdateInventoryPage";
 import MyCartPage from "./pages/HomePages/MyCartPage";
 import LoanTransactionByUserPage from "./pages/DashboardPages/LoanTransactionByUserPage";
 import MyLoanTransactionPage from "./pages/DashboardPages/MyLoanTransactionPage";
-import LoanTransactionDetailPage from "./pages/DashboardPages/LoanTransactionDetailPage";
+import LoanTransactionforStaffPage from "./pages/DashboardPages/LoanTransactionforStaffPage";
 import UserNotificationsPage from "./pages/DashboardPages/UserNotificationsPage";
 import InventoryDetailPage from "./pages/HomePages/InventoryDetailPage";
 
@@ -184,7 +184,7 @@ function App() {
             path="/user-loan/detail-loan/:id"
             element={
               <ProtectedUserRoutes allowedRoles={[2]}>
-                <LoanTransactionDetailPage />
+                <LoanTransactionforStaffPage />
               </ProtectedUserRoutes>
             }
           />

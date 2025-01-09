@@ -191,10 +191,10 @@ const LoanTransactionCardComponent = ({
                 <div className="flex w-full justify-end items-center gap-2">
                   {loan_status === "Pending" && (
                     <Button
-                      className="bg-red-400 text-xs py-1.5 px-2 rounded-lg capitalize transition-all"
+                      className="bg-red-400 text-xs py-2 px-3 rounded-lg capitalize transition-all"
                       onClick={() => handleOpenCancelLoan(_id)}
                     >
-                      Cancel
+                      Cancel Loan
                     </Button>
                   )}
 

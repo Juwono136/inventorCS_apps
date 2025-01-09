@@ -55,13 +55,9 @@ const BorrowedItemsPage = () => {
 
     const itemDetails = {
       ...selectedData,
-      transactionId: selectedData?._id,
-      binusian_id: borrower.personal_info?.binusian_id,
-      name: borrower.personal_info?.name,
-      email: borrower.personal_info?.email,
-      phone: borrower.personal_info?.phone,
-      address: borrower.personal_info?.address,
-      program: borrower.personal_info?.program,
+      id: selectedData?._id,
+      transactionId: selectedData?.transaction_id,
+      ...borrower,
     };
 
     setSelectedItem(itemDetails);
