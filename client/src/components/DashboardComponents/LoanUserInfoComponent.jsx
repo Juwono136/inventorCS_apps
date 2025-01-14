@@ -11,6 +11,7 @@ import {
 // components
 import TimelineLoanStatusComponent from "../../components/DashboardComponents/TimelineLoanStatusComponent";
 import IconArrowRotate from "../../common/IconArrowRotate";
+import { getFullDay } from "../../common/Date";
 
 const LoanUserInfoComponent = ({
   loanItemInfo,
@@ -103,7 +104,7 @@ const LoanUserInfoComponent = ({
               Borrow Date
             </span>
             <span className="col-span-2 font-semibold text-gray-900 text-xs">
-              : {new Date(loanItemInfo?.borrow_date).toLocaleDateString()}
+              : {getFullDay(loanItemInfo?.borrow_date)}
             </span>
           </div>
         </div>
@@ -114,10 +115,7 @@ const LoanUserInfoComponent = ({
               Expected Return Date
             </span>
             <span className="col-span-2 font-semibold text-gray-900 text-xs">
-              :{" "}
-              {new Date(
-                loanItemInfo?.expected_return_date
-              ).toLocaleDateString()}
+              : {getFullDay(loanItemInfo?.expected_return_date)}
             </span>
           </div>
         </div>

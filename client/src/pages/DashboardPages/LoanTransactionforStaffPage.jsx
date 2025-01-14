@@ -21,7 +21,7 @@ import { getUserById } from "../../features/user/userSlice";
 import LoanDetailforStaffComponent from "../../components/DashboardComponents/LoanDetailforStaffComponent";
 import BackButton from "../../common/BackButton";
 
-const LoanTransactionDetailPage = () => {
+const LoanTransactionforStaffPage = () => {
   UseDocumentTitle("Loan Transaction detail");
 
   const [openDialog, setOpenDialog] = useState(false);
@@ -143,4 +143,4 @@ const LoanTransactionDetailPage = () => {
   );
 };
 
-export default LoanTransactionDetailPage;
+export default LoanTransactionforStaffPage;

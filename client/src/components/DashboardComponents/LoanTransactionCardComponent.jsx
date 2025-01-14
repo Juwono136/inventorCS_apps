@@ -12,6 +12,7 @@ import { BsPatchCheck } from "react-icons/bs";
 // components
 import DialogOpenComponent from "./DialogOpenComponent";
 import FullScreenQRCode from "../../common/FullScreenQRCode";
+import { getFullDay } from "../../common/Date";
 
 const LoanTransactionCardComponent = ({
   statusLoanColors,
@@ -88,7 +89,7 @@ const LoanTransactionCardComponent = ({
                     </div>
 
                     <p className="text-xs text-gray-500">
-                      Borrow Date: {new Date(borrow_date).toLocaleDateString()}
+                      Borrow Date: {getFullDay(borrow_date)}
                     </p>
 
                     {/* Item info card */}
@@ -189,7 +190,7 @@ const LoanTransactionCardComponent = ({
 
                 {/* See detail an cancel button */}
                 <div className="flex w-full justify-end items-center gap-2">
-                  {loan_status === "Pending" && (
+                  {["Pending", "Ready to Pickup"].includes(loan_status) && (
                     <Button
                       className="bg-red-400 text-xs py-2 px-3 rounded-lg capitalize transition-all"
                       onClick={() => handleOpenCancelLoan(_id)}

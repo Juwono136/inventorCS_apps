@@ -15,18 +15,17 @@ import { IoOpenOutline } from "react-icons/io5";
 // components
 import LoanUserInfoComponent from "./LoanUserInfoComponent";
 import TableLoanItemInfoComponent from "./TableLoanItemInfoComponent";
+import { getFullDay } from "../../common/Date";
 
 const MoreInfoBorrowedItemComponent = ({
   open,
   handleOpenDialog,
   selectedItem,
 }) => {
-  const TABLE_HEAD = ["No", "Item Name", "Quantity", "Is Consumable?"];
-
   return (
     <div className="max-h-max">
       <Dialog open={open} size="xl" className="overflow-y-auto">
-        <DialogHeader className="justify-between">
+        <DialogHeader className="relative flex w-full justify-between">
           <div className="flex flex-col justify-center items-center w-full">
             <Typography className="text-xs text-blue-gray-700 mb-2">
               Item borrowing information
@@ -45,16 +44,18 @@ const MoreInfoBorrowedItemComponent = ({
                 <IoOpenOutline className="text-sm" />
               </a>
             </p>
-          </div>
 
-          <IconButton
-            color="blue-gray"
-            size="sm"
-            variant="text"
-            onClick={handleOpenDialog}
-          >
-            <IoClose className="h-5 w-5" />
-          </IconButton>
+            <div className="absolute flex top-0 right-0 p-4">
+              <IconButton
+                color="blue-gray"
+                size="sm"
+                variant="text"
+                onClick={handleOpenDialog}
+              >
+                <IoClose className="h-5 w-5" />
+              </IconButton>
+            </div>
+          </div>
         </DialogHeader>
 
         <DialogBody divider className="grid gap-3 md:mx-4">
@@ -70,27 +71,25 @@ const MoreInfoBorrowedItemComponent = ({
           </div>
 
           <div className="flex w-full justify-center items-center">
-            <span className=" text-xs text-blue-800">
+            <span className=" text-xs text-blue-800 font-semibold">
               Borrower Confirm Date
             </span>
             <span className=" text-blue-900 text-xs">
               :{" "}
               {selectedItem?.borrower_confirmed_date
-                ? new Date(
-                    selectedItem?.borrower_confirmed_date
-                  ).toLocaleDateString()
+                ? getFullDay(selectedItem?.borrower_confirmed_date)
                 : "-"}
             </span>
           </div>
 
           <div className="flex w-full justify-center items-center">
-            <span className=" text-xs text-green-800">
-              Returned Date Confirmation
+            <span className=" text-xs text-green-800 font-semibold">
+              Returned Confirmation Date
             </span>
             <span className=" text-green-900 text-xs">
               :{" "}
               {selectedItem?.return_date
-                ? new Date(selectedItem?.return_date).toLocaleDateString()
+                ? getFullDay(selectedItem?.return_date)
                 : "-"}
             </span>
           </div>

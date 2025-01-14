@@ -1,7 +1,7 @@
 import React from "react";
 
 // icons and material-tailwind
-import { Card, Typography } from "@material-tailwind/react";
+import { Avatar, Card, Typography } from "@material-tailwind/react";
 
 const TableLoanItemInfoComponent = ({ loanItemInfo }) => {
   const TABLE_HEAD = ["No", "Item Name", "Quantity", "Is Consumable?"];
@@ -27,7 +27,7 @@ const TableLoanItemInfoComponent = ({ loanItemInfo }) => {
           <tbody>
             {loanItemInfo?.borrowed_item?.map(
               ({ inventory_id, quantity, is_consumable }, index) => {
-                const { asset_name } = inventory_id;
+                const { asset_name, asset_img, _id } = inventory_id;
 
                 return (
                   <tr key={index}>
@@ -40,14 +40,21 @@ const TableLoanItemInfoComponent = ({ loanItemInfo }) => {
                         {index + 1}
                       </Typography>
                     </td>
-                    <td className="border-b border-blue-gray-50 p-4">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
+                    <td className=" border-b border-blue-gray-50 p-4">
+                      <a
+                        href={`/item_detail/${_id}`}
+                        target="_blank"
+                        className="flex gap-2 w-max items-center"
                       >
-                        {asset_name}
-                      </Typography>
+                        <Avatar src={asset_img} alt={asset_name} size="sm" />
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal hover:text-indigo-900 hover:underline transition-all"
+                        >
+                          {asset_name}
+                        </Typography>
+                      </a>
                     </td>
 
                     <td className="border-b border-blue-gray-50 p-4">

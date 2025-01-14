@@ -17,6 +17,23 @@ const generateTransactionId = () => {
     return `INV/${year}${month}${day}/BUI/SOCCA/${timeStamp}`;
 }
 
+// Function to group items by their program
+const groupItemsByProgram = (borrowedItems) => {
+    return borrowedItems.reduce((acc, item) => {
+        if (!acc[item.item_program]) {
+            acc[item.item_program] = [];
+        }
+        acc[item.item_program].push(item);
+        return acc;
+    }, {});
+};
+
+// Function to get staff members based on item program
+const getStaffsForProgram = async (req, program) => {
+    const staffMembers = await getStaffs(req);
+    return staffMembers.filter(staff => staff.personal_info.program === program);
+};
+
 // create loan transaction
 export const createLoanTransaction = async (req, res) => {
     try {
@@ -89,13 +106,7 @@ export const createLoanTransaction = async (req, res) => {
         }
 
         // Group items by their program
-        const itemsByProgram = borrowedItems.reduce((acc, item) => {
-            if (!acc[item.item_program]) {
-                acc[item.item_program] = [];
-            }
-            acc[item.item_program].push(item);
-            return acc;
-        }, {});
+        const itemsByProgram = groupItemsByProgram(borrowedItems);
 
         // Create separate loan transactions for each program group
         const loanTransactions = await Promise.all(
@@ -104,10 +115,8 @@ export const createLoanTransaction = async (req, res) => {
                 const transactionId = generateTransactionId();
 
                 // send notification to staff based on their program 
-                const staffMembers = await getStaffs(req);
-                const staffIds = staffMembers
-                    .filter(staff => staff.personal_info.program === program)
-                    .map(staff => staff._id);
+                const staffMembers = await getStaffsForProgram(req, program);
+                const staffIds = staffMembers.map(staff => staff._id);
 
                 const newLoanTransaction = await LoanTransactions.create({
                     transaction_id: transactionId,
@@ -543,7 +552,7 @@ export const cancelLoanTransaction = async (req, res) => {
         const loanTransactionId = req.params.id;
         const userId = req.user._id;
 
-        const loanTransaction = await LoanTransactions.findById(loanTransactionId);
+        const loanTransaction = await LoanTransactions.findById(loanTransactionId)
 
         if (!loanTransaction) {
             return res.status(404).json({ message: "Loan transaction not found." });
@@ -553,11 +562,13 @@ export const cancelLoanTransaction = async (req, res) => {
             return res.status(403).json({ message: "You are not allowed to cancel this transaction." });
         }
 
-        if (loanTransaction.loan_status !== "Pending") {
-            return res.status(400).json({ message: "Only pending transactions can be cancelled." });
+        if (!["Pending", "Ready to Pickup"].includes(loanTransaction.loan_status)) {
+            return res.status(400).json({ message: "Transaction can be cancelled." });
         }
 
-        for (const item of loanTransaction.borrowed_item) {
+        const borrowedItems = loanTransaction.borrowed_item;
+
+        for (const item of borrowedItems) {
             const inventory = await Inventories.findById(item.inventory_id);
 
             if (!inventory) {
@@ -575,18 +586,25 @@ export const cancelLoanTransaction = async (req, res) => {
         loanTransaction.loan_status = "Cancelled";
         await loanTransaction.save();
 
-        // Send notification to all staff members
-        const staffMembers = await getStaffs(req);
-        const staffIds = staffMembers.map(staff => staff._id);
+        const itemsByProgram = groupItemsByProgram(borrowedItems);
 
-        const staffMessage = `Loan transaction with ID: ${loanTransaction.transaction_id} has been marked as "Cancelled" by ${req.user.personal_info.name}.`;
+        // Notify staff based on the program of the borrowed items
+        const staffNotificationPromises = Object.entries(itemsByProgram).map(async ([program, items]) => {
+            const staffMembers = await getStaffsForProgram(req, program);
+            const staffIds = staffMembers.map(staff => staff._id);
 
-        try {
-            // Send notification to staff members
-            await createNotification(staffIds, loanTransaction._id, staffMessage);
-        } catch (notificationError) {
-            console.error(`Failed to create notification for staff members: ${notificationError.message}`);
-        }
+            const staffMessage = `Loan transaction with ID: ${loanTransaction.transaction_id} has been marked as "Cancelled" by ${req.user.personal_info.name}.`;
+
+            try {
+                // Send notification to staff members based on their program
+                await createNotification(staffIds, loanTransaction._id, staffMessage);
+            } catch (notificationError) {
+                console.error(`Failed to create notification for staff members: ${notificationError.message}`);
+            }
+        });
+
+        // Wait for all notification promises to complete
+        await Promise.all(staffNotificationPromises);
 
         res.json({ message: "Loan transaction has been cancelled.", loanTransaction });
     } catch (error) {

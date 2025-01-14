@@ -8,6 +8,7 @@ import { Card, CardBody, Typography, Button } from "@material-tailwind/react";
 // components
 import TableLoanItemInfoComponent from "./TableLoanItemInfoComponent";
 import LoanUserInfoComponent from "./LoanUserInfoComponent";
+import { getFullDay } from "../../common/Date";
 
 const LoanDetailByUserComponent = ({
   openDrawerBottom,
@@ -78,30 +79,30 @@ const LoanDetailByUserComponent = ({
               </Button>
             )}
 
-            <div className="flex w-full justify-center items-center">
-              <span className=" text-xs text-blue-800">
-                Borrower Confirm Date
-              </span>
-              <span className=" text-blue-900 text-xs">
-                :{" "}
-                {foundLoan?.borrower_confirmed_date
-                  ? new Date(
-                      foundLoan?.borrower_confirmed_date
-                    ).toLocaleDateString()
-                  : "-"}
-              </span>
-            </div>
+            <div className="flex flex-col gap-2 bg-indigo-400/10 px-10 py-2 rounded-md border border-indigo-500/30">
+              <div className="flex w-full justify-center items-center">
+                <span className=" text-xs text-blue-800">
+                  Borrower Confirm Date
+                </span>
+                <span className=" text-blue-900 text-xs">
+                  :{" "}
+                  {foundLoan?.borrower_confirmed_date
+                    ? getFullDay(foundLoan?.borrower_confirmed_date)
+                    : "-"}
+                </span>
+              </div>
 
-            <div className="flex w-full justify-center items-center">
-              <span className=" text-xs text-green-800">
-                Returned Date Confirmation
-              </span>
-              <span className=" text-green-900 text-xs">
-                :{" "}
-                {foundLoan?.return_date
-                  ? new Date(foundLoan?.return_date).toLocaleDateString()
-                  : "-"}
-              </span>
+              <div className="flex w-full justify-center items-center">
+                <span className=" text-xs text-green-800">
+                  Returned Confirmation Date
+                </span>
+                <span className=" text-green-900 text-xs">
+                  :{" "}
+                  {foundLoan?.return_date
+                    ? getFullDay(foundLoan?.return_date)
+                    : "-"}
+                </span>
+              </div>
             </div>
           </div>
         </CardBody>
