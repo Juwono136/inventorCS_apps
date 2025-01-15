@@ -38,6 +38,15 @@ const createLoanTransaction = async (loanData, token) => {
     return response.data
 }
 
+// mark transaction is new or not
+const markTransactionIsNew = async (id, token) => {
+    const response = await axios.patch(API_URL + `/transaction_is_new/${id}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+    })
+
+    return response.data
+}
+
 // update loan status to ready to pickup
 const updateStatusToReadyToPickup = async (data, token) => {
     const response = await axios.patch(API_URL + `/ready_to_loan/${data._id}`, data, {
@@ -98,6 +107,7 @@ const loanService = {
     getLoanTransactionsByUser,
     getLoanTransactionById,
     createLoanTransaction,
+    markTransactionIsNew,
     updateStatusToReadyToPickup,
     updateStatusToBorrowed,
     confirmReceiveByBorrower,

@@ -9,7 +9,10 @@ import DynamicBreadcrumbs from "../../common/DynamicBreadcrumbs";
 import UseDocumentTitle from "../../common/UseDocumentTitle";
 
 // features
-import { getAllLoanTransactions } from "../../features/loanTransaction/loanSlice";
+import {
+  getAllLoanTransactions,
+  markTransactionIsNew,
+} from "../../features/loanTransaction/loanSlice";
 import { getAllUsersInfor } from "../../features/user/userSlice";
 
 const BorrowedItemsPage = () => {
@@ -38,6 +41,11 @@ const BorrowedItemsPage = () => {
       transactionId: selectedData?.transaction_id,
       ...borrower,
     };
+
+    if (selectedData?.is_new === true) {
+      dispatch(markTransactionIsNew(id));
+      dispatch(getAllLoanTransactions());
+    }
 
     setSelectedItem(itemDetails);
 

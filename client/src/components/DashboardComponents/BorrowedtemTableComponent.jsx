@@ -59,7 +59,7 @@ const BorrowedtemTableComponent = ({
             <div className="flex justify-center">
               <Loader />
             </div>
-          ) : (
+          ) : data?.loanTransactions?.length > 0 ? (
             <table className="w-full table-auto text-left">
               <thead className="sticky top-0 z-30">
                 <tr>
@@ -79,7 +79,7 @@ const BorrowedtemTableComponent = ({
                 </tr>
               </thead>
               <tbody>
-                {data?.loanTransactions?.map(
+                {data.loanTransactions.map(
                   (
                     {
                       _id,
@@ -88,6 +88,7 @@ const BorrowedtemTableComponent = ({
                       borrow_date,
                       return_date,
                       loan_status,
+                      is_new,
                     },
                     index
                   ) => {
@@ -125,6 +126,14 @@ const BorrowedtemTableComponent = ({
                             <h1 className="font-normal text-blue-gray-800 text-xs md:text-sm">
                               {transaction_id}
                             </h1>
+                            {is_new && (
+                              <Chip
+                                size="sm"
+                                color="red"
+                                variant="filled"
+                                value="New"
+                              />
+                            )}
                           </div>
                         </td>
 
@@ -176,6 +185,10 @@ const BorrowedtemTableComponent = ({
                 )}
               </tbody>
             </table>
+          ) : (
+            <div className="flex justify-center item-center text-sm text-gray-700 my-6 mx-8 bg-gray-300 rounded-full p-2">
+              There is no borrowed item.
+            </div>
           )}
         </CardBody>
       </Card>

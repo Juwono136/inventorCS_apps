@@ -6,16 +6,16 @@ const meetingSchema = mongoose.Schema({
         ref: "LoanTransactions",
         required: true,
     },
-    borrower_id: {
-        type: String, // save user_id from users API (borrower)
-        required: true
-    },
     staff_id: {
         type: String, // save user_id from users API (staff)
         default: null,
     },
     meeting_date: {
         type: Date,
+        required: true,
+    },
+    meeting_time: {
+        type: String, // Format "HH:mm" (example: "14:30")
         required: true,
     },
     location: {

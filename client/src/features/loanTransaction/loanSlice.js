@@ -85,6 +85,19 @@ export const createLoanTransaction = createAsyncThunk('loan/create', async (data
     }
 })
 
+// mark transaction is new or not
+export const markTransactionIsNew = createAsyncThunk('loan/is_new', async (id, thunkAPI) => {
+    try {
+        const token = await tokenService.accessToken(id);
+
+        return await loanService.markTransactionIsNew(id, token)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
 // update loan status to ready to pickup
 export const updateStatusToReadyToPickup = createAsyncThunk('loan/ready_to_loan', async (data, thunkAPI) => {
     try {
@@ -267,6 +280,20 @@ export const loanSlice = createSlice({
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;
+            })
+
+            // mark transaction is new or not
+            .addCase(markTransactionIsNew.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(markTransactionIsNew.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.loanData = action.payload;
+            })
+            .addCase(markTransactionIsNew.rejected, (state) => {
+                state.isLoading = false;
+                state.isError = true;
             })
 
             // update loan status to ready to pickup builder

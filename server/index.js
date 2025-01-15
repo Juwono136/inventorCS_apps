@@ -4,12 +4,10 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
-// import cron from 'node-cron';
 
 import inventoryRoutes from './routes/inventory.js';
 import loanRoutes from './routes/loanTransaction.js';
 import notificationRoutes from './routes/notification.js';
-// import { deleteOldDrafts } from './controllers/inventory.js';
 
 const app = express()
 dotenv.config()
@@ -32,11 +30,6 @@ mongoose.set("strictQuery", true)
 
 mongoose.connect(CONNECTION_URL, { dbName: DB_NAME })
     .then(() => {
-        // Schedule a cron job: run every day at 00:00 (midnight).
-        // cron.schedule("0 0 * * *", () => {
-        //     console.log("Running scheduled job to delete old draft inventories...");
-        //     deleteOldDrafts();
-        // });
 
         // Start the server after cron job setup
         app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));

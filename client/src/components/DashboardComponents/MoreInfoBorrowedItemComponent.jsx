@@ -58,14 +58,14 @@ const MoreInfoBorrowedItemComponent = ({
           </div>
         </DialogHeader>
 
-        <DialogBody divider className="grid gap-3 md:mx-4">
+        <DialogBody divider className="overflow-y-auto max-h-[80vh] md:mx-4">
           {/* loan user info */}
           <LoanUserInfoComponent
             loanItemInfo={selectedItem}
             userInfor={selectedItem}
           />
 
-          <div className="grid gap-2">
+          <div className="grid gap-2 my-4">
             {/* table loan item detail */}
             <TableLoanItemInfoComponent loanItemInfo={selectedItem} />
           </div>
@@ -82,7 +82,7 @@ const MoreInfoBorrowedItemComponent = ({
             </span>
           </div>
 
-          <div className="flex w-full justify-center items-center">
+          <div className="flex w-full justify-center items-center mt-2">
             <span className=" text-xs text-green-800 font-semibold">
               Returned Confirmation Date
             </span>

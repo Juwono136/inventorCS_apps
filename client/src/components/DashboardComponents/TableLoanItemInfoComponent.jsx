@@ -10,7 +10,7 @@ const TableLoanItemInfoComponent = ({ loanItemInfo }) => {
     <>
       <Card className="w-full max-h-[400px] overflow-y-auto">
         <table className="w-full table-auto text-left">
-          <thead className="sticky top-0">
+          <thead className="sticky top-0 z-20">
             <tr>
               {TABLE_HEAD.map((head) => (
                 <th

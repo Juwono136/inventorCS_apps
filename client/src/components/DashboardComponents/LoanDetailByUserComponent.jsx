@@ -9,6 +9,7 @@ import { Card, CardBody, Typography, Button } from "@material-tailwind/react";
 import TableLoanItemInfoComponent from "./TableLoanItemInfoComponent";
 import LoanUserInfoComponent from "./LoanUserInfoComponent";
 import { getFullDay } from "../../common/Date";
+import LoanCountDown from "../../common/LoanCountDown";
 
 const LoanDetailByUserComponent = ({
   openDrawerBottom,
@@ -24,10 +25,26 @@ const LoanDetailByUserComponent = ({
 
   const handleOpen = (value) => setOpen(open === value ? 0 : value);
 
+  // Calculate expiry date for countdown (3 days from borrow_date)
+  const expiryDate = foundLoan?.pickup_time
+    ? new Date(
+        new Date(foundLoan.pickup_time).getTime() + 3 * 24 * 60 * 60 * 1000 // 3 days
+      )
+    : null;
+
   return (
     <>
-      <Card className="my-3">
+      <Card>
         <div className="flex flex-col justify-center items-center w-full gap-2 mb-2">
+          {/* Countdown for Ready to Pickup */}
+          {foundLoan?.loan_status === "Ready to Pickup" && expiryDate && (
+            <LoanCountDown
+              expiryDate={expiryDate}
+              txtError="Time to pick up the loan has expired!"
+              txtRender="Time remaining to request meeting for pick up the loan item:"
+            />
+          )}
+
           <Typography className="font-semibold text-xl bg-gradient-to-r from-blue-400 via-purple-500 to-red-500 bg-clip-text text-transparent animate-gradient">
             Loan of Equipment
           </Typography>
@@ -56,12 +73,12 @@ const LoanDetailByUserComponent = ({
           </div>
 
           {/* Button changeloan status */}
-          <div className="flex w-full flex-col items-center justify-center text-white mt-8 gap-4">
+          <div className="flex w-full flex-col items-center justify-center mt-8 gap-4">
             {(foundLoan?.loan_status === "Borrowed" ||
               foundLoan?.loan_status === "Partially Consumed" ||
               foundLoan?.loan_status === "Consumed") && (
               <Button
-                className="bg-gradient-to-r from-cyan-500 to-lime-800 text-xs py-3 px-6 rounded-lg capitalize"
+                className="bg-gradient-to-r from-cyan-500 to-lime-800 text-white text-xs py-3 px-6 rounded-lg capitalize"
                 onClick={openDrawerBottom}
                 disabled={foundLoan?.borrower_confirmed_date ? true : false}
               >
@@ -71,7 +88,7 @@ const LoanDetailByUserComponent = ({
 
             {foundLoan?.loan_status === "Returned" && (
               <Button
-                className="bg-gradient-to-r from-lime-500 to-green-800 text-xs py-3 px-6 rounded-lg capitalize"
+                className="bg-gradient-to-r from-lime-500 to-green-800 text-white text-xs py-3 px-6 rounded-lg capitalize"
                 onClick={openDrawerReturned}
                 disabled={foundLoan?.return_date ? true : false}
               >

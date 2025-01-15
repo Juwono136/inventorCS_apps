@@ -47,8 +47,34 @@ const LoanDetailforStaffComponent = ({ handleOpenDialog }) => {
             <TableLoanItemInfoComponent loanItemInfo={loanData} />
           </div>
 
-          {/* Button changeloan status */}
+          {/* Button change loan status */}
           <div className="flex w-full flex-col items-center justify-center text-white mt-8 gap-4">
+            <div className="flex flex-col gap-2 bg-indigo-400/10 px-10 py-2 rounded-md border border-indigo-500/30">
+              <div className="flex w-full justify-center items-center">
+                <span className=" text-xs text-blue-800">
+                  Borrower Confirm Date
+                </span>
+                <span className=" text-blue-900 text-xs">
+                  :{" "}
+                  {loanData?.borrower_confirmed_date
+                    ? getFullDay(loanData?.borrower_confirmed_date)
+                    : "-"}
+                </span>
+              </div>
+
+              <div className="flex w-full justify-center items-center">
+                <span className=" text-xs text-green-800">
+                  Return Confirmation Date
+                </span>
+                <span className=" text-green-900 text-xs">
+                  :{" "}
+                  {loanData?.return_date
+                    ? getFullDay(loanData?.return_date)
+                    : "-"}
+                </span>
+              </div>
+            </div>
+
             {loanData?.loan_status === "Pending" && (
               <Button
                 className="bg-gradient-to-r from-indigo-500 to-purple-800 text-xs py-3 px-6 rounded-lg capitalize"
@@ -76,32 +102,6 @@ const LoanDetailforStaffComponent = ({ handleOpenDialog }) => {
                 Change status to Returned
               </Button>
             )}
-
-            <div className="flex flex-col gap-2 bg-indigo-400/10 px-10 py-2 rounded-md border border-indigo-500/30">
-              <div className="flex w-full justify-center items-center">
-                <span className=" text-xs text-blue-800">
-                  Borrower Confirm Date
-                </span>
-                <span className=" text-blue-900 text-xs">
-                  :{" "}
-                  {loanData?.borrower_confirmed_date
-                    ? getFullDay(loanData?.borrower_confirmed_date)
-                    : "-"}
-                </span>
-              </div>
-
-              <div className="flex w-full justify-center items-center">
-                <span className=" text-xs text-green-800">
-                  Return Confirmation Date
-                </span>
-                <span className=" text-green-900 text-xs">
-                  :{" "}
-                  {loanData?.return_date
-                    ? getFullDay(loanData?.return_date)
-                    : "-"}
-                </span>
-              </div>
-            </div>
           </div>
         </CardBody>
       </Card>

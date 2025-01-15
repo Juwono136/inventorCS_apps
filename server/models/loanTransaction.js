@@ -62,10 +62,19 @@ const loanTransactionSchema = mongoose.Schema({
         required: true,
         default: "Pending",
         enum: ["Pending", "Ready to Pickup", "Borrowed", "Partially Consumed", "Consumed", "Returned", "Cancelled"]
+    },
+    pickup_time: {
+        type: Date,
+        default: null
+    },
+    is_new: {
+        type: Boolean,
+        required: true,
     }
 }, {
     timestamps: true
 })
 
+loanTransactionSchema.index({ "transaction_id": 1 })
 
 export default mongoose.model('LoanTransactions', loanTransactionSchema)

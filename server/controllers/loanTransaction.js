@@ -4,6 +4,7 @@ import { getStaffs } from '../utils/getStaffs.js';
 import { createNotification } from './notification.js';
 import { sendMail } from '../utils/sendMail.js';
 import { getUserById } from '../utils/getUserById.js';
+import { CronJob } from "cron";
 
 const { CLIENT_URL } = process.env
 
@@ -16,6 +17,15 @@ const generateTransactionId = () => {
     const timeStamp = now.getTime(); // Milliseconds since epoch
     return `INV/${year}${month}${day}/BUI/SOCCA/${timeStamp}`;
 }
+
+// foramt date DD/MM/YYYY
+const formatDate = (date) => {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+};
 
 // Function to group items by their program
 const groupItemsByProgram = (borrowedItems) => {
@@ -33,6 +43,42 @@ const getStaffsForProgram = async (req, program) => {
     const staffMembers = await getStaffs(req);
     return staffMembers.filter(staff => staff.personal_info.program === program);
 };
+
+// Schedule job to auto-cancel loan transaction after 3 days
+const scheduleAutoCancel = (loanTransactionId) => {
+    const cancelDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000); // 3 days
+
+    const job = new CronJob(cancelDate, async () => {
+        const loanTransaction = await LoanTransactions.findById(loanTransactionId);
+
+        if (loanTransaction || loanTransaction.loan_status === "Ready to Pickup") {
+            const borrowedItems = loanTransaction.borrowed_item;
+
+            for (const item of borrowedItems) {
+                const inventory = await Inventories.findById(item.inventory_id);
+
+                if (!inventory) {
+                    return res.status(404).json({ message: `Inventory item ${item.inventory_id} not found.` });
+                }
+
+                if (inventory.draft === true) {
+                    return res.status(400).json({ message: `Cannot cancel. Item ${inventory.asset_name} is in draft status.` });
+                }
+
+                inventory.total_items += item.quantity;
+                await inventory.save();
+            }
+
+            loanTransaction.loan_status = "Cancelled";
+            await loanTransaction.save();
+
+            // Notify borrower about cancellation
+            await createNotification(loanTransaction.borrower_id, loanTransaction._id, `Your loan transaction with ID: ${loanTransaction.transaction_id} has been cancelled due to no meeting request.`);
+        }
+    })
+
+    job.start();
+}
 
 // create loan transaction
 export const createLoanTransaction = async (req, res) => {
@@ -125,6 +171,7 @@ export const createLoanTransaction = async (req, res) => {
                     purpose_of_loan,
                     borrow_date: formattedBorrowDate,
                     expected_return_date: formattedReturnDate,
+                    is_new: true
                 });
 
                 try {
@@ -159,6 +206,22 @@ export const createLoanTransaction = async (req, res) => {
     }
 };
 
+// mark transaction is new or not
+export const markTransactionIsNew = async (req, res) => {
+    try {
+        const loanTransactionId = req.params.id
+        const loanTransaction = await LoanTransactions.findByIdAndUpdate(loanTransactionId, { is_new: false }, { new: true })
+
+        if (!loanTransaction) {
+            return res.status(404).json({ message: "Loan Transaction not found." })
+        }
+
+        res.json({ loanTransaction })
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 // update loan status to ready to pickup
 export const updateStatusToReadyToPickup = async (req, res) => {
     try {
@@ -176,11 +239,18 @@ export const updateStatusToReadyToPickup = async (req, res) => {
 
         // const inventory = await Inventories.findById(loanTransaction.borrower_id)
 
-        await createNotification(loanTransaction.borrower_id, loanTransaction._id, `Your loan item with ID: ${loanTransaction._id} is ready to pickup. Please pick up your items by meeting with our staff.`);
-
         loanTransaction.loan_status = "Ready to Pickup";
         loanTransaction.staff_id = req.user._id;
+        loanTransaction.pickup_time = new Date()
         await loanTransaction.save();
+
+        // Calculate expiry date (pickup_time + 3 days)
+        const expiryDate = new Date(loanTransaction.pickup_time);
+        expiryDate.setDate(expiryDate.getDate() + 3); // Add 3 days
+        const formattedExpiryDate = formatDate(expiryDate);
+
+        // send notification to borrower
+        await createNotification(loanTransaction.borrower_id, loanTransaction._id, `Your loan item with ID: ${loanTransaction.transaction_id} is ready to pickup. Please create a request meeting with our staff to pickup your loan item before ${formattedExpiryDate}.`);
 
         // send email to borrower
         const borrowerInfo = await getUserById(req, loanTransaction.borrower_id);
@@ -188,12 +258,15 @@ export const updateStatusToReadyToPickup = async (req, res) => {
         const url = `${CLIENT_URL}/user-loan/detail/${loanTransaction._id}`
         const emailSubject = "Your Loan is Ready to Pickup"
         const emailTitle = "Loan Item Ready for Pickup"
-        const emailText = `Your loan item with ID: ${loanTransaction._id} is ready to pickup. Please pick up your items by meeting with our staff.`
+        const emailText = `Your loan item with ID: ${loanTransaction.transaction_id} is ready to pickup. Please create a request meeting with our staff to pickup your loan item before ${formattedExpiryDate}.`
         const btnEmailText = "View Loan Item Details"
 
         sendMail(borrowerEmail, url, emailSubject, emailTitle, emailText, btnEmailText);
 
         res.json({ message: "Loan status updated to ready to pickup.", loanTransaction });
+
+        // Schedule auto-cancel after 3 days if no meeting request
+        scheduleAutoCancel(loanTransactionId);
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
@@ -563,7 +636,7 @@ export const cancelLoanTransaction = async (req, res) => {
         }
 
         if (!["Pending", "Ready to Pickup"].includes(loanTransaction.loan_status)) {
-            return res.status(400).json({ message: "Transaction can be cancelled." });
+            return res.status(400).json({ message: "Transaction cannot be cancelled." });
         }
 
         const borrowedItems = loanTransaction.borrowed_item;
