@@ -6,10 +6,6 @@ const meetingSchema = mongoose.Schema({
         ref: "LoanTransactions",
         required: true,
     },
-    staff_id: {
-        type: String, // save user_id from users API (staff)
-        default: null,
-    },
     meeting_date: {
         type: Date,
         required: true,
@@ -31,5 +27,7 @@ const meetingSchema = mongoose.Schema({
 }, {
     timestamps: true
 })
+
+meetingSchema.index({ "loanTransaction_id": 1 })
 
 export default mongoose.model('Meetings', meetingSchema)

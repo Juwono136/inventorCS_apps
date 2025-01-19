@@ -8,6 +8,7 @@ import dotenv from 'dotenv';
 import inventoryRoutes from './routes/inventory.js';
 import loanRoutes from './routes/loanTransaction.js';
 import notificationRoutes from './routes/notification.js';
+import meetingRoutes from './routes/meeting.js';
 
 const app = express()
 dotenv.config()
@@ -21,6 +22,7 @@ app.use(cookieParser())
 app.use("/service/inventory", inventoryRoutes)
 app.use("/service/loan", loanRoutes)
 app.use("/service/notification", notificationRoutes)
+app.use("/service/meeting", meetingRoutes)
 
 const CONNECTION_URL = process.env.CONNECTION_URL
 const PORT = process.env.PORT

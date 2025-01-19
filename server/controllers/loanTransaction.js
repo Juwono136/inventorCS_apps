@@ -19,7 +19,7 @@ const generateTransactionId = () => {
 }
 
 // foramt date DD/MM/YYYY
-const formatDate = (date) => {
+export const formatDate = (date) => {
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
@@ -28,7 +28,7 @@ const formatDate = (date) => {
 };
 
 // Function to group items by their program
-const groupItemsByProgram = (borrowedItems) => {
+export const groupItemsByProgram = (borrowedItems) => {
     return borrowedItems.reduce((acc, item) => {
         if (!acc[item.item_program]) {
             acc[item.item_program] = [];
@@ -39,7 +39,7 @@ const groupItemsByProgram = (borrowedItems) => {
 };
 
 // Function to get staff members based on item program
-const getStaffsForProgram = async (req, program) => {
+export const getStaffsForProgram = async (req, program) => {
     const staffMembers = await getStaffs(req);
     return staffMembers.filter(staff => staff.personal_info.program === program);
 };
@@ -73,7 +73,11 @@ const scheduleAutoCancel = (loanTransactionId) => {
             await loanTransaction.save();
 
             // Notify borrower about cancellation
-            await createNotification(loanTransaction.borrower_id, loanTransaction._id, `Your loan transaction with ID: ${loanTransaction.transaction_id} has been cancelled due to no meeting request.`);
+            await createNotification(
+                loanTransaction.borrower_id,
+                loanTransaction._id,
+                `Your loan transaction with ID: ${loanTransaction.transaction_id} has been cancelled due to no meeting request.`
+            );
         }
     })
 
@@ -693,7 +697,8 @@ export const getAllLoanTransactions = async (req, res) => {
             "borrowed_item.item_program": userData.personal_info.program
         })
             .populate('borrowed_item.inventory_id', '_id asset_name asset_id serial_number asset_img')
-            .exec();
+            .lean()
+            .exec()
 
         res.json({ loanTransactions });
     } catch (error) {
@@ -706,6 +711,7 @@ export const getLoanTransactionById = async (req, res) => {
     try {
         const loanTransaction = await LoanTransactions.findById(req.params.id)
             .populate('borrowed_item.inventory_id', '_id asset_name asset_id serial_number asset_img')
+            .lean()
             .exec()
 
         if (!loanTransaction) {
@@ -725,7 +731,8 @@ export const getLoanTransactionsByUser = async (req, res) => {
 
         const loanTransactions = await LoanTransactions.find({ borrower_id: userId })
             .populate('borrowed_item.inventory_id', '_id asset_name asset_id serial_number asset_img')
-            .exec();
+            .lean()
+            .exec()
 
         res.json({ loanTransactions });
     } catch (error) {
