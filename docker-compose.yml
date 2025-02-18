@@ -1,35 +1,11 @@
 version: "3.8"
 
 services:
-  mongodb:
-    image: mongo
-    container_name: mongodb
-    restart: always
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
-    volumes:
-      - mongodb_data:/data/db
-
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq
-    restart: always
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-
   backend:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
+    image: juwono136/inventorcs-backend:latest
+    pull_policy: always
     container_name: inventorcs-backend
     restart: always
-    depends_on:
-      - mongodb
-      - rabbitmq
     environment:
       PORT: ${PORT}
       CONNECTION_URL: ${CONNECTION_URL}
@@ -46,17 +22,24 @@ services:
       RABBITMQ_URL: ${RABBITMQ_URL}
     ports:
       - "5001:5001"
+    networks:
+      - csbiweb-tunnel
 
   frontend:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
+    image: juwono136/inventorcs-frontend:latest
+    pull_policy: always
     container_name: inventorcs-frontend
     restart: always
     depends_on:
       - backend
     ports:
       - "5173:5173"
+    networks:
+      - csbiweb-tunnel
 
 volumes:
   mongodb_data:
+
+networks:
+  csbiweb-tunnel:
+    external: true
