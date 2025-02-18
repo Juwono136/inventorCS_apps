@@ -21,7 +21,7 @@ FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Copy Nginx configuration file to sites-available folder 
-COPY ../inventorcs-nginx.conf /etc/nginx/sites-available/inventorcs-nginx.conf
+COPY inventorcs-nginx.conf /etc/nginx/sites-available/inventorcs-nginx.conf
 
 # Create symlink for enable Nginx configuration
 RUN ln -s /etc/nginx/sites-available/inventorcs-nginx.conf /etc/nginx/sites-enabled/
