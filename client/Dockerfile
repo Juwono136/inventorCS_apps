@@ -1,5 +1,5 @@
 # Base image
-FROM node:alpine3.20
+FROM node:alpine3.20 AS builder
 
 # Set working directory
 WORKDIR /app
@@ -14,12 +14,14 @@ COPY . .
 # build the application
 RUN npm run build
 
-# user Nginx as web server
+# Use Nginx as web server
 FROM nginx:alpine
-COPY --from=0 /app/dist /usr/share/nginx/html
+
+# Copy built app to Nginx
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Expose the application port
-EXPOSE 5173
+EXPOSE 80
 
 # Command to run the application
 CMD ["nginx", "-g", "daemon off;"]
