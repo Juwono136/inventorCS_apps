@@ -17,7 +17,7 @@ export default defineConfig({
       "/service": {
         target: "https://inventorcs-server.portproject.my.id",
         changeOrigin: true,
-        secure: false,
+        secure: true,
         ws: true,
       },
     },
