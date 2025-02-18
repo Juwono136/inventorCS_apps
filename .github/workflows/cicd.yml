@@ -36,6 +36,9 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Pull Latest Backend Image
         run: docker pull ${{ secrets.DOCKER_USERNAME }}/inventorcs-backend:latest
 
@@ -44,13 +47,11 @@ jobs:
 
       - name: Stop and Remove Old Containers
         run: |
-          cd $GITHUB_WORKSPACE
           docker-compose down || true
           docker system prune -f
 
       - name: Run New Containers
         run: |
-          cd $GITHUB_WORKSPACE
           docker-compose up -d
 
       - name: Add Containers to Tunnel
