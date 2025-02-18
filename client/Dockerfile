@@ -21,7 +21,7 @@ FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Expose the application port
-EXPOSE 80
+EXPOSE 8080
 
 # Command to run the application
 CMD ["nginx", "-g", "daemon off;"]
