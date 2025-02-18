@@ -1,0 +1,62 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - mongodb_data:/data/db
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: inventorcs-backend
+    restart: always
+    depends_on:
+      - mongodb
+      - rabbitmq
+    environment:
+      PORT: ${PORT}
+      CONNECTION_URL: ${CONNECTION_URL}
+      DB_NAME: ${DB_NAME}
+      CLIENT_URL: ${CLIENT_URL}
+      INTERNET_SERVER: ${INTERNET_SERVER}
+      API_USERS_URL: ${API_USERS_URL}
+      NODE_ENV: ${NODE_ENV}
+      REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET}
+      ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET}
+      ACTIVATION_TOKEN_SECRET: ${ACTIVATION_TOKEN_SECRET}
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+      RABBITMQ_URL: ${RABBITMQ_URL}
+    ports:
+      - "5001:5001"
+
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: inventorcs-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+
+volumes:
+  mongodb_data:

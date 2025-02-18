@@ -84,14 +84,14 @@ const LoanDetailforStaffComponent = ({ handleOpenDialog }) => {
               </Button>
             )}
 
-            {loanData?.loan_status === "Ready to Pickup" && (
+            {/* {loanData?.loan_status === "Ready to Pickup" && (
               <Button
                 className="bg-gradient-to-r from-red-500 to-orange-800 text-xs py-3 px-6 rounded-lg capitalize"
                 onClick={handleOpenDialog}
               >
                 Change status to Borrowed
               </Button>
-            )}
+            )} */}
 
             {(loanData?.loan_status === "Borrowed" ||
               loanData?.loan_status === "Partially Consumed") && (

@@ -194,7 +194,7 @@ export const sendMail = (to, url, emailSubject, titleTxt, emailTxt, btnTxt, res)
                             <!-- start copy -->
                             <tr>
                                 <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-bottom: 3px solid #d4dadf">
-                                <p style="margin: 0;">Thanks,<br>-- InventorCS Support Team --</p>
+                                <p style="margin: 0;">Thanks,<br>-- CSBI Support Team --</p>
                                 </td>
                             </tr>
                             <!-- end copy -->
@@ -220,7 +220,7 @@ export const sendMail = (to, url, emailSubject, titleTxt, emailTxt, btnTxt, res)
                             <!-- start footer logo -->
                             <tr>
                                 <td align="center" bgcolor="#e9ecef" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
-                                <p style="margin: 0;">InventorCS - Binus University International</p>
+                                <p style="margin: 0;">CSBI Support Team - Binus University International</p>
                                 </td>
                             </tr>
                             <!-- end footer logo -->

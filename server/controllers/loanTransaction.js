@@ -4,6 +4,7 @@ import { getStaffs } from '../utils/getStaffs.js';
 import { createNotification } from './notification.js';
 import { sendMail } from '../utils/sendMail.js';
 import { getUserById } from '../utils/getUserById.js';
+import { getChannel } from '../utils/rabbitmq.js';
 import { CronJob } from "cron";
 
 const { CLIENT_URL } = process.env
@@ -44,11 +45,9 @@ export const getStaffsForProgram = async (req, program) => {
     return staffMembers.filter(staff => staff.personal_info.program === program);
 };
 
-// Schedule job to auto-cancel loan transaction after 3 days
-const scheduleAutoCancel = (loanTransactionId) => {
-    const cancelDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000); // 3 days
-
-    const job = new CronJob(cancelDate, async () => {
+// Schedule job to auto-cancel
+export const processAutoCancel = async (loanTransactionId) => {
+    try {
         const loanTransaction = await LoanTransactions.findById(loanTransactionId);
 
         if (loanTransaction || loanTransaction.loan_status === "Ready to Pickup") {
@@ -79,10 +78,12 @@ const scheduleAutoCancel = (loanTransactionId) => {
                 `Your loan transaction with ID: ${loanTransaction.transaction_id} has been cancelled due to no meeting request.`
             );
         }
-    })
 
-    job.start();
-}
+        console.log(`Loan Transaction ID: ${loanTransactionId} has been auto-cancelled.`);
+    } catch (error) {
+        console.error("Error in auto-cancel process:", error);
+    }
+};
 
 // create loan transaction
 export const createLoanTransaction = async (req, res) => {
@@ -185,17 +186,17 @@ export const createLoanTransaction = async (req, res) => {
                 }
 
                 // send email to specific user
-                const staffEmails = staffMembers
-                    .filter(staff => staff.personal_info.program === program)
-                    .map(staff => staff.personal_info.email);
+                // const staffEmails = staffMembers
+                //     .filter(staff => staff.personal_info.program === program)
+                //     .map(staff => staff.personal_info.email);
 
-                const url = `${CLIENT_URL}/user-loan/detail-loan/${newLoanTransaction._id}`
-                const emailSubject = "New Loan Request Submitted"
-                const emailTitle = "Loan Transaction Request Created"
-                const emailText = `New Loan request from ${req.user.personal_info.name} with Transaction ID: ${transactionId} is pending approval.`
-                const btnEmailText = "View Loan Item Details"
+                // const url = `${CLIENT_URL}/user-loan/detail-loan/${newLoanTransaction._id}`
+                // const emailSubject = "New Loan Request Submitted"
+                // const emailTitle = "Loan Transaction Request Created"
+                // const emailText = `New Loan request from ${req.user.personal_info.name} with Transaction ID: ${transactionId} is pending approval.`
+                // const btnEmailText = "View Loan Item Details"
 
-                sendMail(staffEmails, url, emailSubject, emailTitle, emailText, btnEmailText);
+                // sendMail(staffEmails, url, emailSubject, emailTitle, emailText, btnEmailText);
 
                 return newLoanTransaction;
             })
@@ -257,20 +258,51 @@ export const updateStatusToReadyToPickup = async (req, res) => {
         await createNotification(loanTransaction.borrower_id, loanTransaction._id, `Your loan item with ID: ${loanTransaction.transaction_id} is ready to pickup. Please create a request meeting with our staff to pickup your loan item before ${formattedExpiryDate}.`);
 
         // send email to borrower
-        const borrowerInfo = await getUserById(req, loanTransaction.borrower_id);
-        const borrowerEmail = borrowerInfo.personal_info.email
-        const url = `${CLIENT_URL}/user-loan/detail/${loanTransaction._id}`
-        const emailSubject = "Your Loan is Ready to Pickup"
-        const emailTitle = "Loan Item Ready for Pickup"
-        const emailText = `Your loan item with ID: ${loanTransaction.transaction_id} is ready to pickup. Please create a request meeting with our staff to pickup your loan item before ${formattedExpiryDate}.`
-        const btnEmailText = "View Loan Item Details"
+        // const borrowerInfo = await getUserById(req, loanTransaction.borrower_id);
+        // const borrowerEmail = borrowerInfo.personal_info.email
+        // const url = `${CLIENT_URL}/user-loan/detail/${loanTransaction._id}`
+        // const emailSubject = "Your Loan is Ready to Pickup"
+        // const emailTitle = "Loan Item Ready for Pickup"
+        // const emailText = `Your loan item with ID: ${loanTransaction.transaction_id} is ready to pickup. Please create a request meeting with our staff to pickup your loan item before ${formattedExpiryDate}.`
+        // const btnEmailText = "View Loan Item Details"
 
-        sendMail(borrowerEmail, url, emailSubject, emailTitle, emailText, btnEmailText);
+        // sendMail(borrowerEmail, url, emailSubject, emailTitle, emailText, btnEmailText);
 
         res.json({ message: "Loan status updated to ready to pickup.", loanTransaction });
 
-        // Schedule auto-cancel after 3 days if no meeting request
-        scheduleAutoCancel(loanTransactionId);
+        // send message to rabbitMQ for auto-cancel scheduling
+        const channel = getChannel();
+        if (!channel) {
+            console.error("RabbitMQ channel is not available.");
+            return;
+        }
+        const queue = "loan_auto_cancel"
+        const delayQueue = "loan_auto_cancel_delayed";
+        const delay = 2 * 60 * 1000 // 3 days
+        const message = JSON.stringify({ loanTransactionId })
+        const uniqueRoutingKey = `loan_auto_cancel_${loanTransactionId}`;
+
+        await channel.assertExchange("loan_dlx", "direct", { durable: true });
+
+        await channel.assertQueue(queue, {
+            durable: true,
+        });
+
+        await channel.assertQueue(delayQueue, {
+            durable: true,
+            arguments: {
+                "x-message-ttl": delay,
+                "x-dead-letter-exchange": "loan_dlx",
+                "x-dead-letter-routing-key": uniqueRoutingKey,
+            },
+        });
+
+        await channel.bindQueue(queue, "loan_dlx", uniqueRoutingKey);
+
+        await channel.sendToQueue(delayQueue, Buffer.from(message), { persistent: true });
+
+        // console.log(`Scheduled auto-cancel for Loan Transaction ID: ${loanTransactionId} in 3 days`);
+
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }

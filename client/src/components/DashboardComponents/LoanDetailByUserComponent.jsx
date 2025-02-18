@@ -14,11 +14,12 @@ import LoanCountDown from "../../common/LoanCountDown";
 const LoanDetailByUserComponent = ({
   openDrawerBottom,
   openDrawerReturned,
+  handleOpenDialog,
+  userInfor,
 }) => {
   const [open, setOpen] = useState(0);
 
   const { loanData } = useSelector((state) => state.loan);
-  const { userInfor } = useSelector((state) => state.user);
 
   const { id } = useParams();
   const foundLoan = loanData?.loanTransactions?.find((loan) => loan._id === id);
@@ -28,7 +29,7 @@ const LoanDetailByUserComponent = ({
   // Calculate expiry date for countdown (3 days from borrow_date)
   const expiryDate = foundLoan?.pickup_time
     ? new Date(
-        new Date(foundLoan.pickup_time).getTime() + 3 * 24 * 60 * 60 * 1000 // 3 days
+        new Date(foundLoan.pickup_time).getTime() + 2 * 60 * 1000 // 3 days
       )
     : null;
 
@@ -37,10 +38,10 @@ const LoanDetailByUserComponent = ({
       <Card>
         <div className="flex flex-col justify-center items-center w-full gap-2 mb-2">
           {/* Countdown for Ready to Pickup */}
-          {foundLoan?.loan_status === "Ready to Pickup" && expiryDate && (
+          {foundLoan.loan_status === "Ready to Pickup" && expiryDate && (
             <LoanCountDown
               expiryDate={expiryDate}
-              txtError="Time to pick up the loan has expired!"
+              txtError="Time to pick up the loan has expired! Loan status change to 'Cancelled'"
               txtRender="Time remaining to request meeting for pick up the loan item:"
             />
           )}
@@ -74,28 +75,6 @@ const LoanDetailByUserComponent = ({
 
           {/* Button changeloan status */}
           <div className="flex w-full flex-col items-center justify-center mt-8 gap-4">
-            {(foundLoan?.loan_status === "Borrowed" ||
-              foundLoan?.loan_status === "Partially Consumed" ||
-              foundLoan?.loan_status === "Consumed") && (
-              <Button
-                className="bg-gradient-to-r from-cyan-500 to-lime-800 text-white text-xs py-3 px-6 rounded-lg capitalize"
-                onClick={openDrawerBottom}
-                disabled={foundLoan?.borrower_confirmed_date ? true : false}
-              >
-                Confirm loan items
-              </Button>
-            )}
-
-            {foundLoan?.loan_status === "Returned" && (
-              <Button
-                className="bg-gradient-to-r from-lime-500 to-green-800 text-white text-xs py-3 px-6 rounded-lg capitalize"
-                onClick={openDrawerReturned}
-                disabled={foundLoan?.return_date ? true : false}
-              >
-                Confirm loan item has already returned
-              </Button>
-            )}
-
             <div className="flex flex-col gap-2 bg-indigo-400/10 px-10 py-2 rounded-md border border-indigo-500/30">
               <div className="flex w-full justify-center items-center">
                 <span className=" text-xs text-blue-800">
@@ -121,6 +100,37 @@ const LoanDetailByUserComponent = ({
                 </span>
               </div>
             </div>
+
+            {foundLoan?.loan_status === "Ready to Pickup" && (
+              <Button
+                className="bg-gradient-to-r from-red-500 to-orange-800 text-xs py-2.5 px-6 rounded-lg capitalize"
+                onClick={handleOpenDialog}
+              >
+                Create request meeting
+              </Button>
+            )}
+
+            {(foundLoan?.loan_status === "Borrowed" ||
+              foundLoan?.loan_status === "Partially Consumed" ||
+              foundLoan?.loan_status === "Consumed") && (
+              <Button
+                className="bg-gradient-to-r from-cyan-500 to-lime-800 text-white text-xs py-3 px-6 rounded-lg capitalize"
+                onClick={openDrawerBottom}
+                disabled={foundLoan?.borrower_confirmed_date ? true : false}
+              >
+                Confirm loan items
+              </Button>
+            )}
+
+            {foundLoan?.loan_status === "Returned" && (
+              <Button
+                className="bg-gradient-to-r from-lime-500 to-green-800 text-white text-xs py-3 px-6 rounded-lg capitalize"
+                onClick={openDrawerReturned}
+                disabled={foundLoan?.return_date ? true : false}
+              >
+                Confirm loan item has already returned
+              </Button>
+            )}
           </div>
         </CardBody>
       </Card>

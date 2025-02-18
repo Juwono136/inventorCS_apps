@@ -5,18 +5,17 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   server: {
     proxy: {
-      // ngrok
       "/api": {
-        target: "http://localhost:5000",
+        target: "https://csbi-users.portproject.my.id",
         changeOrigin: true,
-        secure: false,
+        secure: true,
         ws: true,
-        headers: {
-          "ngrok-skip-browser-warning": "69420"
-        }
+        // headers: {
+        //   "ngrok-skip-browser-warning": "69420"
+        // }
       },
       "/service": {
-        target: "http://localhost:5001",
+        target: "https://inventorcs-server.portproject.my.id",
         changeOrigin: true,
         secure: false,
         ws: true,

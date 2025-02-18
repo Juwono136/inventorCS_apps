@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import LoanDetailByUserComponent from "../../components/DashboardComponents/LoanDetailByUserComponent";
 import ConfirmDrawerComponent from "../../components/DashboardComponents/ConfirmDrawerComponent";
 import ConfirmDrawerReturnedComponent from "../../components/DashboardComponents/ConfirmDrawerReturnedComponent";
+import DialogRequestMeeting from "../../components/DashboardComponents/DialogRequestMeeting";
 import BackButton from "../../common/BackButton";
 import Loader from "../../common/Loader";
 import UseDocumentTitle from "../../common/UseDocumentTitle";
@@ -24,6 +25,7 @@ const LoanTransactionByUserPage = () => {
   UseDocumentTitle("Loan Transaction by User");
 
   const [openBottom, setOpenBottom] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
   const [openReturned, setOpenReturned] = useState(false);
   const [itemReturned, setItemReturned] = useState(false);
   const [itemReceived, setItemReceived] = useState(false);
@@ -31,10 +33,15 @@ const LoanTransactionByUserPage = () => {
   const { loanData, isLoading, isSuccess, isError, message } = useSelector(
     (state) => state.loan
   );
+  const { userInfor } = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
+
+  const handleOpenDialog = () => {
+    setOpenDialog(!openDialog);
+  };
 
   const openDrawerBottom = () => setOpenBottom(true);
   const closeDrawerBottom = () => setOpenBottom(false);
@@ -120,6 +127,16 @@ const LoanTransactionByUserPage = () => {
       <LoanDetailByUserComponent
         openDrawerBottom={openDrawerBottom}
         openDrawerReturned={openDrawerReturned}
+        handleOpenDialog={handleOpenDialog}
+        userInfor={userInfor}
+      />
+
+      {/* Dialog component for request meeting */}
+      <DialogRequestMeeting
+        loanData={loanData}
+        openDialog={openDialog}
+        setOpenDialog={setOpenDialog}
+        handleOpenDialog={handleOpenDialog}
       />
 
       {/* Drawer component for confirm the loan item */}

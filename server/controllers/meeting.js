@@ -3,6 +3,7 @@ import LoanTransactions from '../models/loanTransaction.js';
 import { createNotification } from './notification.js';
 import { getStaffsForProgram } from './loanTransaction.js';
 import { sendMail } from '../utils/sendMail.js';
+import { getChannel } from '../utils/rabbitmq.js';
 
 const { CLIENT_URL } = process.env
 
@@ -31,6 +32,10 @@ export const createMeeting = async (req, res) => {
 
         if (loanTransaction.loan_status !== "Ready to Pickup") {
             return res.status(404).json({ message: "Invalid loan transaction status for meeting request" })
+        }
+
+        if (!location || !meeting_date || !meeting_time) {
+            return res.status(400).json({ message: "Invalid request meeting format." })
         }
 
         // validate and format meeting_date and meeting_time
@@ -97,19 +102,19 @@ export const createMeeting = async (req, res) => {
             const staffIds = staffMembers.map(staff => staff._id);
 
             // Send email notifications to staff
-            const staffEmails = staffMembers
-                .filter(staff => staff.personal_info.program === program)
-                .map(staff => staff.personal_info.email);
+            // const staffEmails = staffMembers
+            //     .filter(staff => staff.personal_info.program === program)
+            //     .map(staff => staff.personal_info.email);
 
-            if (staffEmails.length > 0) {
-                const url = `${CLIENT_URL}/user-loan/meeting-detail/${newMeeting._id}`;
-                const emailSubject = "New Meeting Request Created";
-                const emailTitle = "Meeting Request Notification";
-                const emailText = `A meeting request has been created for transaction ID: ${loanTransaction.transaction_id}. Please review the meeting details and prepare to meet with the borrower.`;
-                const btnEmailText = "View Meeting Details";
+            // if (staffEmails.length > 0) {
+            //     const url = `${CLIENT_URL}/user-loan/meeting-detail/${newMeeting._id}`;
+            //     const emailSubject = "New Meeting Request Created";
+            //     const emailTitle = "Meeting Request Notification";
+            //     const emailText = `A meeting request has been created for transaction ID: ${loanTransaction.transaction_id}. Please review the meeting details and prepare to meet with the borrower.`;
+            //     const btnEmailText = "View Meeting Details";
 
-                sendMail(staffEmails, url, emailSubject, emailTitle, emailText, btnEmailText);
-            }
+            //     sendMail(staffEmails, url, emailSubject, emailTitle, emailText, btnEmailText);
+            // }
 
             if (staffIds.length > 0) {
                 return createNotification(
@@ -122,6 +127,20 @@ export const createMeeting = async (req, res) => {
         })
 
         await Promise.all(notificationPromises);
+
+        // stop auto-cancel in rabbitMQ
+        const channel = getChannel()
+        const queue = "loan_auto_cancel"
+        if (!channel) {
+            console.error("RabbitMQ channel is not available.");
+            return;
+        }
+
+        const uniqueRoutingKey = `loan_auto_cancel_${loanTransactionId}`;
+
+        await channel.unbindQueue(queue, "loan_dlx", uniqueRoutingKey);
+
+        console.log(`Auto-cancel stopped for Loan Transaction ID: ${loanTransactionId}`);
 
         res.json({
             message: "Meeting request created successfully.",
@@ -144,7 +163,7 @@ export const getAllMeetings = async (req, res) => {
 
         // Aggregation Pipeline
         const meetings = await Meetings.aggregate([
-            // Stage 1: Join with LoanTransactions
+            // Join with LoanTransactions
             {
                 $lookup: {
                     from: "loantransactions",
@@ -153,17 +172,17 @@ export const getAllMeetings = async (req, res) => {
                     as: "loanTransaction_info"
                 }
             },
-            // Stage 2: Filter loan transactions that match with userProgram
+            // Filter loan transactions that match with userProgram
             {
                 $match: {
                     "loanTransaction_info.borrowed_item.item_program": userProgram
                 }
             },
-            // Stage 3: Unwind loanTransaction_info to facilitate data access
+            // Unwind loanTransaction_info to facilitate data access
             {
                 $unwind: "$loanTransaction_info"
             },
-            // Stage 4: Select the required fields
+            // Select the required fields
             {
                 $project: {
                     meeting_date: 1,
@@ -182,6 +201,15 @@ export const getAllMeetings = async (req, res) => {
             data: meetings
         });
 
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+// get request meeting by user
+export const getMeetingByUser = async (req, res) => {
+    try {
+        const userId = req.user.id
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
