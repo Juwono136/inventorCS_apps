@@ -53,6 +53,20 @@ jobs:
       - name: Run New Containers
         run: |
           docker-compose up -d
+        env:
+          PORT: ${{ secrets.PORT }}
+          CONNECTION_URL: ${{ secrets.CONNECTION_URL }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          CLIENT_URL: ${{secrets.CLIENT_URL}}
+          INTERNET_SERVER: ${{secrets.INTERNET_SERVER}}
+          API_USERS_URL: ${{secrets.API_USERS_URL}}
+          NODE_ENV: ${{secrets.NODE_ENV}}
+          REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
+          ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+          ACTIVATION_TOKEN_SECRET: ${{ secrets.ACTIVATION_TOKEN_SECRET }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          RABBITMQ_URL: ${{ secrets.RABBITMQ_URL }}
 
       - name: Add Containers to Tunnel
         run: |

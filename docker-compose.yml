@@ -6,8 +6,6 @@ services:
     pull_policy: always
     container_name: inventorcs-backend
     restart: always
-    env_file:
-      - .env
     environment:
       PORT: ${PORT}
       CONNECTION_URL: ${CONNECTION_URL}
