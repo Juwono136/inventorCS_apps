@@ -44,11 +44,14 @@ jobs:
 
       - name: Stop and Remove Old Containers
         run: |
+          cd $GITHUB_WORKSPACE
           docker-compose down || true
           docker system prune -f
 
       - name: Run New Containers
-        run: docker-compose up -d
+        run: |
+          cd $GITHUB_WORKSPACE
+          docker-compose up -d
 
       - name: Add Containers to Tunnel
         run: |
