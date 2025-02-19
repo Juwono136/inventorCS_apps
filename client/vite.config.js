@@ -8,7 +8,7 @@ export default defineConfig({
       "/api": {
         target: "https://csbi-users.portproject.my.id",
         changeOrigin: true,
-        secure: false,
+        secure: true,
         ws: true,
         // headers: {
         //   "ngrok-skip-browser-warning": "69420"
@@ -17,7 +17,7 @@ export default defineConfig({
       "/service": {
         target: "https://inventorcs-server.portproject.my.id",
         changeOrigin: true,
-        secure: false,
+        secure: true,
         ws: true,
       },
     },
