@@ -24,9 +24,8 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }))
 app.use(express.json());
 
 const corsOptions = {
-    origin: process.env.CLIENT_URL,
-    credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization']
+    origin: "*",
+    credentials: false,
 };
 
 const CONNECTION_URL = process.env.CONNECTION_URL
