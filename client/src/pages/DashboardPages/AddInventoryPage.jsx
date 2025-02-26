@@ -165,7 +165,7 @@ const AddInventoryPage = () => {
     if (isError) {
       toast.error(message);
       dispatch(inventoryReset());
-      navigate("/add_inventory");
+      navigate("/inventories/add_inventory");
     }
 
     if (isSuccess) {

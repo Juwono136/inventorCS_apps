@@ -20,8 +20,9 @@ import {
   updateCartItemQuantity,
 } from "../../features/loanTransaction/loanSlice";
 import { accessToken } from "../../features/token/tokenSlice";
+import { getAllInventories } from "../../features/inventory/inventorySlice";
 
-const MyCartPage = () => {
+const MyCartPage = ({ page, sort }) => {
   UseDocumentTitle("My Cart");
 
   const initialState = {
@@ -114,6 +115,10 @@ const MyCartPage = () => {
     }
     dispatch(loanReset());
   }, [user, isLoggedOut, isError, isSuccess, message, loanData, dispatch]);
+
+  useEffect(() => {
+    dispatch(getAllInventories({ page, sort }));
+  }, [page, sort]);
 
   if (!user && isLoggedOut) {
     return <Navigate to="/" />;

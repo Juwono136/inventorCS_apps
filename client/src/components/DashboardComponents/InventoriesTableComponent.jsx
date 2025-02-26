@@ -5,15 +5,6 @@ import { Avatar, Chip } from "@material-tailwind/react";
 import { RxCaretSort } from "react-icons/rx";
 import { useNavigate } from "react-router-dom";
 import { useDragScroll } from "../../utils/handleMouseDrag";
-// import { FaRegTrashAlt } from "react-icons/fa";
-// import { useDispatch } from "react-redux";
-
-// components
-// import DialogOpenComponent from "./DialogOpenComponent";
-
-// features
-// import { deleteInventory } from "../../features/inventory/inventorySlice";
-// import { accessToken } from "../../features/token/tokenSlice";
 
 const InventoriesTablComponent = ({ items, TABLE_HEAD, handleSort }) => {
   const {
@@ -84,8 +75,8 @@ const InventoriesTablComponent = ({ items, TABLE_HEAD, handleSort }) => {
         <tbody>
           {items?.length === 0 && (
             <tr>
-              <td colSpan="5">
-                <h4 className="p-3 text-sm text-red-800 font-medium">
+              <td>
+                <h4 className="p-3 text-sm text-center text-red-800 font-semibold">
                   Item not found.
                 </h4>
               </td>

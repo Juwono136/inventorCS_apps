@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 // components
 import HeroComponent from "../../components/HomeComponents/HeroComponent";
@@ -7,7 +8,16 @@ import TeamComponent from "../../components/HomeComponents/TeamComponent";
 import FooterComponent from "../../components/HomeComponents/FooterComponent";
 import ScrollUp from "../../common/ScrollUp";
 
-const Home = () => {
+// features
+import { getAllInventories } from "../../features/inventory/inventorySlice";
+
+const Home = ({ page, sort }) => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getAllInventories({ page, sort }));
+  }, [page, sort]);
+
   return (
     <>
       <HeroComponent />

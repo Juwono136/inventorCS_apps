@@ -19,7 +19,6 @@ import UseDocumentTitle from "../../common/UseDocumentTitle";
 
 // features
 import { getInventoriesByProgram } from "../../features/inventory/inventorySlice";
-import { accessToken } from "../../features/token/tokenSlice";
 
 const InventoriesPage = ({
   sort,
@@ -55,17 +54,13 @@ const InventoriesPage = ({
 
   const handleSearch = (term) => {
     setSearch(term);
-    setSearchParams({ ...searchParams, search: term });
     setPage(1);
+    if (term) {
+      setSearchParams({ search: term, page: 1 });
+    } else {
+      setSearchParams({ page: 1 });
+    }
   };
-
-  useEffect(() => {
-    dispatch(getInventoriesByProgram({ page, sort, categories, search })).then(
-      (res) => {
-        dispatch(accessToken(res));
-      }
-    );
-  }, [page, sort, categories, search]);
 
   useEffect(() => {
     // get the page number from the URL parameters when the component mounts
@@ -86,7 +81,11 @@ const InventoriesPage = ({
     if (isSuccess) {
       toast.success(message);
     }
-  }, [setPage, setSearchParams, search, sort, isError, isSuccess, message]);
+  }, [setPage, setSearchParams, isError, isSuccess, message]);
+
+  useEffect(() => {
+    dispatch(getInventoriesByProgram({ page, sort, categories, search }));
+  }, [search, page, sort, categories]);
 
   // handle sort
   const handleSort = (column) => {

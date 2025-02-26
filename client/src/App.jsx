@@ -34,9 +34,7 @@ import ProtectedUserRoutes from "./common/ProtectedUserRoutes";
 
 // features
 import { getUserInfor } from "./features/user/userSlice";
-import { getAllInventories } from "./features/inventory/inventorySlice";
 import InventoryListPage from "./pages/HomePages/InventoryListPage";
-import { accessToken } from "./features/token/tokenSlice";
 
 function App() {
   const [sortUser, setSortUser] = useState({
@@ -57,17 +55,9 @@ function App() {
 
   useEffect(() => {
     if (!isLoggedOut && user) {
-      dispatch(getUserInfor()).then((res) => {
-        dispatch(accessToken(res));
-      });
+      dispatch(getUserInfor());
     }
   }, [isLoggedOut, dispatch, user]);
-
-  useEffect(() => {
-    dispatch(
-      getAllInventories({ page, sort: sortInventory, categories, search })
-    );
-  }, [page, sortInventory, categories, search]);
 
   return (
     <>
@@ -79,8 +69,11 @@ function App() {
 
           {/* Home page routes */}
           <Route path="/" element={<NavbarComponent />}>
-            <Route index element={<Home />} />
-            <Route path="mycarts" element={<MyCartPage />} />
+            <Route index element={<Home page={page} sort={sortInventory} />} />
+            <Route
+              path="mycarts"
+              element={<MyCartPage page={page} sort={sortInventory} />}
+            />
 
             {/* Auth page routes */}
             <Route path="signin" element={<SigninPage />} />
@@ -92,7 +85,10 @@ function App() {
             />
 
             {/* inventory routes */}
-            <Route path="item_detail/:id" element={<InventoryDetailPage />} />
+            <Route
+              path="item_detail/:id"
+              element={<InventoryDetailPage page={page} sort={sortInventory} />}
+            />
 
             <Route
               path="inventory-list"

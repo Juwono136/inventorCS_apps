@@ -13,6 +13,9 @@ import Loader from "../../common/Loader";
 import Pagination from "../../common/Pagination";
 import ScrollUp from "../../common/ScrollUp";
 
+// features
+import { getAllInventories } from "../../features/inventory/inventorySlice";
+
 const InventoryListPage = ({
   sort,
   setSort,
@@ -37,8 +40,12 @@ const InventoryListPage = ({
 
   const handleSearch = (term) => {
     setSearch(term);
-    setSearchParams({ ...searchParams, search: term });
     setPage(1);
+    if (term) {
+      setSearchParams({ search: term, page: 1 });
+    } else {
+      setSearchParams({ page: 1 });
+    }
   };
 
   useEffect(() => {
@@ -60,7 +67,11 @@ const InventoryListPage = ({
     if (isSuccess) {
       toast.success(message);
     }
-  }, [setPage, setSearchParams, search, sort, isError, isSuccess, message]);
+  }, [setPage, setSearchParams, isError, isSuccess, message]);
+
+  useEffect(() => {
+    dispatch(getAllInventories({ page, sort, categories, search }));
+  }, [search, categories, page]);
 
   // handle sort
   const handleSort = (column) => {
@@ -117,7 +128,7 @@ const InventoryListPage = ({
           {isLoading ? (
             <Loader />
           ) : items?.length === 0 ? (
-            <h4 className="p-3 text-base text-center font-semibold text-red-900">
+            <h4 className="p-3 text-base text-center font-semibold text-red-900 bg-red-100 rounded-full">
               Sorry, Inventory not found.
             </h4>
           ) : (

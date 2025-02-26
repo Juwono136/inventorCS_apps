@@ -1,5 +1,5 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 // components
 import InventoryDetailComponent from "../../components/HomeComponents/InventoryDetailComponent";
@@ -10,17 +10,26 @@ import BackButton from "../../common/BackButton";
 import UseDocumentTitle from "../../common/UseDocumentTitle";
 import ScrollUp from "../../common/ScrollUp";
 
-const InventoryDetailPage = () => {
+// features
+import { getAllInventories } from "../../features/inventory/inventorySlice";
+
+const InventoryDetailPage = ({ page, sort }) => {
   UseDocumentTitle("Item Detail");
 
   const { inventories } = useSelector((state) => state.inventory);
   const { items, isLoading } = inventories;
+
+  const dispatch = useDispatch();
 
   const sortedItems = items
     ? [...items].sort(
         (a, b) => new Date(b.publishedAt) - new Date(a.publishedAt)
       )
     : [];
+
+  useEffect(() => {
+    dispatch(getAllInventories({ page, sort }));
+  }, [page, sort]);
 
   return (
     <div className="mx-6 md:mx-8 my-4">

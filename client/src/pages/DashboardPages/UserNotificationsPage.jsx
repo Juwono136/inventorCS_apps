@@ -68,7 +68,7 @@ const UserNotificationsPage = () => {
 
   useEffect(() => {
     dispatch(getNotificationByUser());
-  }, []);
+  }, [dispatch]);
 
   return (
     <Layout>
