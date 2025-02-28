@@ -85,7 +85,7 @@ const InventoriesPage = ({
 
   useEffect(() => {
     dispatch(getInventoriesByProgram({ page, sort, categories, search }));
-  }, [search, page, sort, categories]);
+  }, [dispatch, search, page, sort, categories]);
 
   // handle sort
   const handleSort = (column) => {

@@ -2,28 +2,31 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  server: {
-    proxy: {
-      "/api": {
-        target: "https://csbi-users.portproject.my.id",
-        changeOrigin: true,
-        secure: true,
-        ws: true,
-        // headers: {
-        //   "ngrok-skip-browser-warning": "69420"
-        // }
-      },
-      "/service": {
-        target: "https://inventorcs-server.portproject.my.id",
-        changeOrigin: true,
-        secure: true,
-        ws: true,
+export default defineConfig(({ mode }) => {
+  return {
+    server: {
+      proxy: {
+        "/api": {
+          target: mode === "development"
+            ? "http://localhost:5000"
+            : "https://csbi-users.portproject.my.id",
+          changeOrigin: true,
+          secure: mode !== "development",
+          ws: true,
+        },
+        "/service": {
+          target: mode === "development"
+            ? "http://localhost:5001"
+            : "https://inventorcs-server.portproject.my.id",
+          changeOrigin: true,
+          secure: mode !== "development",
+          ws: true,
+        },
       },
     },
-  },
-  build: {
-    outDir: "dist",
-  },
-  plugins: [react()],
+    build: {
+      outDir: "dist",
+    },
+    plugins: [react()],
+  }
 })

@@ -26,6 +26,7 @@ import MyLoanTransactionPage from "./pages/DashboardPages/MyLoanTransactionPage"
 import LoanTransactionforStaffPage from "./pages/DashboardPages/LoanTransactionforStaffPage";
 import UserNotificationsPage from "./pages/DashboardPages/UserNotificationsPage";
 import InventoryDetailPage from "./pages/HomePages/InventoryDetailPage";
+import InventoryListPage from "./pages/HomePages/InventoryListPage";
 
 // components
 import NavbarComponent from "./components/HomeComponents/NavbarComponent";
@@ -34,7 +35,7 @@ import ProtectedUserRoutes from "./common/ProtectedUserRoutes";
 
 // features
 import { getUserInfor } from "./features/user/userSlice";
-import InventoryListPage from "./pages/HomePages/InventoryListPage";
+import { accessToken } from "./features/token/tokenSlice";
 
 function App() {
   const [sortUser, setSortUser] = useState({
@@ -55,7 +56,9 @@ function App() {
 
   useEffect(() => {
     if (!isLoggedOut && user) {
-      dispatch(getUserInfor());
+      dispatch(getUserInfor()).then((res) => {
+        dispatch(accessToken(res));
+      });
     }
   }, [isLoggedOut, dispatch, user]);
 
