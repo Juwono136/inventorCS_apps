@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 
 // icons and material-tailwind
 import { Button, Chip, Typography } from "@material-tailwind/react";
+import { TiFolderDelete } from "react-icons/ti";
 
 // components
 import Layout from "./Layout";
@@ -13,10 +14,14 @@ import DialogOpenComponent from "../../components/DashboardComponents/DialogOpen
 import Loader from "../../common/Loader";
 import BackButton from "../../common/BackButton";
 import UseDocumentTitle from "../../common/UseDocumentTitle";
+import FullScreenImage from "../../common/FullScreenImage";
+import FullScreenQRCode from "../../common/FullScreenQRCode";
+import { getFullDay } from "../../common/Date";
 
 // features
 import { convertFileToBase64 } from "../../utils/convertToBase64";
 import {
+  draftInventory,
   getInventoryById,
   updateInventory,
 } from "../../features/inventory/inventorySlice";
@@ -36,8 +41,6 @@ const UpdateInventoryPage = () => {
     "Peripheral",
     "Others",
   ];
-
-  const statusMenu = ["Available", "Maintenance", "Lost", "Damaged"];
 
   const consumableMenu = [
     { label: "Yes", value: true },
@@ -102,6 +105,11 @@ const UpdateInventoryPage = () => {
   const [selectedItem, setSelectedItem] = useState(initialState);
   const [image, setImage] = useState("");
   const [openDialogSave, setOpenDialogSave] = useState(false);
+  const [isQRCodeModalOpen, setQRCodeModalOpen] = useState(false);
+  const [qrCodeValue, setQRCodeValue] = useState("");
+  const [openDraftInventory, setOpenDraftinventory] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
   const {
     asset_name,
     serial_number,
@@ -118,18 +126,46 @@ const UpdateInventoryPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const handleOpenDraftLoan = (id) => {
+    setOpenDraftinventory(!openDraftInventory);
+    setSelectedId(id);
+  };
+
+  const handleDraftInventory = (id) => {
+    dispatch(draftInventory(id)).then(() => {
+      navigate("/inventories");
+    });
+
+    setOpenDraftinventory(!openDraftInventory);
+  };
+
+  const handleOpenQRCodeModal = (value) => {
+    setQRCodeModalOpen(true);
+    setQRCodeValue(value);
+  };
+
+  const handleCloseQRCodeModal = () => {
+    setQRCodeModalOpen(false);
+    setQRCodeValue("");
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setSelectedItem({
-      ...selectedItem,
-      [name]: value,
-      isError: "",
-      isSuccess: "",
-    });
 
     if (value < 0) {
       e.target.value = 0;
     }
+
+    setSelectedItem((prev) => {
+      const updatedItem = {
+        ...prev,
+        [name]: value,
+        isError: "",
+        isSuccess: "",
+      };
+
+      return updatedItem;
+    });
   };
 
   const handleOpenDialogSave = () => {
@@ -194,6 +230,14 @@ const UpdateInventoryPage = () => {
             <h3 className="text-base font-bold text-indigo-500/60 pointer-events-none sm:text-xl">
               Update Inventory
             </h3>
+
+            <Button
+              className="flex justify-center items-center gap-1 bg-red-600 text-xs py-2 px-3 rounded-lg capitalize transition-all"
+              onClick={() => handleOpenDraftLoan(inventoryById?._id)}
+            >
+              <TiFolderDelete className="text-lg font-semibold" />
+              Draft Item
+            </Button>
           </div>
 
           <hr className="w-full border-indigo-100 my-4" />
@@ -203,11 +247,16 @@ const UpdateInventoryPage = () => {
               {/* Inventory summary info */}
               <div className="flex md:basis-1/2 gap-2 flex-col w-full items-center justify-start shadow-lg bg-indigo-50/40 rounded-md">
                 <div className="flex flex-col gap-4 px-2 py-4 justify-center items-center w-full">
-                  <img
-                    className="h-96 md:h-full w-full rounded-lg object-cover object-center shadow-xl shadow-blue-gray-900/50"
-                    src={image || inventoryById?.asset_img}
-                    alt="item image"
-                  />
+                  <FullScreenImage
+                    src={inventoryById.asset_img}
+                    alt="item-image"
+                  >
+                    <img
+                      className="h-96 md:h-full w-full rounded-lg object-cover object-center shadow-xl shadow-blue-gray-900/50"
+                      src={image || inventoryById?.asset_img}
+                      alt="item image"
+                    />
+                  </FullScreenImage>
                   <label className="block py-2 w-[200px] relative cursor-pointer">
                     <span className="sr-only">Choose item image</span>
                     <input
@@ -243,16 +292,10 @@ const UpdateInventoryPage = () => {
                         </Typography>
 
                         <Typography className="text-xs text-gray-700">
-                          Created At:{" "}
-                          {new Date(
-                            inventoryById?.publishedAt
-                          ).toLocaleDateString()}
+                          Created At: {getFullDay(inventoryById?.publishedAt)}
                         </Typography>
                         <Typography className="text-xs text-gray-700">
-                          Updated At:{" "}
-                          {new Date(
-                            inventoryById?.updatedAt
-                          ).toLocaleDateString()}
+                          Updated At: {getFullDay(inventoryById?.updatedAt)}
                         </Typography>
                       </div>
 
@@ -268,15 +311,24 @@ const UpdateInventoryPage = () => {
                     </div>
 
                     <div className="flex">
-                      <QRCode
-                        value="http://localhost:5000/inventory"
-                        size={150}
-                        logoWidth={16}
-                        eyeRadius={10}
-                        eyeColor="#161D6F"
-                        fgColor="#161D6F"
-                        qrStyle="dots"
-                      />
+                      <div
+                        className="w-max rounded-lg p-2 border border-indigo-100 bg-indigo-100/30 hover:cursor-pointer hover:bg-indigo-100/60 transition-all"
+                        onClick={() =>
+                          handleOpenQRCodeModal(
+                            `${window.location.origin}/item_detail/${inventoryById?._id}`
+                          )
+                        }
+                      >
+                        <QRCode
+                          value={`${window.location.origin}/item_detail/${inventoryById?._id}`}
+                          size={100}
+                          logoWidth={16}
+                          eyeRadius={5}
+                          eyeColor="#161D6F"
+                          fgColor="#161D6F"
+                          qrStyle="dots"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -346,34 +398,6 @@ const UpdateInventoryPage = () => {
                               className="text-gray-900"
                             >
                               {category}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col w-full">
-                      <label
-                        htmlFor="item_status"
-                        className="text-gray-800 font-semibold lg:text-sm text-xs"
-                      >
-                        Item Status:
-                      </label>
-                      <div className="mt-1 relative">
-                        <select
-                          id="item_status"
-                          name="item_status"
-                          value={item_status || "Select Item Status"}
-                          onChange={handleChange}
-                          className="block w-full rounded-md border-0 text-xs p-3 bg-indigo-300/30 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        >
-                          {statusMenu.map((status, index) => (
-                            <option
-                              key={index}
-                              value={status}
-                              className="text-gray-900"
-                            >
-                              {status.charAt(0).toUpperCase() + status.slice(1)}
                             </option>
                           ))}
                         </select>
@@ -536,6 +560,23 @@ const UpdateInventoryPage = () => {
         handleOpenDialog={handleOpenDialogSave}
         message="Save update item?"
         btnText="Save"
+      />
+
+      {/* Draft Inventory dialog component */}
+      <DialogOpenComponent
+        openDialog={openDraftInventory}
+        handleFunc={() => handleDraftInventory(selectedId)}
+        handleOpenDialog={handleOpenDraftLoan}
+        message="Are you sure want to draft this inventory?"
+        btnText="Yes"
+      />
+
+      {/* Fullscreen QR Code Modal */}
+      <FullScreenQRCode
+        isOpen={isQRCodeModalOpen}
+        onClose={handleCloseQRCodeModal}
+        qrValue={qrCodeValue}
+        text="Scan The Inventory Detail"
       />
     </Layout>
   );

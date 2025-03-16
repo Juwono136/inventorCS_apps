@@ -4,16 +4,20 @@ import { QRCode } from "react-qrcode-logo";
 // icons and material-tailwind
 import { FaTimes } from "react-icons/fa";
 
-const FullScreenQRCode = ({ isOpen, onClose, qrValue, transactionId }) => {
+const FullScreenQRCode = ({
+  isOpen,
+  onClose,
+  qrValue,
+  transactionId,
+  text,
+}) => {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-xs md:max-w-md lg:max-w-lg">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-base font-semibold text-indigo-800">
-            Scan the loan transaction
-          </h3>
+          <h3 className="text-base font-semibold text-indigo-800">{text}</h3>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-red-500 transition"

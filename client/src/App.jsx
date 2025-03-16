@@ -98,7 +98,6 @@ function App() {
               element={
                 <InventoryListPage
                   sort={sortInventory}
-                  setSort={setSortInventory}
                   categories={categories}
                   setCategories={setCategories}
                   page={page}

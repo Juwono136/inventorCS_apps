@@ -146,67 +146,71 @@ export const getInventoryById = async (req, res) => {
 // create inventory
 export const createInventory = async (req, res) => {
     try {
-        const { asset_id, asset_name, asset_img, serial_number, categories, desc, location, room_number, cabinet, total_items, is_consumable } = req.body;
+        let inventories = req.body;
 
-        const newAssetId = nanoid(15);
-
-        if (!asset_name || !asset_img || !categories || !desc || !location || !room_number || !cabinet || !total_items || !is_consumable) {
-            return res.status(400).json({ message: "Please fill in the required fields." });
+        const isArray = Array.isArray(inventories);
+        if (!isArray) {
+            inventories = [inventories];
         }
 
-        if (asset_name && asset_name.length < 3) {
-            return res.status(400).json({ message: "Item name is too short." });
-        }
+        const validatedInventories = inventories.map((inventory) => {
+            const {
+                asset_id,
+                asset_name,
+                asset_img,
+                serial_number,
+                categories,
+                desc,
+                location,
+                room_number,
+                cabinet,
+                total_items,
+                is_consumable,
+            } = inventory;
 
-        if (asset_name && asset_name.length > 50) {
-            return res.status(400).json({ message: "Item name cannot exceed 50 characters." });
-        }
+            const newAssetId = nanoid(15);
 
-        if (asset_id && asset_id.length > 15) {
-            return res.status(400).json({ message: "Item ID cannot exceed 15 characters." });
-        }
-
-        if (serial_number && serial_number.length > 15) {
-            return res.status(400).json({ message: "Serial number cannot exceed 15 characters." });
-        }
-
-        if (total_items < 0) {
-            return res.status(400).json({ message: "Please input the total items with a positive number." })
-        }
-
-        const existingInventory = await Inventories.findOne({
-            asset_id: newAssetId
-        });
-
-        if (existingInventory) {
-            if (existingInventory.asset_id === asset_id) {
-                return res.status(400).json({ message: "Item ID already exists." });
+            if (
+                !asset_name || !categories || !desc ||
+                !location || !room_number || !cabinet || !total_items || is_consumable === undefined
+            ) {
+                throw new Error("Please fill in the required fields.");
             }
-        }
 
-        const formattedCategories = categories && Array.isArray(categories)
-            ? categories.map(category => category.toLowerCase())
-            : [];
+            if (asset_name.length < 3) throw new Error("Item name is too short.");
+            if (asset_name.length > 80) throw new Error("Item name cannot exceed 80 characters.");
+            if (asset_id && asset_id.length > 15) throw new Error("Item ID cannot exceed 15 characters.");
+            if (serial_number && serial_number.length > 15) throw new Error("Serial number cannot exceed 15 characters.");
+            if (total_items < 0) throw new Error("Please input the total items with a positive number.");
 
-        const userData = req.userData;
-
-        const inventoryData = await Inventories.create({
-            asset_id: newAssetId,
-            asset_name,
-            asset_img,
-            serial_number: serial_number || "",
-            item_program: userData.personal_info.program || "",
-            desc,
-            categories: formattedCategories,
-            location,
-            room_number,
-            cabinet,
-            total_items,
-            is_consumable,
-            added_by: req.user._id
+            return {
+                asset_id: newAssetId,
+                asset_name,
+                asset_img: asset_img || "https://api.dicebear.com/9.x/icons/svg?seed=Chase",
+                serial_number: serial_number || "",
+                item_program: req.userData.personal_info.program || "",
+                desc,
+                categories: categories.map(category => category.toLowerCase()),
+                location,
+                room_number,
+                cabinet,
+                total_items,
+                is_consumable,
+                added_by: req.user._id,
+            };
         });
 
-        res.json({ message: "Item created successfully", inventoryData });
+        let savedInventories;
+        if (isArray) {
+            savedInventories = await Inventories.insertMany(validatedInventories); // Batch Insert
+        } else {
+            savedInventories = await Inventories.create(validatedInventories[0]); // Single Insert
+        }
+
+        res.json({
+            message: "Item created successfully",
+            inventories: savedInventories,
+        });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
@@ -304,29 +308,26 @@ export const updateInventory = async (req, res) => {
 // }
 
 // draft inventory (soft delete)
-// export const draftInventory = async (req, res) => {
-//     try {
-//         const { draft } = req.body
+export const draftInventory = async (req, res) => {
+    try {
+        const updateDrafInventory = await Inventories.findByIdAndUpdate(
+            req.params.id,
+            { draft: true },
+            { new: true }
+        );
 
-//         const updatedInventory = await Inventories.findByIdAndUpdate(
-//             { _id: req.params.id },
-//             { draft },
-//             { new: true }
-//         );
+        if (!updateDrafInventory) {
+            return res.status(404).json({ message: "Inventory not found." });
+        }
 
-//         if (!updatedInventory) {
-//             return res.status(404).json({ message: "Inventory not found." });
-//         }
-
-//         res.json({
-//             message: "Inventory marked as draft and will be permanently deleted after 7 days.",
-//             inventory: updatedInventory,
-//         });
-//     } catch (error) {
-//         return res.status(500).json({ message: error.message });
-//     }
-// }
-
+        res.json({
+            message: `${updateDrafInventory.asset_name} marked as draft.`,
+            inventory: updateDrafInventory,
+        });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
 
 
 // Delete inventory that has been in draft status for 7 days (running automatically)

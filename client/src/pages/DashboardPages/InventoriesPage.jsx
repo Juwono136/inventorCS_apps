@@ -1,15 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useDebounce } from "use-debounce";
 import toast from "react-hot-toast";
 
 // icons and material-tailwind
-import { Button } from "@material-tailwind/react";
+import { Button, Progress } from "@material-tailwind/react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 
 // components
 import Layout from "./Layout";
 import InventoriesTableComponent from "../../components/DashboardComponents/InventoriesTableComponent";
+import ExcelImportExportComponent from "../../components/DashboardComponents/ExcelImportExportComponent";
 import SearchElement from "../../common/SearchElement";
 import Pagination from "../../common/Pagination";
 import Loader from "../../common/Loader";
@@ -42,8 +44,12 @@ const InventoriesPage = ({
     "Item Status",
     "Is Consumable?",
   ];
+  const [progress, setProgress] = useState(0);
+  const [inventoryData, setInventoryData] = useState([]);
+
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page")) || 1;
+  const searchQuery = searchParams.get("search") || "";
 
   const { inventories, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.inventory
@@ -52,27 +58,48 @@ const InventoriesPage = ({
 
   const dispatch = useDispatch();
 
-  const handleSearch = (term) => {
-    setSearch(term);
-    setPage(1);
-    if (term) {
-      setSearchParams({ search: term, page: 1 });
-    } else {
-      setSearchParams({ page: 1 });
-    }
-  };
+  const [debouncedSearch] = useDebounce(search, 500);
 
+  // Sets the page when the component is first mounted to match the URL.
   useEffect(() => {
-    // get the page number from the URL parameters when the component mounts
-    if (currentPage) {
-      setPage(currentPage);
-      setSearchParams({
-        page: currentPage,
-        search,
-        sort: sort.sort,
-        order: sort.order,
-      });
+    setPage(currentPage);
+  }, []);
+
+  // Sync search with URL
+  useEffect(() => {
+    if (searchQuery !== search) {
+      setSearch(searchQuery);
     }
+  }, [searchQuery]);
+
+  // Reset page to 1 when search changes
+  useEffect(() => {
+    if (debouncedSearch) {
+      setPage(1);
+      setSearchParams({ search: debouncedSearch, page: 1 });
+    }
+  }, [debouncedSearch]);
+
+  // Fetch data after ensuring the page matches the URL
+  useEffect(() => {
+    if (page === currentPage) {
+      dispatch(
+        getInventoriesByProgram({
+          page,
+          sort,
+          categories,
+          search: debouncedSearch || "",
+        })
+      );
+    }
+  }, [debouncedSearch, categories, page, sort, dispatch, currentPage]);
+
+  // Make sure the URL is always updated with the state
+  useEffect(() => {
+    setSearchParams({
+      page,
+      search,
+    });
 
     if (isError) {
       toast.error(message);
@@ -81,11 +108,15 @@ const InventoriesPage = ({
     if (isSuccess) {
       toast.success(message);
     }
-  }, [setPage, setSearchParams, isError, isSuccess, message]);
+  }, [page, search, isError, isSuccess, message]);
 
-  useEffect(() => {
-    dispatch(getInventoriesByProgram({ page, sort, categories, search }));
-  }, [dispatch, search, page, sort, categories]);
+  // handle progress bar
+  const handleProgressBar = (value) => {
+    setProgress(value);
+    if (value === 100) {
+      setTimeout(() => setProgress(0), 2000);
+    }
+  };
 
   // handle sort
   const handleSort = (column) => {
@@ -110,6 +141,19 @@ const InventoriesPage = ({
 
   return (
     <Layout>
+      {/* progress bar */}
+      {progress > 0 && (
+        <Progress
+          value={progress}
+          color="indigo"
+          className="transition-all duration-500 my-1"
+        />
+      )}
+      <ExcelImportExportComponent
+        handleProgressBar={handleProgressBar}
+        setData={setInventoryData}
+      />
+
       <DynamicBreadcrumbs />
       <div className="flex w-full flex-col md:flex-row justify-between md:items-center">
         <h3 className="text-base font-bold text-indigo-500/60 pointer-events-none sm:text-xl mb-2 md:mb-0">
@@ -132,12 +176,10 @@ const InventoriesPage = ({
 
       <div className="flex gap-4 flex-col">
         <div className="flex basis-1/5 flex-col md:flex-row gap-4">
-          <SearchElement setSearch={handleSearch} />
+          <SearchElement setSearch={setSearch} />
 
           <FilterCheckBox
-            filterValues={
-              inventories?.categories ? inventories?.categories : []
-            }
+            filterValues={inventories?.categories || []}
             setFilter={(categories) => setCategories(categories)}
             setPage={setPage}
             filterTitle="Filter by Category"

@@ -26,49 +26,6 @@ const InventoryCardComponent = ({
     total_items - cartItemQuantity
   );
 
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  // const handleAddToCart = (e) => {
-  //   e.stopPropagation();
-  //   if (!user && isLoggedOut) {
-  //     toast.error("Please login to add items to your cart.");
-  //     navigate("/");
-  //   } else if (cartItemQuantity >= 5) {
-  //     toast.error("You cannot add more than 5 of the same item to your cart.");
-  //   } else if (availableItems > 0) {
-  //     dispatch(
-  //       addToCart({
-  //         _id: itemId,
-  //         image,
-  //         title,
-  //         total_items,
-  //         status,
-  //         desc,
-  //         categories,
-  //         is_consumable,
-  //         item_program,
-  //       })
-  //     );
-  //     setAvailableItems(availableItems - 1);
-  //     toast.success("Loan item added");
-  //   } else {
-  //     toast.error("No items available to add to cart.");
-  //   }
-  // };
-
-  // const itemDetails = {
-  //   image,
-  //   title,
-  //   total_items: availableItems,
-  //   status,
-  //   serial_number,
-  //   desc,
-  //   categories,
-  //   is_consumable,
-  //   item_program,
-  // };
-
   const statusColorMap = {
     Available: "green",
     Maintenance: "orange",
@@ -76,8 +33,6 @@ const InventoryCardComponent = ({
     Damaged: "purple",
     OutOfStock: "gray",
   };
-
-  // const isAddToCartEnabled = status === "Available" && total_items > 0;
 
   if (isLoading) {
     return <Loader />;

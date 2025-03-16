@@ -173,6 +173,15 @@ const AddInventoryPage = () => {
     }
   }, [isError, isSuccess, message]);
 
+  const isFormValid =
+    asset_name.trim() !== "" &&
+    location.trim() !== "" &&
+    room_number.trim() !== "" &&
+    cabinet.trim() !== "" &&
+    categories.length > 0 &&
+    is_consumable !== "" &&
+    desc.trim() !== "";
+
   return (
     <Layout>
       <DynamicBreadcrumbs />
@@ -468,8 +477,13 @@ const AddInventoryPage = () => {
 
                   <div className="flex w-full items-center justify-center md:justify-start text-white mt-4">
                     <Button
-                      className="bg-gradient-to-r from-indigo-500 to-purple-800 text-sm py-2 px-8 rounded-lg capitalize"
+                      className={`text-sm py-2 px-8 rounded-lg capitalize ${
+                        isFormValid
+                          ? "bg-gradient-to-r from-indigo-500 to-purple-800"
+                          : "bg-indigo-300 cursor-not-allowed"
+                      }`}
                       onClick={() => handleOpenDialog("xs")}
+                      disabled={!isFormValid} // Disable button jika form tidak valid
                     >
                       Add Inventory
                     </Button>

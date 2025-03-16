@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useDebounce } from "use-debounce";
 import toast from "react-hot-toast";
 
 // components
@@ -18,7 +19,6 @@ import { getAllInventories } from "../../features/inventory/inventorySlice";
 
 const InventoryListPage = ({
   sort,
-  setSort,
   categories,
   setCategories,
   page,
@@ -29,36 +29,58 @@ const InventoryListPage = ({
   UseDocumentTitle("Our Inventories");
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const dispatch = useDispatch();
+
   const currentPage = parseInt(searchParams.get("page")) || 1;
+  const searchQuery = searchParams.get("search") || "";
 
   const { inventories, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.inventory
   );
   const { items, totalPages, limit, totalItems } = inventories;
 
-  const dispatch = useDispatch();
+  const [debouncedSearch] = useDebounce(search, 500);
 
-  const handleSearch = (term) => {
-    setSearch(term);
-    setPage(1);
-    if (term) {
-      setSearchParams({ search: term, page: 1 });
-    } else {
-      setSearchParams({ page: 1 });
-    }
-  };
-
+  // Sets the page when the component is first mounted to match the URL.
   useEffect(() => {
-    // get the page number from the URL parameters when the component mounts
-    if (currentPage) {
-      setPage(currentPage);
-      setSearchParams({
-        page: currentPage,
-        search,
-        sort: sort.sort,
-        order: sort.order,
-      });
+    setPage(currentPage);
+  }, []);
+
+  // Sync search with URL
+  useEffect(() => {
+    if (searchQuery !== search) {
+      setSearch(searchQuery);
     }
+  }, [searchQuery]);
+
+  // Reset page to 1 when search changes
+  useEffect(() => {
+    if (debouncedSearch) {
+      setPage(1);
+      setSearchParams({ search: debouncedSearch, page: 1 });
+    }
+  }, [debouncedSearch]);
+
+  // Fetch data after ensuring the page matches the URL
+  useEffect(() => {
+    if (page === currentPage) {
+      dispatch(
+        getAllInventories({
+          page,
+          sort,
+          categories,
+          search: debouncedSearch || "",
+        })
+      );
+    }
+  }, [debouncedSearch, categories, page, sort, dispatch, currentPage]);
+
+  // Make sure the URL is always updated with the state
+  useEffect(() => {
+    setSearchParams({
+      page,
+      search,
+    });
 
     if (isError) {
       toast.error(message);
@@ -67,32 +89,7 @@ const InventoryListPage = ({
     if (isSuccess) {
       toast.success(message);
     }
-  }, [setPage, setSearchParams, isError, isSuccess, message]);
-
-  useEffect(() => {
-    dispatch(getAllInventories({ page, sort, categories, search }));
-  }, [search, categories, page]);
-
-  // handle sort
-  const handleSort = (column) => {
-    const sortFileMap = {
-      "Item Info": "asset_name",
-      "Item Location": "location",
-      "Item Cabinet": "cabinet",
-      "Item Category": "categories",
-      "Total Items": "total_items",
-      "Item Status": "item_status",
-      "Is Consumable?": "is_consumable",
-    };
-    const selectedSortField = sortFileMap[column];
-    if (selectedSortField) {
-      const newOrder =
-        sort.sort === selectedSortField && sort.order === "asc"
-          ? "desc"
-          : "asc";
-      setSort({ sort: selectedSortField, order: newOrder });
-    }
-  };
+  }, [page, search, isError, isSuccess, message]);
 
   const sortedItems = items
     ? [...items].sort(
@@ -109,21 +106,19 @@ const InventoryListPage = ({
       </div>
 
       <div className="flex flex-col w-full gap-4 my-6">
-        {/* search and filter section */}
+        {/* Search dan filter */}
         <div className="flex flex-col md:flex-row w-full gap-4">
-          <SearchElement setSearch={handleSearch} />
+          <SearchElement setSearch={setSearch} />
 
           <FilterCheckBox
-            filterValues={
-              inventories?.categories ? inventories?.categories : []
-            }
+            filterValues={inventories?.categories || []}
             setFilter={(categories) => setCategories(categories)}
             setPage={setPage}
             filterTitle="Filter by Category"
           />
         </div>
 
-        {/* inventory list section */}
+        {/* Inventory List */}
         <div className="w-full mt-4">
           {isLoading ? (
             <Loader />
@@ -152,16 +147,14 @@ const InventoryListPage = ({
           )}
         </div>
 
-        {/* pagination */}
-        {totalItems > 0 ? (
+        {/* Pagination */}
+        {totalItems > 0 && (
           <Pagination
             totalPage={search ? Math.ceil(totalItems / limit) : totalPages}
             page={page}
             setPage={setPage}
             bgColor="indigo"
           />
-        ) : (
-          ""
         )}
       </div>
 

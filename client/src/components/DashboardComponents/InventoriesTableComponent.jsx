@@ -218,7 +218,7 @@ const InventoriesTablComponent = ({ items, TABLE_HEAD, handleSort }) => {
         </tbody>
       </table>
 
-      {/* delte inventory open dialog */}
+      {/* delete inventory open dialog */}
       {/* <DialogOpenComponent
         openDialog={openDialog}
         handleFunc={handleDeleteInventory}

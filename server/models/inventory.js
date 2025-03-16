@@ -4,16 +4,17 @@ const inventorySchema = mongoose.Schema({
     asset_id: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        index: true
     },
     asset_name: {
         type: String,
-        required: true
+        required: true,
+        index: true
     },
     asset_img: {
         type: String,
         default: "https://api.dicebear.com/9.x/icons/svg?seed=Chase",
-        required: true,
     },
     serial_number: {
         type: String,
@@ -22,11 +23,13 @@ const inventorySchema = mongoose.Schema({
     categories: {
         type: [String], // ["Creative Tools", "Game Board", "IOT", "IOT Parts", "PC & Laptop", "Peripheral", "Others"]
         required: true,
-        default: []
+        default: [],
+        index: true
     },
     item_program: {
         type: String,
         required: true,
+        index: true
     },
     desc: {
         type: String,

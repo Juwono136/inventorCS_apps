@@ -228,6 +228,7 @@ const LoanTransactionCardComponent = ({
         onClose={handleCloseQRCodeModal}
         qrValue={qrCodeValue}
         transactionId={qrCodeTransactionId}
+        text="Scan the loan transaction "
       />
     </div>
   );
