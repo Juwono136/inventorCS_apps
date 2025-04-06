@@ -34,7 +34,7 @@ const UpdateInventoryPage = () => {
 
   const categoryMenu = [
     "Creative Tools",
-    "Game Board",
+    "Board Game",
     "IOT",
     "IOT Parts",
     "PC & Laptop",
@@ -243,7 +243,7 @@ const UpdateInventoryPage = () => {
           <hr className="w-full border-indigo-100 my-4" />
 
           <div className="flex flex-col items-start px-5 py-4 my-2 w-full shadow-lg shadow-gray-300 rounded-md">
-            <div className="flex w-full gap-4 flex-col lg:flex-row mb-4">
+            <div className="flex w-full gap-4 flex-col lg:flex-row">
               {/* Inventory summary info */}
               <div className="flex md:basis-1/2 gap-2 flex-col w-full items-center justify-start shadow-lg bg-indigo-50/40 rounded-md">
                 <div className="flex flex-col gap-4 px-2 py-4 justify-center items-center w-full">
@@ -336,8 +336,8 @@ const UpdateInventoryPage = () => {
 
               {/* Inventory detail info */}
               <div className="flex gap-4 w-full p-4 bg-indigo-50/60 rounded-md shadow-lg">
-                <form className="flex flex-col gap-1 justify-between w-full">
-                  <div className="mb-6">
+                <form className="flex flex-col gap-8 w-full">
+                  <div>
                     <label
                       htmlFor="asset_name"
                       className="text-gray-800 font-semibold lg:text-sm text-xs"
@@ -356,7 +356,7 @@ const UpdateInventoryPage = () => {
                     />
                   </div>
 
-                  <div className="mb-6">
+                  <div>
                     <label
                       htmlFor="serial_number"
                       className="text-gray-800 font-semibold lg:text-sm text-xs"
@@ -375,7 +375,7 @@ const UpdateInventoryPage = () => {
                     />
                   </div>
 
-                  <div className="flex w-full flex-col md:flex-row gap-6 mb-6">
+                  <div className="flex w-full flex-col md:flex-row gap-6">
                     <div className="flex flex-col w-full">
                       <label
                         htmlFor="categories"
@@ -433,7 +433,7 @@ const UpdateInventoryPage = () => {
                     </div>
                   </div>
 
-                  <div className="mb-6">
+                  <div>
                     <label
                       htmlFor="location"
                       className="text-gray-800 font-semibold lg:text-sm text-xs"
@@ -452,7 +452,7 @@ const UpdateInventoryPage = () => {
                     />
                   </div>
 
-                  <div className="flex w-full flex-col md:flex-row gap-6 mb-6">
+                  <div className="flex w-full flex-col md:flex-row gap-6">
                     <div className="flex flex-col w-full">
                       <label
                         htmlFor="room_number"
@@ -531,14 +531,13 @@ const UpdateInventoryPage = () => {
                       placeholder={desc}
                       onChange={handleChange}
                     ></textarea>
+                    <p className="mb-1 text-gray-600 text-xs text-right">
+                      {characterLimit - desc.length}/{characterLimit} characters
+                      left
+                    </p>
                   </div>
 
-                  <p className="mb-1 text-gray-600 text-xs text-right">
-                    {characterLimit - desc.length}/{characterLimit} characters
-                    left
-                  </p>
-
-                  <div className="flex w-full items-center justify-center md:justify-start text-white mt-4">
+                  <div className="flex w-full items-center justify-center md:justify-start text-white">
                     <Button
                       className="bg-gradient-to-r from-indigo-500 to-purple-800 text-sm py-2 px-8 rounded-lg capitalize"
                       onClick={() => handleOpenDialogSave("xs")}

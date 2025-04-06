@@ -5,7 +5,7 @@ import { createMeeting, getAllMeetings } from "../controllers/meeting.js";
 
 const router = express.Router()
 
-router.get("/all_meeting", auth, authStaff, getAllMeetings)
+router.get("/all_meetings", auth, authStaff, getAllMeetings)
 
 router.post("/create_meeting/:id", auth, createMeeting)
 

@@ -114,7 +114,7 @@ const NavbarComponent = () => {
   }, [dispatch]);
 
   const unreadNotifications = Array.isArray(notification)
-    ? notification.filter((notif) => !notif.is_read).slice(0, 5)
+    ? notification.filter((notif) => !notif.is_read).slice(0, 3)
     : [];
 
   return (

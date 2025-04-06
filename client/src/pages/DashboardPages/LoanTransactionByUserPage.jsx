@@ -119,7 +119,7 @@ const LoanTransactionByUserPage = () => {
       </div>
 
       <h3 className="text-base text-center md:text-left font-bold text-indigo-500/60 pointer-events-non sm:text-xl ">
-        Loan Transaction Detail
+        User Loan Transaction Detail Form
       </h3>
 
       <hr className="w-full border-indigo-100 my-4" />

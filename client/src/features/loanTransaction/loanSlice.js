@@ -34,11 +34,20 @@ const initialState = {
 
 
 // get all loan transaction
-export const getAllLoanTransactions = createAsyncThunk('loan/all', async (token, thunkAPI) => {
+export const getAllLoanTransactions = createAsyncThunk('loan/all', async ({ token, page, sort, loanStatus, search, borrow_date_start, borrow_date_end }, thunkAPI) => {
     try {
+        const params = {
+            page,
+            sort: `${sort.sort},${sort.order}`,
+            loanStatus,
+            search,
+            borrow_date_start,
+            borrow_date_end
+        }
+
         const tokenData = await tokenService.accessToken(token)
 
-        return await loanService.getAllLoanTransactions(tokenData)
+        return await loanService.getAllLoanTransactions(tokenData, params)
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
 

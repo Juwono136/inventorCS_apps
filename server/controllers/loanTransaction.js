@@ -5,7 +5,6 @@ import { createNotification } from './notification.js';
 import { sendMail } from '../utils/sendMail.js';
 import { getUserById } from '../utils/getUserById.js';
 import { getChannel } from '../utils/rabbitmq.js';
-import { CronJob } from "cron";
 
 const { CLIENT_URL } = process.env
 
@@ -48,40 +47,51 @@ export const getStaffsForProgram = async (req, program) => {
 // Schedule job to auto-cancel
 export const processAutoCancel = async (loanTransactionId) => {
     try {
-        const loanTransaction = await LoanTransactions.findById(loanTransactionId);
+        const loanTransaction = await LoanTransactions.findById(loanTransactionId)
 
-        if (loanTransaction || loanTransaction.loan_status === "Ready to Pickup") {
-            const borrowedItems = loanTransaction.borrowed_item;
+        if (!loanTransaction) {
+            console.error(`LoanTransaction ID: ${loanTransactionId} not found.`);
+            return;
+        }
 
-            for (const item of borrowedItems) {
-                const inventory = await Inventories.findById(item.inventory_id);
+        if (loanTransaction.loan_status !== "Ready to Pickup") {
+            console.warn(`LoanTransaction ID: ${loanTransactionId} is not in 'Ready to Pickup' status.`);
+            return;
+        }
+
+        const borrowedItems = loanTransaction.borrowed_item;
+
+        for (const item of borrowedItems) {
+            try {
+                const inventory = await Inventories.findById(item.inventory_id)
 
                 if (!inventory) {
-                    return res.status(404).json({ message: `Inventory item ${item.inventory_id} not found.` });
+                    console.warn(`Inventory item ${item.inventory_id} not found.`);
+                    continue;
                 }
 
                 if (inventory.draft === true) {
-                    return res.status(400).json({ message: `Cannot cancel. Item ${inventory.asset_name} is in draft status.` });
+                    console.warn(`Cannot cancel. Item ${inventory.asset_name} is in draft status.`);
+                    return;
                 }
 
                 inventory.total_items += item.quantity;
                 await inventory.save();
+            } catch (error) {
+                console.error(`Error updating inventory ${item.inventory_id}:`, error);
             }
-
-            loanTransaction.loan_status = "Cancelled";
-            await loanTransaction.save();
-
-            // Notify borrower about cancellation
-            await createNotification(
-                loanTransaction.borrower_id,
-                loanTransaction._id,
-                `Your loan transaction with ID: ${loanTransaction.transaction_id} has been cancelled due to no meeting request.`
-            );
         }
 
-        console.log(`Loan Transaction ID: ${loanTransactionId} has been auto-cancelled.`);
+        loanTransaction.loan_status = "Cancelled";
+        await loanTransaction.save();
+
+        await createNotification(
+            loanTransaction.borrower_id,
+            loanTransaction._id,
+            `Your loan transaction with ID: ${loanTransaction.transaction_id} has been cancelled due to no meeting request.`
+        );
     } catch (error) {
-        console.error("Error in auto-cancel process:", error);
+        console.error("Critical error in auto-cancel process:", error);
     }
 };
 
@@ -232,26 +242,25 @@ export const updateStatusToReadyToPickup = async (req, res) => {
     try {
         const loanTransactionId = req.params.id
 
-        const loanTransaction = await LoanTransactions.findById(loanTransactionId)
+        const loanTransaction = await LoanTransactions.findOneAndUpdate(
+            { _id: loanTransactionId, loan_status: "Pending" },
+            {
+                loan_status: "Ready to Pickup",
+                staff_id: req.user._id,
+                pickup_time: new Date()
+            },
+            { new: true }
+        );
 
         if (!loanTransaction) {
-            return res.status(404).json({ message: "Loan transaction not found." });
+            return res.status(404).json({ message: "Loan transaction not found or not in Pending status." });
         }
-
-        if (loanTransaction.loan_status !== "Pending") {
-            return res.status(400).json({ message: "Transaction is not in Pending status." });
-        }
-
         // const inventory = await Inventories.findById(loanTransaction.borrower_id)
-
-        loanTransaction.loan_status = "Ready to Pickup";
-        loanTransaction.staff_id = req.user._id;
-        loanTransaction.pickup_time = new Date()
-        await loanTransaction.save();
 
         // Calculate expiry date (pickup_time + 3 days)
         const expiryDate = new Date(loanTransaction.pickup_time);
-        expiryDate.setDate(expiryDate.getDate() + 3); // Add 3 days
+        // expiryDate.setMinutes(expiryDate.getMinutes() + 2);
+        expiryDate.setDate(expiryDate.getDate() + 3); // 3 days
         const formattedExpiryDate = formatDate(expiryDate);
 
         // send notification to borrower
@@ -277,10 +286,10 @@ export const updateStatusToReadyToPickup = async (req, res) => {
             return;
         }
         const queue = "loan_auto_cancel"
-        const delayQueue = "loan_auto_cancel_delayed";
-        const delay = 2 * 60 * 1000 // 3 days
-        const message = JSON.stringify({ loanTransactionId })
         const uniqueRoutingKey = `loan_auto_cancel_${loanTransactionId}`;
+        const delay = 3 * 24 * 60 * 60 * 1000; // 3 days
+        const expires = delay + (1 * 60 * 60 * 1000); // 3 days + 1 hour
+        const message = JSON.stringify({ loanTransactionId })
 
         await channel.assertExchange("loan_dlx", "direct", { durable: true });
 
@@ -288,18 +297,19 @@ export const updateStatusToReadyToPickup = async (req, res) => {
             durable: true,
         });
 
-        await channel.assertQueue(delayQueue, {
+        await channel.assertQueue(uniqueRoutingKey, {
             durable: true,
             arguments: {
                 "x-message-ttl": delay,
                 "x-dead-letter-exchange": "loan_dlx",
-                "x-dead-letter-routing-key": uniqueRoutingKey,
+                "x-dead-letter-routing-key": queue,
+                "x-expires": expires
             },
         });
 
-        await channel.bindQueue(queue, "loan_dlx", uniqueRoutingKey);
+        await channel.bindQueue(queue, "loan_dlx", queue);
 
-        await channel.sendToQueue(delayQueue, Buffer.from(message), { persistent: true });
+        await channel.sendToQueue(uniqueRoutingKey, Buffer.from(message), { persistent: true });
 
         // console.log(`Scheduled auto-cancel for Loan Transaction ID: ${loanTransactionId} in 3 days`);
 
@@ -715,6 +725,19 @@ export const cancelLoanTransaction = async (req, res) => {
         // Wait for all notification promises to complete
         await Promise.all(staffNotificationPromises);
 
+        // stop auto-cancel in rabbitMQ
+        const uniqueRoutingKey = `loan_auto_cancel_${loanTransactionId}`;
+        const channel = getChannel();
+        if (!channel) {
+            console.error("RabbitMQ channel is not available.");
+            return;
+        }
+
+        if (channel) {
+            await channel.deleteQueue(uniqueRoutingKey);
+            console.log(`Auto-cancel stopped for Loan Transaction ID: ${loanTransactionId}`);
+        }
+
         res.json({ message: "Loan transaction has been cancelled.", loanTransaction });
     } catch (error) {
         return res.status(500).json({ message: error.message });
@@ -725,14 +748,65 @@ export const cancelLoanTransaction = async (req, res) => {
 export const getAllLoanTransactions = async (req, res) => {
     try {
         const userData = req.userData;
-        const loanTransactions = await LoanTransactions.find({
-            "borrowed_item.item_program": userData.personal_info.program
-        })
-            .populate('borrowed_item.inventory_id', '_id asset_name asset_id serial_number asset_img')
-            .lean()
-            .exec()
+        const page = parseInt(req.query.page) - 1 || 0;
+        const limit = parseInt(req.query.limit) || 16;
+        const search = req.query.search || "";
+        let sort = req.query.sort || "borrow_date";
+        let loan_status = req.query.loanStatus || "All";
+        let { borrow_date_start, borrow_date_end } = req.query
 
-        res.json({ loanTransactions });
+        const query = {
+            "borrowed_item.item_program": userData.personal_info.program
+        };
+
+        // Apply search filter (transaction_id, loan_status, or borrowed item name)
+        if (search) {
+            query["$or"] = [
+                { "transaction_id": { $regex: search, $options: "i" } },
+                { "loan_status": { $regex: search, $options: "i" } },
+                { "borrowed_item.inventory_id.asset_name": { $regex: search, $options: "i" } }
+            ];
+        }
+
+        // Filter by loan_status
+        const validLoanStatuses = ["Pending", "Ready to Pickup", "Borrowed", "Partially Consumed", "Consumed", "Returned", "Cancelled"];
+
+        if (loan_status !== "All") {
+            loan_status = loan_status.split(",")
+            query["loan_status"] = { $in: loan_status };
+        }
+
+        // Filter by borrow_date range
+        if (borrow_date_start || borrow_date_end) {
+            query["borrow_date"] = {};
+            if (borrow_date_start) query["borrow_date"].$gte = new Date(borrow_date_start);
+            if (borrow_date_end) query["borrow_date"].$lte = new Date(borrow_date_end);
+        }
+
+        req.query.sort ? (sort = req.query.sort.split(",")) : (sort = [sort]);
+
+        let sortBy = {};
+        sortBy[sort[0]] = sort[1] ? sort[1] : "desc";
+
+        // Get total count for pagination
+        const totalLoans = await LoanTransactions.countDocuments(query);
+
+        const loanTransactions = await LoanTransactions.find(query)
+            .populate('borrowed_item.inventory_id', '_id asset_name asset_id serial_number asset_img')
+            .sort(sortBy)
+            .skip(page * limit)
+            .limit(limit)
+            .lean()
+            .exec();
+
+        res.json({
+            totalLoans,
+            totalPages: Math.ceil(totalLoans / limit),
+            page: page + 1,
+            limit,
+            loan_statuses: validLoanStatuses,
+            loanTransactions
+        });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }

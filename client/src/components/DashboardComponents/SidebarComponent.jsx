@@ -101,7 +101,7 @@ const SidebarComponent = ({ isDrawerOpen = false, closeDrawer }) => {
                 >
                   <ListItem className="flex gap-2 items-center text-indigo-800">
                     <BsCartCheck className="text-md" />
-                    Borrowed Items List
+                    Borrowed Items
                   </ListItem>
                 </NavLink>
               </>

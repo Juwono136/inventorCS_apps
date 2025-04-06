@@ -10,7 +10,7 @@ export const getAllInventories = async (req, res) => {
         let sort = req.query.sort || "asset_name";
         let categories = req.query.categories || "All";
 
-        const categoryOptions = ["Creative Tools", "Game Board", "IOT", "IOT Parts", "PC & Laptop", "Peripheral", "Others"];
+        const categoryOptions = ["Creative Tools", "Board Game", "IOT", "IOT Parts", "PC & Laptop", "Peripheral", "Others"];
 
         const searchQuery = {
             draft: false,
@@ -70,7 +70,7 @@ export const getInventoriesByProgram = async (req, res) => {
         let sort = req.query.sort || "asset_name";
         let categories = req.query.categories || "All";
 
-        const categoryOptions = ["Creative Tools", "Game Board", "IOT", "IOT Parts", "PC & Laptop", "Peripheral", "Others"];
+        const categoryOptions = ["Creative Tools", "Board Game", "IOT", "IOT Parts", "PC & Laptop", "Peripheral", "Others"];
 
         const userData = req.userData;
 
@@ -292,21 +292,6 @@ export const updateInventory = async (req, res) => {
     }
 }
 
-// delete inventory
-// export const deleteInventory = async (req, res) => {
-//     try {
-//         const inventory = await Inventories.findByIdAndDelete(req.params.id)
-
-//         if (!inventory) {
-//             return res.status(404).json({ message: "Inventory not found." })
-//         }
-
-//         res.json({ message: "Inventory item deleted." })
-//     } catch (error) {
-//         return res.status(500).json({ message: error.message });
-//     }
-// }
-
 // draft inventory (soft delete)
 export const draftInventory = async (req, res) => {
     try {
@@ -329,6 +314,20 @@ export const draftInventory = async (req, res) => {
     }
 };
 
+// delete inventory
+// export const deleteInventory = async (req, res) => {
+//     try {
+//         const inventory = await Inventories.findByIdAndDelete(req.params.id)
+
+//         if (!inventory) {
+//             return res.status(404).json({ message: "Inventory not found." })
+//         }
+
+//         res.json({ message: "Inventory item deleted." })
+//     } catch (error) {
+//         return res.status(500).json({ message: error.message });
+//     }
+// }
 
 // Delete inventory that has been in draft status for 7 days (running automatically)
 // export const deleteOldDrafts = async () => {

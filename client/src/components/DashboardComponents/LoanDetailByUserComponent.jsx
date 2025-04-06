@@ -29,8 +29,8 @@ const LoanDetailByUserComponent = ({
   // Calculate expiry date for countdown (3 days from borrow_date)
   const expiryDate = foundLoan?.pickup_time
     ? new Date(
-        new Date(foundLoan.pickup_time).getTime() + 2 * 60 * 1000 // 3 days
-      )
+        new Date(foundLoan.pickup_time).getTime() + 3 * 24 * 60 * 60 * 1000
+      ) // 3 days
     : null;
 
   return (
@@ -38,7 +38,7 @@ const LoanDetailByUserComponent = ({
       <Card>
         <div className="flex flex-col justify-center items-center w-full gap-2 mb-2">
           {/* Countdown for Ready to Pickup */}
-          {foundLoan.loan_status === "Ready to Pickup" && expiryDate && (
+          {expiryDate && (
             <LoanCountDown
               expiryDate={expiryDate}
               txtError="Time to pick up the loan has expired! Loan status change to 'Cancelled'"

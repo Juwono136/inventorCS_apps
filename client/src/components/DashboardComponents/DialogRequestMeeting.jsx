@@ -40,7 +40,7 @@ const DialogRequestMeeting = ({
     "17:00",
   ];
 
-  const locationOptions = ["JWC Campus", "FX Campus"];
+  const locationOptions = ["Binus JWC Campus", "Binus FX Campus"];
 
   const initialState = {
     location: "",
@@ -129,6 +129,11 @@ const DialogRequestMeeting = ({
           {isError && <AlertNotification message={message} type="error" />}
 
           <div className="flex w-full flex-col gap-4">
+            <span className="text-[10px] text-red-600 italic font-semibold">
+              *) Make sure you choose a meeting date on a weekday (Monday -
+              Friday).
+            </span>
+
             {/* Meeting Location */}
             <div className="flex flex-col w-full gap-1">
               <label

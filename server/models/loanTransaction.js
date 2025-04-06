@@ -44,7 +44,11 @@ const loanTransactionSchema = mongoose.Schema({
         required: true,
         default: null
     },
-    borrower_confirmed_date: {
+    borrower_confirmed_date: { // When the borrower receives the loan item
+        type: Date,
+        default: null
+    },
+    staff_confirmed_date: { // When the staff confirms the loan item for borrowing
         type: Date,
         default: null
     },
@@ -53,7 +57,7 @@ const loanTransactionSchema = mongoose.Schema({
         required: true,
         default: null
     },
-    return_date: {
+    return_date: { // When the borrower successfully returns the loan item to the staff
         type: Date,
         default: null
     },
@@ -76,5 +80,6 @@ const loanTransactionSchema = mongoose.Schema({
 })
 
 loanTransactionSchema.index({ "transaction_id": 1 })
+loanTransactionSchema.index({ loan_status: 1, pickup_time: 1 });
 
 export default mongoose.model('LoanTransactions', loanTransactionSchema)

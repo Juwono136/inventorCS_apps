@@ -21,7 +21,7 @@ const inventorySchema = mongoose.Schema({
         default: ""
     },
     categories: {
-        type: [String], // ["Creative Tools", "Game Board", "IOT", "IOT Parts", "PC & Laptop", "Peripheral", "Others"]
+        type: [String], // ["Creative Tools", "Board Game", "IOT", "IOT Parts", "PC & Laptop", "Peripheral", "Others"]
         required: true,
         default: [],
         index: true

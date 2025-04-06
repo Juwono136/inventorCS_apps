@@ -3,9 +3,10 @@ import axios from 'axios'
 const API_URL = '/service/loan'
 
 // get all loan transaction
-const getAllLoanTransactions = async (token) => {
+const getAllLoanTransactions = async (token, params) => {
     const response = await axios.get(API_URL + '/all_loan', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
+        params
     })
 
     return response.data

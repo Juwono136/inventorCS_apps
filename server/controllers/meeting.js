@@ -49,6 +49,14 @@ export const createMeeting = async (req, res) => {
             return res.status(400).json({ message: "Invalid meeting date format." })
         }
 
+        const meetingDay = formattedMeetingDate.getDay();
+        if (meetingDay === 0 || meetingDay === 6) {
+            return res.status(400).json({ message: "Meeting date must be on a weekday (Monday - Friday)." });
+        }
+
+        const expectedReturnDate = new Date(loanTransaction.expected_return_date);
+        expectedReturnDate.setHours(23, 59, 59, 999);
+
         const [hours, minutes] = meeting_time.split(':').map(Number)
 
         const meetingDateTime = formattedMeetingDate
@@ -60,6 +68,10 @@ export const createMeeting = async (req, res) => {
 
         if (formattedMeetingDate <= loanTransaction.pickup_time) {
             return res.status(400).json({ message: "Meeting Date or time must be after pickup date." })
+        }
+
+        if (formattedMeetingDate > expectedReturnDate) {
+            return res.status(400).json({ message: "Meeting date cannot exceed the expected return date." });
         }
 
         const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/ //HH:mm format
@@ -96,7 +108,6 @@ export const createMeeting = async (req, res) => {
         await createNotification(loanTransaction.borrower_id, loanTransaction._id, `Meeting request for transaction ID: ${loanTransaction.transaction_id} has been successfully created. Next, please meet with our staff soon to pick up your loan item.`)
 
         // create notification to user staff
-
         const notificationPromises = uniquePrograms.map(async (program) => {
             const staffMembers = await getStaffsForProgram(req, program);
             const staffIds = staffMembers.map(staff => staff._id);
@@ -129,18 +140,17 @@ export const createMeeting = async (req, res) => {
         await Promise.all(notificationPromises);
 
         // stop auto-cancel in rabbitMQ
-        const channel = getChannel()
-        const queue = "loan_auto_cancel"
+        const uniqueRoutingKey = `loan_auto_cancel_${loanTransactionId}`;
+        const channel = getChannel();
         if (!channel) {
             console.error("RabbitMQ channel is not available.");
             return;
         }
 
-        const uniqueRoutingKey = `loan_auto_cancel_${loanTransactionId}`;
-
-        await channel.unbindQueue(queue, "loan_dlx", uniqueRoutingKey);
-
-        console.log(`Auto-cancel stopped for Loan Transaction ID: ${loanTransactionId}`);
+        if (channel) {
+            await channel.deleteQueue(uniqueRoutingKey);
+            console.log(`Auto-cancel stopped for Loan Transaction ID: ${loanTransactionId}`);
+        }
 
         res.json({
             message: "Meeting request created successfully.",
@@ -196,10 +206,7 @@ export const getAllMeetings = async (req, res) => {
             }
         ]);
 
-        return res.json({
-            message: "Meetings retrieved successfully.",
-            data: meetings
-        });
+        return res.json({ meetings });
 
     } catch (error) {
         return res.status(500).json({ message: error.message });

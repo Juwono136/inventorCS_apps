@@ -31,7 +31,7 @@ const AddInventoryPage = () => {
 
   const categoryMenu = [
     "Creative Tools",
-    "Game Board",
+    "Board Game",
     "IOT",
     "IOT Parts",
     "PC & Laptop",

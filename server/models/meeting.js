@@ -10,6 +10,10 @@ const meetingSchema = mongoose.Schema({
         type: Date,
         required: true,
     },
+    meeting_confirmed_date: {
+        type: Date,
+        default: null
+    },
     meeting_time: {
         type: String, // Format "HH:mm" (example: "14:30")
         required: true,
@@ -19,9 +23,14 @@ const meetingSchema = mongoose.Schema({
         required: true,
         trim: true,
     },
+    cancelation_reason: {
+        type: String,
+        maxlength: 500,
+        default: ""
+    },
     status: {
         type: String,
-        enum: ['Need Approval', 'Approved', 'Rejected'],
+        enum: ['Need Approval', 'Approved', 'Meeting Cancelled'],
         default: 'Need Approval',
     },
 }, {
