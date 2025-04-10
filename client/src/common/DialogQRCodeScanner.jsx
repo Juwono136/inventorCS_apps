@@ -12,7 +12,7 @@ const DialogQRCodeScanner = ({ open, handleClose }) => {
     let isMounted = true;
 
     if (open) {
-      const config = { fps: 10, qrbox: { width: 280, height: 280 } };
+      const config = { fps: 10, qrbox: { width: 300, height: 300 } };
       const qrRegionId = "qr-reader";
 
       const initializeScanner = async () => {
@@ -79,12 +79,13 @@ const DialogQRCodeScanner = ({ open, handleClose }) => {
   return (
     <Dialog
       open={open}
-      handler={handleClose}
-      size="xs"
+      size="sm"
       className="flex flex-col items-center justify-center bg-white p-4 rounded-xl"
     >
       <div className="flex w-full justify-between items-center mb-3">
-        <h3 className="text-indigo-600 text-lg font-semibold">Scan QR Code</h3>
+        <h3 className="bg-gradient-to-r from-blue-500  to-purple-700 bg-clip-text text-transparent text-lg font-semibold">
+          Scan QR Code
+        </h3>
         <button onClick={handleClose}>
           <IoClose className="text-2xl text-red-500" />
         </button>
@@ -92,13 +93,13 @@ const DialogQRCodeScanner = ({ open, handleClose }) => {
 
       {!isReady && (
         <div className="w-full h-[250px] flex items-center justify-center border border-gray-200 rounded-lg mb-2">
-          <p className="text-gray-500 text-sm">Loading scanner...</p>
+          <p className="text-gray-500 text-sm">Loading Camera...</p>
         </div>
       )}
 
       <div id="qr-reader" ref={qrRef} className={`w-full h-auto`} />
 
-      <p className="text-xs text-purple-600 italic font-semibold mt-3 text-center">
+      <p className="text-xs text-purple-600 italic mt-3 text-center">
         Point the camera at the QR code to scan the link.
       </p>
     </Dialog>
