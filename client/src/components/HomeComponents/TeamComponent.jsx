@@ -45,7 +45,7 @@ const TeamComponent = () => {
             Binus University International (BUI)
           </Typography>
           <h4 className="my-2 text-sm font-semibold bg-gradient-to-r from-indigo-400 via-purple-500 to-blue-800 bg-clip-text text-transparent animate-gradient">
-            School of Computer and Creative Art (SoCCA)
+            School of Computing and Creative Art (SoCCA)
           </h4>
           {/* <Typography
             variant="lead"

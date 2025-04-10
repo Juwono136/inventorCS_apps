@@ -1,4 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useDebounce } from "use-debounce";
+import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
+import toast from "react-hot-toast";
 
 // icons and material-tailwind
 import {
@@ -16,19 +20,17 @@ import { getFullDay } from "../../common/Date";
 import SearchElement from "../../common/SearchElement";
 import FilterCheckBox from "../../common/FilterCheckBox";
 import FilterByDate from "../../common/FilterByDate";
+import Pagination from "../../common/Pagination";
+import MoreInfoBorrowedItemComponent from "./MoreInfoBorrowedItemComponent";
 
-const BorrowedItemTableComponent = ({
-  isLoading,
-  handleOpenDialog,
-  getBorrowerInfo,
-  data,
-  setSearch,
-  setLoanStatus,
-  setPage,
-  borrowDateRange,
-  setBorrowDateRange,
-  handleSort,
-}) => {
+// features
+import {
+  getAllLoanTransactions,
+  markTransactionIsNew,
+} from "../../features/loanTransaction/loanSlice";
+import { getAllUsersInfor } from "../../features/user/userSlice";
+
+const BorrowedItemTableComponent = ({ refreshTrigger }) => {
   const TABLE_HEAD = [
     "No.",
     "Transaction ID",
@@ -38,6 +40,160 @@ const BorrowedItemTableComponent = ({
     "Return Date",
     "Loan Status",
   ];
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentPage = parseInt(searchParams.get("page")) || 1;
+  const searchQuery = searchParams.get("search") || "";
+  const [sortLoanStatus, setSortLoanStatus] = useState({
+    sort: "borrow_date",
+    order: "desc",
+  });
+
+  const [loanStatus, setLoanStatus] = useState("");
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [borrowDateRange, setBorrowDateRange] = useState({
+    startDate: "",
+    endDate: "",
+  });
+
+  const { loanData, isLoading, isError, message } = useSelector(
+    (state) => state.loan
+  );
+  const { allUsersInfor } = useSelector((state) => state.user);
+
+  const { users } = allUsersInfor;
+  const data = loanData;
+
+  const formattedStartDate = borrowDateRange.startDate
+    ? new Date(borrowDateRange.startDate).toISOString()
+    : "";
+
+  const formattedEndDate = borrowDateRange.endDate
+    ? new Date(
+        new Date(borrowDateRange.endDate).setHours(23, 59, 59, 999)
+      ).toISOString()
+    : "";
+
+  const dispatch = useDispatch();
+  const [debouncedSearch] = useDebounce(search, 500);
+
+  // Sets the page when the component is first mounted to match the URL.
+  useEffect(() => {
+    setPage(currentPage);
+  }, []);
+
+  // Sync search with URL
+  useEffect(() => {
+    if (searchQuery !== search) {
+      setSearch(searchQuery);
+    }
+  }, [searchQuery]);
+
+  // Reset page to 1 when search changes
+  useEffect(() => {
+    if (debouncedSearch) {
+      setPage(1);
+      setSearchParams({ search: debouncedSearch, page: 1 });
+    }
+  }, [debouncedSearch]);
+
+  useEffect(() => {
+    if (page === currentPage) {
+      dispatch(
+        getAllLoanTransactions({
+          page,
+          sort: sortLoanStatus,
+          loanStatus,
+          search: debouncedSearch || "",
+          borrow_date_start: formattedStartDate,
+          borrow_date_end: formattedEndDate,
+        })
+      );
+      dispatch(getAllUsersInfor({ all: true }));
+    }
+  }, [
+    dispatch,
+    page,
+    currentPage,
+    sortLoanStatus,
+    loanStatus,
+    debouncedSearch,
+    formattedStartDate,
+    formattedEndDate,
+    refreshTrigger,
+  ]);
+
+  useEffect(() => {
+    setSearchParams({
+      page,
+      search,
+      loanStatus,
+    });
+
+    if (isError) {
+      toast.error(message);
+    }
+  }, [page, search, loanStatus, borrowDateRange, isError, message]);
+
+  const handleOpenDialog = (id) => {
+    const selectedData = data?.loanTransactions?.find(
+      (item) => item._id === id
+    );
+
+    const borrower = getBorrowerInfo(selectedData.borrower_id);
+
+    const itemDetails = {
+      ...selectedData,
+      id: selectedData?._id,
+      transactionId: selectedData?.transaction_id,
+      ...borrower,
+    };
+
+    if (selectedData?.is_new === true) {
+      dispatch(markTransactionIsNew(id));
+      dispatch(
+        getAllLoanTransactions({
+          page,
+          sort: sortLoanStatus,
+          loanStatus,
+          search: debouncedSearch || "",
+          borrow_date_start: formattedStartDate,
+          borrow_date_end: formattedEndDate,
+        })
+      );
+    }
+
+    setSelectedItem(itemDetails);
+    setOpenDialog(!openDialog);
+  };
+
+  const getBorrowerInfo = (borrowerId) => {
+    const borrower = users?.find((user) => user._id === borrowerId);
+    return borrower || {};
+  };
+
+  const handleSort = (column) => {
+    const sortFileMap = {
+      "Transaction ID": "transaction_id",
+      "Borrower ID": "borrower_id",
+      "Borrower Name": "borrower_id",
+      "Borrow Date": "borrow_date",
+      "Return Date": "return_date",
+      "Loan Status": "Loan Status",
+    };
+    const selectedSortField = sortFileMap[column];
+    if (selectedSortField) {
+      const newOrder =
+        sortLoanStatus.sort === selectedSortField &&
+        sortLoanStatus.order === "asc"
+          ? "desc"
+          : "asc";
+      setSortLoanStatus({ sort: selectedSortField, order: newOrder });
+    }
+  };
 
   return (
     <>
@@ -61,7 +217,9 @@ const BorrowedItemTableComponent = ({
 
           <FilterCheckBox
             filterValues={data?.loan_statuses || []}
-            setFilter={(loanStatus) => setLoanStatus(loanStatus)}
+            setFilter={(val) => {
+              setLoanStatus(val);
+            }}
             setPage={setPage}
             filterTitle="Filter by Loan Status"
           />
@@ -219,7 +377,26 @@ const BorrowedItemTableComponent = ({
             )
           )}
         </CardBody>
+
+        {data?.totalLoans > 0 && (
+          <Pagination
+            totalPage={
+              search
+                ? Math.ceil(data?.totalLoans / data?.limit)
+                : data?.totalPages
+            }
+            page={page}
+            setPage={setPage}
+            bgColor="deep-purple"
+          />
+        )}
       </Card>
+
+      <MoreInfoBorrowedItemComponent
+        open={openDialog}
+        handleOpenDialog={() => setOpenDialog(false)}
+        selectedItem={selectedItem}
+      />
     </>
   );
 };

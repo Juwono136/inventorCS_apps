@@ -23,11 +23,6 @@ const meetingSchema = mongoose.Schema({
         required: true,
         trim: true,
     },
-    cancelation_reason: {
-        type: String,
-        maxlength: 500,
-        default: ""
-    },
     status: {
         type: String,
         enum: ['Need Approval', 'Approved', 'Meeting Cancelled'],

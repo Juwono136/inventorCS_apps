@@ -165,15 +165,63 @@ export const createMeeting = async (req, res) => {
 // get all meeting request
 export const getAllMeetings = async (req, res) => {
     try {
-        const userProgram = req.user.personal_info.program
+        const userProgram = req.userData.personal_info.program;
 
         if (!userProgram) {
             return res.status(400).json({ message: "User is not allowed for this request." })
         }
 
-        // Aggregation Pipeline
-        const meetings = await Meetings.aggregate([
-            // Join with LoanTransactions
+        // Query params
+        const page = parseInt(req.query.page) - 1 || 0;
+        const limit = parseInt(req.query.limit) || 10;
+        const search = req.query.search || "";
+        let sort = req.query.sort || "meeting_date";
+        let status = req.query.meetingStatus || "All";
+        let { meeting_date_start, meeting_date_end } = req.query;
+
+        // Sorting
+        req.query.sort ? (sort = req.query.sort.split(",")) : (sort = [sort]);
+        let sortBy = {};
+        const sortField = sort[0];
+        const sortOrder = sort[1] && sort[1].toLowerCase() === "asc" ? 1 : -1;
+        sortBy[sortField] = sortOrder;
+
+        // Status filter
+        const matchStage = {
+            "loanTransaction_info.borrowed_item.item_program": userProgram
+        };
+
+        const validStatuses = ["Need Approval", "Approved", "Meeting Cancelled"]
+        if (status !== "All") {
+            status = status.split(",");
+            matchStage["status"] = { $in: status };
+        }
+
+        // Date filter
+        if (meeting_date_start || meeting_date_end) {
+            matchStage["meeting_date"] = {};
+            if (meeting_date_start) matchStage["meeting_date"].$gte = new Date(meeting_date_start);
+            if (meeting_date_end) matchStage["meeting_date"].$lte = new Date(meeting_date_end);
+        }
+
+        // Apply search filter (loanTransaction_id, meeting_time, location, status)
+        const searchStage = [];
+        if (search) {
+            searchStage.push({
+                $match: {
+                    $or: [
+                        { "loanTransaction_info.transaction_id": { $regex: search, $options: "i" } },
+                        { "meeting_date": { $regex: search, $options: "i" } },
+                        { "meeting_time": { $regex: search, $options: "i" } },
+                        { "location": { $regex: search, $options: "i" } },
+                        { "status": { $regex: search, $options: "i" } }
+                    ]
+                }
+            });
+        }
+
+        // Count total documents
+        const countAggregation = await Meetings.aggregate([
             {
                 $lookup: {
                     from: "loantransactions",
@@ -182,23 +230,54 @@ export const getAllMeetings = async (req, res) => {
                     as: "loanTransaction_info"
                 }
             },
-            // Filter loan transactions that match with userProgram
-            {
-                $match: {
-                    "loanTransaction_info.borrowed_item.item_program": userProgram
-                }
-            },
-            // Unwind loanTransaction_info to facilitate data access
             {
                 $unwind: "$loanTransaction_info"
             },
-            // Select the required fields
+            {
+                $match: matchStage
+            },
+            ...searchStage,
+            {
+                $count: "total"
+            }
+        ]);
+
+        const totalMeetings = countAggregation[0]?.total || 0;
+
+        // Main aggregation with pagination
+        const meetings = await Meetings.aggregate([
+            {
+                $lookup: {
+                    from: "loantransactions",
+                    localField: "loanTransaction_id",
+                    foreignField: "_id",
+                    as: "loanTransaction_info"
+                }
+            },
+            {
+                $unwind: "$loanTransaction_info"
+            },
+            {
+                $match: matchStage
+            },
+            ...searchStage,
+            {
+                $sort: sortBy
+            },
+            {
+                $skip: page * limit
+            },
+            {
+                $limit: limit
+            },
             {
                 $project: {
                     meeting_date: 1,
                     meeting_time: 1,
                     location: 1,
                     status: 1,
+                    "loanTransaction_info._id": 1,
+                    "loanTransaction_info.transaction_id": 1,
                     "loanTransaction_info.borrower_id": 1,
                     "loanTransaction_info.staff_id": 1,
                     "loanTransaction_info.borrowed_item": 1
@@ -206,17 +285,36 @@ export const getAllMeetings = async (req, res) => {
             }
         ]);
 
-        return res.json({ meetings });
+        return res.json({
+            totalMeetings,
+            totalPages: Math.ceil(totalMeetings / limit),
+            page: page + 1,
+            limit,
+            statuses: validStatuses,
+            meetings
+        });
 
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
 }
 
-// get request meeting by user
-export const getMeetingByUser = async (req, res) => {
+// get request meeting by loan id
+export const getMeetingByLoanId = async (req, res) => {
     try {
-        const userId = req.user.id
+        const loanTransactionId = req.params.id
+
+        const meeting = await Meetings.findOne({ loanTransaction_id: loanTransactionId }).populate({
+            path: "loanTransaction_id",
+            model: "LoanTransactions",
+            select: "_id transaction_id borrower_id staff_id borrowed_item"
+        })
+
+        // if (!meeting) {
+        //     return res.status(404).json({ message: "Request Meeting not found" })
+        // }
+
+        res.json(meeting)
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }

@@ -3,10 +3,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
+// icons and material-tailwind
+import { MdOutlineMeetingRoom } from "react-icons/md";
+
 // components
 import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
+import LoanDetailforStaffComponent from "../../components/DashboardComponents/LoanDetailforStaffComponent";
+import DialogMeetingDetailComponent from "../../components/DashboardComponents/DialogMeetingDetailComponent";
 import Loader from "../../common/Loader";
 import UseDocumentTitle from "../../common/UseDocumentTitle";
+import BackButton from "../../common/BackButton";
 
 // features
 import {
@@ -18,20 +24,24 @@ import {
 } from "../../features/loanTransaction/loanSlice";
 import { accessToken } from "../../features/token/tokenSlice";
 import { getUserById } from "../../features/user/userSlice";
-import LoanDetailforStaffComponent from "../../components/DashboardComponents/LoanDetailforStaffComponent";
-import BackButton from "../../common/BackButton";
+import { getMeetingByLoanId } from "../../features/meeting/meetingSlice";
 
 const LoanTransactionforStaffPage = () => {
   UseDocumentTitle("Loan Transaction detail");
 
   const [openDialog, setOpenDialog] = useState(false);
+  const [openMeetingModal, setOpenMeetingModal] = useState(false);
 
   const { loanData, isError, isSuccess, message, isLoading } = useSelector(
     (state) => state.loan
   );
+  const { meetingInfoByLoanId } = useSelector((state) => state.meeting);
 
   const { id } = useParams();
   const dispatch = useDispatch();
+
+  const handleOpenMeetingModal = () => setOpenMeetingModal(true);
+  const handleCloseMeetingModal = () => setOpenMeetingModal(false);
 
   const handleOpenDialog = () => {
     setOpenDialog(!openDialog);
@@ -89,6 +99,7 @@ const LoanTransactionforStaffPage = () => {
     }
 
     dispatch(loanReset());
+    dispatch(getMeetingByLoanId(id));
   }, [loanData, isError, isSuccess, message]);
 
   useEffect(() => {
@@ -113,9 +124,20 @@ const LoanTransactionforStaffPage = () => {
         <BackButton link="/borrowed-item" />
       </div>
 
-      <h3 className="text-base font-bold text-indigo-500/60 pointer-events-non sm:text-xl ">
-        Detail Loan Transaction
-      </h3>
+      <div className="flex w-full flex-col md:flex-row gap-2 justify-between items-center">
+        <h3 className="text-base text-center md:text-left font-bold text-indigo-500/60 pointer-events-non sm:text-xl ">
+          Loan Transaction Detail
+        </h3>
+        {meetingInfoByLoanId && (
+          <button
+            className="text-purple-600 hover:text-purple-900 flex gap-1 justify-center items-center bg-purple-50 rounded-md p-2 transition ease-in-out"
+            onClick={handleOpenMeetingModal}
+          >
+            <MdOutlineMeetingRoom className="text-base" />
+            <p className="text-xs font-semibold">Meeting Information</p>
+          </button>
+        )}
+      </div>
 
       <hr className="w-full border-indigo-100 my-4" />
 
@@ -138,6 +160,14 @@ const LoanTransactionforStaffPage = () => {
         handleOpenDialog={handleOpenDialog}
         message="Are you sure want to change the loan status?"
         btnText="Yes"
+      />
+
+      {/* Dialog component for meeting detail */}
+      <DialogMeetingDetailComponent
+        open={openMeetingModal}
+        handleClose={handleCloseMeetingModal}
+        meetingData={meetingInfoByLoanId}
+        loanData={loanData}
       />
     </div>
   );

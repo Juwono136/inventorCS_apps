@@ -14,6 +14,7 @@ import AlertNotification from "../../common/AlertNotification";
 // features
 import {
   createMeeting,
+  getMeetingByLoanId,
   meetingReset,
 } from "../../features/meeting/meetingSlice";
 
@@ -88,7 +89,9 @@ const DialogRequestMeeting = ({
       location,
     };
 
-    dispatch(createMeeting({ meetingData, loanId: id }));
+    dispatch(createMeeting({ meetingData, loanId: id })).then((res) => {
+      dispatch(getMeetingByLoanId(id));
+    });
 
     if (isSuccess) {
       setOpenDialog(!openDialog);

@@ -46,13 +46,8 @@ function App() {
     sort: "asset_name",
     order: "asc",
   });
-  const [sortLoanStatus, setSortLoanStatus] = useState({
-    sort: "borrow_date",
-    order: "desc",
-  });
   const [program, setProgram] = useState("");
   const [categories, setCategories] = useState("");
-  const [loanStatus, setLoanStatus] = useState("");
 
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -164,16 +159,7 @@ function App() {
             path="borrowed-item"
             element={
               <ProtectedUserRoutes allowedRoles={[2]}>
-                <BorrowedItemsPage
-                  sort={sortLoanStatus}
-                  setSort={setSortLoanStatus}
-                  loanStatus={loanStatus}
-                  setLoanStatus={setLoanStatus}
-                  page={page}
-                  setPage={setPage}
-                  search={search}
-                  setSearch={setSearch}
-                />
+                <BorrowedItemsPage />
               </ProtectedUserRoutes>
             }
           />

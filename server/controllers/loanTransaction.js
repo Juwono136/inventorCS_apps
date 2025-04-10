@@ -1,5 +1,6 @@
 import LoanTransactions from '../models/loanTransaction.js';
 import Inventories from '../models/inventory.js';
+import Meetings from '../models/meeting.js';
 import { getStaffs } from '../utils/getStaffs.js';
 import { createNotification } from './notification.js';
 import { sendMail } from '../utils/sendMail.js';
@@ -670,6 +671,11 @@ export const cancelLoanTransaction = async (req, res) => {
     try {
         const loanTransactionId = req.params.id;
         const userId = req.user._id;
+        const { cancelation_reason } = req.body;
+
+        if (!cancelation_reason || cancelation_reason.trim() === "") {
+            return res.status(400).json({ message: "Cancelation reason is required." });
+        }
 
         const loanTransaction = await LoanTransactions.findById(loanTransactionId)
 
@@ -703,7 +709,15 @@ export const cancelLoanTransaction = async (req, res) => {
         }
 
         loanTransaction.loan_status = "Cancelled";
+        loanTransaction.cancelation_reason = cancelation_reason;
         await loanTransaction.save();
+
+        const meeting = await Meetings.findOne({ loanTransaction_id: loanTransactionId });
+
+        if (meeting) {
+            meeting.status = "Meeting Cancelled";
+            await meeting.save();
+        }
 
         const itemsByProgram = groupItemsByProgram(borrowedItems);
 
@@ -738,7 +752,7 @@ export const cancelLoanTransaction = async (req, res) => {
             console.log(`Auto-cancel stopped for Loan Transaction ID: ${loanTransactionId}`);
         }
 
-        res.json({ message: "Loan transaction has been cancelled.", loanTransaction });
+        res.json({ message: "Loan transaction has been cancelled.", loanTransaction, ...(meeting && { meeting }), });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
@@ -749,7 +763,7 @@ export const getAllLoanTransactions = async (req, res) => {
     try {
         const userData = req.userData;
         const page = parseInt(req.query.page) - 1 || 0;
-        const limit = parseInt(req.query.limit) || 16;
+        const limit = parseInt(req.query.limit) || 10;
         const search = req.query.search || "";
         let sort = req.query.sort || "borrow_date";
         let loan_status = req.query.loanStatus || "All";

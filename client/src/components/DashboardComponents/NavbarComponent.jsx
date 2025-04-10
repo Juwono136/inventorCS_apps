@@ -210,7 +210,7 @@ const NavbarComponent = () => {
                   </button>
                 </MenuHandler>
               </Badge>
-              <MenuList className="flex flex-col gap-2 max-w-max m-2 md:w-1/2 md:m-0">
+              <MenuList className="flex flex-col gap-2 max-w-max m-2 md:w-1/2 md:m-0 bg-gray-100">
                 {unreadNotifications?.length > 0 ? (
                   unreadNotifications?.map((notif) => (
                     <MenuItem

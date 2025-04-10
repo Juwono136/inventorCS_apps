@@ -71,6 +71,16 @@ const loanTransactionSchema = mongoose.Schema({
         type: Date,
         default: null
     },
+    loan_note: {
+        type: String,
+        maxlength: 500,
+        default: ""
+    },
+    cancelation_reason: {
+        type: String,
+        maxlength: 500,
+        default: ""
+    },
     is_new: {
         type: Boolean,
         required: true,

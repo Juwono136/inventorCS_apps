@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 // icons and material-tailwind
 import { Button, Card, CardBody, Typography } from "@material-tailwind/react";
@@ -9,13 +9,25 @@ import LoanUserInfoComponent from "./LoanUserInfoComponent";
 import TableLoanItemInfoComponent from "./TableLoanItemInfoComponent";
 import { getFullDay } from "../../common/Date";
 
+// features
+import { getMeetingByLoanId } from "../../features/meeting/meetingSlice";
+
 const LoanDetailforStaffComponent = ({ handleOpenDialog }) => {
   const [open, setOpen] = useState(0);
 
   const { loanData } = useSelector((state) => state.loan);
   const { userById } = useSelector((state) => state.user);
+  const { meetingInfoByLoanId } = useSelector((state) => state.meeting);
+
+  const dispatch = useDispatch();
 
   const handleOpen = (value) => setOpen(open === value ? 0 : value);
+
+  useEffect(() => {
+    if (loanData?._id) {
+      dispatch(getMeetingByLoanId(loanData._id));
+    }
+  }, [loanData]);
 
   return (
     <>
@@ -36,6 +48,7 @@ const LoanDetailforStaffComponent = ({ handleOpenDialog }) => {
             userInfor={userById}
             handleOpen={handleOpen}
             open={open}
+            meetingInfoByLoanId={meetingInfoByLoanId}
           />
           <hr className="border-indigo-100 my-2" />
 

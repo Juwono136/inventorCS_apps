@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 // icons and material-tailwind
 import {
@@ -7,7 +8,6 @@ import {
   Typography,
   DialogBody,
   IconButton,
-  Card,
 } from "@material-tailwind/react";
 import { IoClose } from "react-icons/io5";
 import { IoOpenOutline } from "react-icons/io5";
@@ -17,11 +17,24 @@ import LoanUserInfoComponent from "./LoanUserInfoComponent";
 import TableLoanItemInfoComponent from "./TableLoanItemInfoComponent";
 import { getFullDay } from "../../common/Date";
 
+// features
+import { getMeetingByLoanId } from "../../features/meeting/meetingSlice";
+
 const MoreInfoBorrowedItemComponent = ({
   open,
   handleOpenDialog,
   selectedItem,
 }) => {
+  const { meetingInfoByLoanId } = useSelector((state) => state.meeting);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (selectedItem?.id) {
+      dispatch(getMeetingByLoanId(selectedItem.id));
+    }
+  }, [selectedItem]);
+
   return (
     <div className="max-h-max">
       <Dialog open={open} size="xl" className="overflow-y-auto">
@@ -63,6 +76,7 @@ const MoreInfoBorrowedItemComponent = ({
           <LoanUserInfoComponent
             loanItemInfo={selectedItem}
             userInfor={selectedItem}
+            meetingInfoByLoanId={meetingInfoByLoanId}
           />
 
           <div className="grid gap-2 my-4">

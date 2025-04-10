@@ -14,6 +14,7 @@ import LoanCountDown from "../../common/LoanCountDown";
 const LoanDetailByUserComponent = ({
   openDrawerBottom,
   openDrawerReturned,
+  meetingInfoByLoanId,
   handleOpenDialog,
   userInfor,
 }) => {
@@ -38,7 +39,7 @@ const LoanDetailByUserComponent = ({
       <Card>
         <div className="flex flex-col justify-center items-center w-full gap-2 mb-2">
           {/* Countdown for Ready to Pickup */}
-          {expiryDate && (
+          {!meetingInfoByLoanId && (
             <LoanCountDown
               expiryDate={expiryDate}
               txtError="Time to pick up the loan has expired! Loan status change to 'Cancelled'"
@@ -59,6 +60,7 @@ const LoanDetailByUserComponent = ({
           <LoanUserInfoComponent
             loanItemInfo={foundLoan}
             userInfor={userInfor}
+            meetingInfoByLoanId={meetingInfoByLoanId}
             handleOpen={handleOpen}
             open={open}
           />
@@ -101,14 +103,22 @@ const LoanDetailByUserComponent = ({
               </div>
             </div>
 
-            {foundLoan?.loan_status === "Ready to Pickup" && (
-              <Button
-                className="bg-gradient-to-r from-red-500 to-orange-800 text-xs py-2.5 px-6 rounded-lg capitalize"
-                onClick={handleOpenDialog}
-              >
-                Create request meeting
-              </Button>
+            {foundLoan?.loan_status === "Pending" && (
+              <p className="text-xs italic text-indigo-800 text-center">
+                Please wait, your loan transaction is currently being
+                processed...
+              </p>
             )}
+
+            {foundLoan?.loan_status === "Ready to Pickup" &&
+              !meetingInfoByLoanId && (
+                <Button
+                  className="bg-gradient-to-r from-red-500 to-orange-800 text-xs py-2.5 px-6 rounded-lg capitalize"
+                  onClick={handleOpenDialog}
+                >
+                  Create request meeting
+                </Button>
+              )}
 
             {(foundLoan?.loan_status === "Borrowed" ||
               foundLoan?.loan_status === "Partially Consumed" ||

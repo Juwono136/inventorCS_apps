@@ -34,6 +34,7 @@ const MyLoanTransactionPage = () => {
   );
   const [openCancelLoan, setOpenCancelLoan] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [cancelationReason, setCancelationReason] = useState("");
 
   const dispatch = useDispatch();
 
@@ -44,9 +45,10 @@ const MyLoanTransactionPage = () => {
     setSelectedId(id);
   };
 
-  const handleCancelLoan = (id) => {
+  const handleCancelLoan = (id, reason) => {
     const data = {
       _id: id,
+      cancelation_reason: reason,
     };
 
     dispatch(cancelLoanTransaction(data))
@@ -57,6 +59,7 @@ const MyLoanTransactionPage = () => {
       });
 
     setOpenCancelLoan(!openCancelLoan);
+    setCancelationReason("");
   };
 
   const handleCopy = (id) => {
@@ -114,6 +117,8 @@ const MyLoanTransactionPage = () => {
           openCancelLoan={openCancelLoan}
           handleOpenCancelLoan={handleOpenCancelLoan}
           handleCancelLoan={handleCancelLoan}
+          cancelationReason={cancelationReason}
+          setCancelationReason={setCancelationReason}
         />
       )}
     </Layout>

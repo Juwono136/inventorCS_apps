@@ -3,11 +3,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
+// icons and material-tailwind
+import { MdOutlineMeetingRoom } from "react-icons/md";
+
 // components
 import LoanDetailByUserComponent from "../../components/DashboardComponents/LoanDetailByUserComponent";
 import ConfirmDrawerComponent from "../../components/DashboardComponents/ConfirmDrawerComponent";
 import ConfirmDrawerReturnedComponent from "../../components/DashboardComponents/ConfirmDrawerReturnedComponent";
 import DialogRequestMeeting from "../../components/DashboardComponents/DialogRequestMeeting";
+import DialogMeetingDetailComponent from "../../components/DashboardComponents/DialogMeetingDetailComponent";
 import BackButton from "../../common/BackButton";
 import Loader from "../../common/Loader";
 import UseDocumentTitle from "../../common/UseDocumentTitle";
@@ -20,6 +24,7 @@ import {
   loanReset,
 } from "../../features/loanTransaction/loanSlice";
 import { accessToken } from "../../features/token/tokenSlice";
+import { getMeetingByLoanId } from "../../features/meeting/meetingSlice";
 
 const LoanTransactionByUserPage = () => {
   UseDocumentTitle("Loan Transaction by User");
@@ -29,19 +34,28 @@ const LoanTransactionByUserPage = () => {
   const [openReturned, setOpenReturned] = useState(false);
   const [itemReturned, setItemReturned] = useState(false);
   const [itemReceived, setItemReceived] = useState(false);
+  const [openMeetingModal, setOpenMeetingModal] = useState(false);
 
   const { loanData, isLoading, isSuccess, isError, message } = useSelector(
     (state) => state.loan
   );
   const { userInfor } = useSelector((state) => state.user);
+  const { meetingInfoByLoanId } = useSelector((state) => state.meeting);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
 
+  const matchedLoan = loanData?.loanTransactions.find(
+    (loan) => loan._id === id
+  );
+
   const handleOpenDialog = () => {
     setOpenDialog(!openDialog);
   };
+
+  const handleOpenMeetingModal = () => setOpenMeetingModal(true);
+  const handleCloseMeetingModal = () => setOpenMeetingModal(false);
 
   const openDrawerBottom = () => setOpenBottom(true);
   const closeDrawerBottom = () => setOpenBottom(false);
@@ -80,10 +94,6 @@ const LoanTransactionByUserPage = () => {
 
   useEffect(() => {
     if (loanData?.loanTransactions) {
-      const matchedLoan = loanData.loanTransactions.find(
-        (loan) => loan._id === id
-      );
-
       if (!matchedLoan) {
         toast.error("Transaction not found");
         navigate("/404", { replace: true });
@@ -102,6 +112,7 @@ const LoanTransactionByUserPage = () => {
     }
     dispatch(loanReset());
     dispatch(getLoanTransactionsByUser());
+    dispatch(getMeetingByLoanId(id));
   }, [isError, isSuccess, message]);
 
   if (isLoading || !loanData) {
@@ -117,18 +128,37 @@ const LoanTransactionByUserPage = () => {
       <div className="flex items-center">
         <BackButton link="/user-loan" />
       </div>
-
-      <h3 className="text-base text-center md:text-left font-bold text-indigo-500/60 pointer-events-non sm:text-xl ">
-        User Loan Transaction Detail Form
-      </h3>
+      <div className="flex w-full flex-col md:flex-row gap-2 justify-between items-center">
+        <h3 className="text-base text-center md:text-left font-bold text-indigo-500/60 pointer-events-non sm:text-xl ">
+          User Loan Transaction Detail Form
+        </h3>
+        {meetingInfoByLoanId && (
+          <button
+            className="text-purple-600 hover:text-purple-900 flex gap-1 justify-center items-center bg-purple-50 rounded-md p-2 transition ease-in-out"
+            onClick={handleOpenMeetingModal}
+          >
+            <MdOutlineMeetingRoom className="text-base" />
+            <p className="text-xs font-semibold">Meeting Information</p>
+          </button>
+        )}
+      </div>
 
       <hr className="w-full border-indigo-100 my-4" />
 
       <LoanDetailByUserComponent
         openDrawerBottom={openDrawerBottom}
         openDrawerReturned={openDrawerReturned}
+        meetingInfoByLoanId={meetingInfoByLoanId}
         handleOpenDialog={handleOpenDialog}
         userInfor={userInfor}
+      />
+
+      {/* Dialog component for meeting detail */}
+      <DialogMeetingDetailComponent
+        open={openMeetingModal}
+        handleClose={handleCloseMeetingModal}
+        meetingData={meetingInfoByLoanId}
+        loanData={matchedLoan}
       />
 
       {/* Dialog component for request meeting */}

@@ -16,6 +16,7 @@ import { getFullDay } from "../../common/Date";
 const LoanUserInfoComponent = ({
   loanItemInfo,
   userInfor,
+  meetingInfoByLoanId,
   handleOpen = null,
   open = false,
 }) => {
@@ -27,6 +28,12 @@ const LoanUserInfoComponent = ({
     Consumed: "orange",
     Returned: "green",
     Cancelled: "red",
+  };
+
+  const statusMeetingColors = {
+    "Need Approval": "orange",
+    Approved: "green",
+    "Meeting Cancelled": "red",
   };
 
   return (
@@ -148,6 +155,26 @@ const LoanUserInfoComponent = ({
             </span>
           </div>
         </div>
+
+        {meetingInfoByLoanId && Object.keys(meetingInfoByLoanId).length > 0 && (
+          <div className="space-y-2 text-sm">
+            <div className="grid grid-cols-3 gap-2">
+              <span className="text-xs text-orange-800 w-full font-bold">
+                Meeting Status
+              </span>
+              <span className="flex gap-2 items-center col-span-2">
+                :{" "}
+                <Chip
+                  size="sm"
+                  variant="gradient"
+                  className="max-w-max"
+                  value={meetingInfoByLoanId.status || ""}
+                  color={statusMeetingColors[meetingInfoByLoanId.status]}
+                />
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* loan status history */}
         {handleOpen !== null && (

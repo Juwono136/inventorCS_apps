@@ -10,9 +10,9 @@ import { LuClipboardCheck } from "react-icons/lu";
 import { BsPatchCheck } from "react-icons/bs";
 
 // components
-import DialogOpenComponent from "./DialogOpenComponent";
 import FullScreenQRCode from "../../common/FullScreenQRCode";
 import { getFullDay } from "../../common/Date";
+import CancelLoanModalComponent from "./CancelLoanModalComponent";
 
 const LoanTransactionCardComponent = ({
   statusLoanColors,
@@ -23,6 +23,8 @@ const LoanTransactionCardComponent = ({
   openCancelLoan,
   handleOpenCancelLoan,
   handleCancelLoan,
+  cancelationReason,
+  setCancelationReason,
 }) => {
   const [isQRCodeModalOpen, setQRCodeModalOpen] = useState(false);
   const [qrCodeValue, setQRCodeValue] = useState("");
@@ -213,13 +215,13 @@ const LoanTransactionCardComponent = ({
         }
       )}
 
-      {/* Cancel loan transaction dialog component */}
-      <DialogOpenComponent
-        openDialog={openCancelLoan}
-        handleFunc={() => handleCancelLoan(selectedId)}
-        handleOpenDialog={handleOpenCancelLoan}
-        message="Are you sure want to cancel this loan transaction?"
-        btnText="Yes"
+      {/* cancel loan transaction with reason dialog component */}
+      <CancelLoanModalComponent
+        open={openCancelLoan}
+        handleOpen={handleOpenCancelLoan}
+        reason={cancelationReason}
+        setReason={setCancelationReason}
+        onConfirm={() => handleCancelLoan(selectedId, cancelationReason)}
       />
 
       {/* Fullscreen QR Code Modal */}
