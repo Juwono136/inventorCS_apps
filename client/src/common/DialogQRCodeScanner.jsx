@@ -2,90 +2,78 @@ import React, { useEffect, useRef, useState } from "react";
 import { Dialog } from "@material-tailwind/react";
 import { Html5Qrcode } from "html5-qrcode";
 import { IoClose } from "react-icons/io5";
-import { BiRefresh } from "react-icons/bi";
 
 const DialogQRCodeScanner = ({ open, handleClose }) => {
   const qrRef = useRef(null);
   const scannerRef = useRef(null);
   const [isReady, setIsReady] = useState(false);
-  const [cameras, setCameras] = useState([]);
-  const [currentCameraIndex, setCurrentCameraIndex] = useState(0);
-
-  const config = { fps: 10, qrbox: { width: 280, height: 250 } };
-  const qrRegionId = "qr-reader";
-
-  const startScanner = async (cameraId) => {
-    try {
-      await scannerRef.current.start(
-        cameraId,
-        config,
-        (decodedText) => {
-          window.location.href = decodedText;
-        },
-        (errorMessage) => {
-          // Optionally handle scan errors
-        }
-      );
-      setIsReady(true);
-    } catch (err) {
-      console.error("Error starting scanner:", err);
-    }
-  };
-
-  const stopScanner = async () => {
-    if (scannerRef.current) {
-      try {
-        const state = scannerRef.current.getState();
-        // 2 = SCANNING, 1 = PAUSED
-        if (state === 2) {
-          await scannerRef.current.stop();
-        }
-        await scannerRef.current.clear();
-      } catch (err) {
-        console.error("Error stopping scanner:", err);
-      }
-    }
-    setIsReady(false);
-  };
-
-  const switchCamera = async () => {
-    if (cameras.length <= 1) return;
-    const nextIndex = (currentCameraIndex + 1) % cameras.length;
-    await stopScanner();
-    setCurrentCameraIndex(nextIndex);
-    startScanner(cameras[nextIndex].id);
-  };
 
   useEffect(() => {
     let isMounted = true;
 
     if (open) {
-      const initialize = async () => {
-        await new Promise((r) => requestAnimationFrame(r));
+      const config = { fps: 10, qrbox: { width: 280, height: 280 } };
+      const qrRegionId = "qr-reader";
 
-        if (!document.getElementById(qrRegionId)) return;
+      const initializeScanner = async () => {
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+
+        if (!document.getElementById(qrRegionId)) {
+          console.warn("QR container not found.");
+          return;
+        }
 
         scannerRef.current = new Html5Qrcode(qrRegionId);
 
         try {
           const devices = await Html5Qrcode.getCameras();
-          if (devices && devices.length && isMounted) {
-            setCameras(devices);
-            setCurrentCameraIndex(0);
-            startScanner(devices[0].id);
+          if (devices && devices.length) {
+            let selectedCameraId = devices[0].id;
+
+            // Cari kamera belakang yang bukan ultra wide
+            const backCamera = devices.find(
+              (device) =>
+                /back|environment/i.test(device.label) &&
+                !/ultra/i.test(device.label)
+            );
+
+            if (backCamera) {
+              selectedCameraId = backCamera.id;
+            }
+
+            await scannerRef.current.start(
+              selectedCameraId,
+              config,
+              (decodedText) => {
+                if (isMounted) {
+                  window.location.href = decodedText;
+                }
+              },
+              (errorMessage) => {
+                // Scan error handling opsional
+              }
+            );
+
+            if (isMounted) setIsReady(true);
           }
         } catch (err) {
-          console.error("Unable to get cameras:", err);
+          console.error("Error starting QR scanner:", err);
         }
       };
 
-      initialize();
-    }
+      initializeScanner();
 
-    return () => {
-      isMounted = false;
-      stopScanner();
-    };
+      return () => {
+        isMounted = false;
+        if (scannerRef.current) {
+          scannerRef.current
+            .stop()
+            .then(() => scannerRef.current.clear())
+            .catch((err) => console.error("Error stopping scanner:", err));
+        }
+        setIsReady(false);
+      };
+    }
   }, [open]);
 
   return (
@@ -108,19 +96,9 @@ const DialogQRCodeScanner = ({ open, handleClose }) => {
         </div>
       )}
 
-      <div id="qr-reader" ref={qrRef} className="w-full h-auto" />
+      <div id="qr-reader" ref={qrRef} className={`w-full h-auto`} />
 
-      {cameras.length > 1 && (
-        <button
-          onClick={switchCamera}
-          className="mt-4 mb-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg flex items-center gap-2"
-        >
-          <BiRefresh className="text-lg" />
-          Switch Camera
-        </button>
-      )}
-
-      <p className="text-sm text-purple-600 font-semibold mt-2 text-center italic">
+      <p className="text-xs text-purple-600 italic font-semibold mt-3 text-center">
         Point the camera at the QR code to scan the link.
       </p>
     </Dialog>
