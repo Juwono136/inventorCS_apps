@@ -32,7 +32,7 @@ const HeroComponent = () => {
             Binus University International
           </Typography>
           <Typography variant="h4" className="text-indigo-900">
-            School of Computer and Creative Art Inventory Center
+            School of Computing and Creative Art Inventory Center
           </Typography>
 
           {user && isLoggedOut === false ? (

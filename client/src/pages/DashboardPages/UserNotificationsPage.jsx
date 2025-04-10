@@ -99,7 +99,7 @@ const UserNotificationsPage = () => {
             {Array.isArray(notification) && notification?.length > 0 ? (
               notification?.map((notif) => (
                 <div
-                  className="flex gap-4 rounded-md shadow-md p-4 hover:bg-blue-gray-100/50 hover:cursor-pointer"
+                  className="flex gap-3 rounded-md shadow-md p-2 hover:bg-blue-gray-100/50 hover:cursor-pointer"
                   key={notif._id}
                   onClick={() =>
                     handleNotificationClick(
@@ -120,8 +120,8 @@ const UserNotificationsPage = () => {
                       {notif.message}
                     </h3>
                     <div className="flex gap-2 items-center">
-                      <FaRegClock className="text-xs text-gray-700" />
-                      <p className="text-xs text-gray-700">
+                      <FaRegClock className="text-xs text-gray-500" />
+                      <p className="text-xs text-gray-500">
                         {formatDistanceToNow(new Date(notif.createdAt), {
                           addSuffix: true,
                         })}

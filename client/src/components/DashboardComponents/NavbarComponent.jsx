@@ -27,6 +27,7 @@ import {
 } from "react-icons/io5";
 import { FiUsers } from "react-icons/fi";
 import { CiPower } from "react-icons/ci";
+import { AiOutlineScan } from "react-icons/ai";
 
 // components
 import SidebarComponent from "./SidebarComponent";
@@ -40,6 +41,7 @@ import {
   markNotificationAsRead,
 } from "../../features/notification/notificationSlice";
 import DialogChangeRoleComponent from "./DialogChangeRoleComponent";
+import DialogQRCodeScanner from "../../common/DialogQRCodeScanner";
 
 const NavbarComponent = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -47,6 +49,7 @@ const NavbarComponent = () => {
   const [openDialogLogout, setOpenDialogLogout] = useState(false);
   const [openDialogChangeRole, setOpenDialogChangeRole] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
+  const [openQRScanner, setOpenQRScanner] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -67,6 +70,7 @@ const NavbarComponent = () => {
   const openDrawer = () => setIsDrawerOpen(true);
   const closeDrawer = () => setIsDrawerOpen(false);
   const closeMenuProfile = () => setIsMenuProfileOpen(false);
+  const toggleQRScanner = () => setOpenQRScanner(!openQRScanner);
 
   const handleOpenDialogLogout = () => {
     setOpenDialogLogout(!openDialogLogout);
@@ -134,6 +138,7 @@ const NavbarComponent = () => {
           </div>
 
           <div className="flex items-center gap-2 mx-3">
+            {/* home page button */}
             <div className="px-4 hidden md:flex">
               <a
                 href="/"
@@ -144,6 +149,7 @@ const NavbarComponent = () => {
               </a>
             </div>
 
+            {/* profile icon button */}
             <Menu
               open={isMenuProfileOpen}
               handler={setIsMenuProfileOpen}
@@ -197,6 +203,20 @@ const NavbarComponent = () => {
                 </MenuItem>
               </MenuList>
             </Menu>
+
+            {/* scan qr code button */}
+            {user?.selectedRole === 2 || user?.selectedRole === 1 ? (
+              <div className="flex">
+                <button
+                  onClick={toggleQRScanner}
+                  className="flex items-center justify-center gap-2 bg-white text-indigo-500 text-xs font-semibold p-2 rounded-full transition-all hover:bg-indigo-100"
+                >
+                  <AiOutlineScan className="text-xl" />
+                </button>
+              </div>
+            ) : (
+              ""
+            )}
 
             {/* notification menu */}
             <Menu placement="bottom-end">
@@ -289,6 +309,8 @@ const NavbarComponent = () => {
         roleOptions={roleOptions}
         selectedRole={selectedRole}
       />
+
+      <DialogQRCodeScanner open={openQRScanner} handleClose={toggleQRScanner} />
     </>
   );
 };

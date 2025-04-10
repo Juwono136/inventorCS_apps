@@ -34,7 +34,7 @@ const CancelLoanModalComponent = ({
           maxLength={characterLimit}
           name="cancelation_reason"
           id="cancelation_reason"
-          className="p-3 rounded-md outline-none text-xs w-full text-blue-gray-900 bg-red-100/50 placeholder:text-gray-600 sm:text-sm resize-none"
+          className="p-3 rounded-md outline-none text-sm w-full text-blue-gray-900 bg-red-100/50 placeholder:text-gray-600 sm:text-sm resize-none"
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           placeholder="Enter your reason..."
