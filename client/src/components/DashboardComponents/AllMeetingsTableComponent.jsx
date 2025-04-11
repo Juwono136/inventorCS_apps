@@ -41,7 +41,7 @@ const AllMeetingsTableComponent = ({ refreshTrigger }) => {
 
   const [sortMeeting, setSortMeeting] = useState({
     sort: "meeting_date",
-    order: "asc",
+    order: "desc",
   });
   const [search, setSearch] = useState("");
   const [meetingStatus, setMeetingStatus] = useState("");

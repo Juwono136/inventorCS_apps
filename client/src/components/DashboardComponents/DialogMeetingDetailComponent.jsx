@@ -38,7 +38,7 @@ const DialogMeetingDetailComponent = ({
 
       <DialogBody className="pt-0 px-5">
         <div className="mb-2 text-xs text-gray-600 italic">
-          <span>Request Created At: {getFullDay(meetingData?.createdAt)}</span>
+          <span>Request created at {getFullDay(meetingData?.createdAt)}</span>
         </div>
         <div className="space-y-2 p-4 text-sm text-blue-gray-700 bg-gradient-to-r from-blue-50 via-purple-50 to-indigo-50 rounded-md">
           <div className="space-y-2 text-sm">

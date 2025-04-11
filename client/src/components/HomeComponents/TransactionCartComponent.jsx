@@ -61,14 +61,14 @@ const TransactionCartComponent = ({
                 />
 
                 <div className="flex flex-col gap-2 w-full">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 pb-2">
                     <BsPatchCheck className="font-bold text-sm text-purple-900" />
                     <h2 className="font-semibold text-xs bg-gradient-to-r from-blue-400 via-purple-500 to-red-500 bg-clip-text text-transparent animate-gradient">
                       {item_program}
                     </h2>
                   </div>
 
-                  <a href={`/item_detail/${_id}`} className="w-max">
+                  <a href={`/item_detail/${_id}`} className="w-full">
                     <h2 className="text-base text-indigo-900 hover:underline">
                       {title}
                     </h2>

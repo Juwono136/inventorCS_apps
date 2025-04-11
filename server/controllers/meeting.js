@@ -105,7 +105,7 @@ export const createMeeting = async (req, res) => {
         })
 
         // create notification to borrower
-        await createNotification(loanTransaction.borrower_id, loanTransaction._id, `Meeting request for transaction ID: ${loanTransaction.transaction_id} has been successfully created. Next, please meet with our staff soon to pick up your loan item.`)
+        await createNotification(loanTransaction.borrower_id, loanTransaction._id, `Meeting request for transaction ID: ${loanTransaction.transaction_id} has been successfully cre ated. Next, please meet with our staff soon to pick up your loan item.`)
 
         // create notification to user staff
         const notificationPromises = uniquePrograms.map(async (program) => {
@@ -315,6 +315,45 @@ export const getMeetingByLoanId = async (req, res) => {
         // }
 
         res.json(meeting)
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+// change meeting status to approved by staff
+export const approveMeeting = async (req, res) => {
+    try {
+        const meetingId = req.params.id
+
+        const meeting = await Meetings.findById(meetingId).populate({
+            path: "loanTransaction_id",
+            model: "LoanTransactions",
+            select: "transaction_id borrower_id staff_id borrowed_item",
+        })
+
+        if (!meeting) {
+            return res.status(404).json({ message: "Meeting not found." });
+        }
+
+        if (meeting.status === "Approved") {
+            return res.status(400).json({ message: "Meeting is already approved." });
+        }
+
+        meeting.status = "Approved";
+        meeting.meeting_confirmed_date = new Date();
+        await meeting.save();
+
+        // create notification to borrower
+        await createNotification(
+            meeting.loanTransaction_id.borrower_id,
+            meeting.loanTransaction_id.transaction_id,
+            `Your meeting request (Transaction ID: ${meeting.loanTransaction_id.transaction_id}) has been approved. Please meet the staff on ${meeting.meeting_date.toDateString()} at ${meeting.meeting_time}.`
+        )
+
+        return res.json({
+            message: "Meeting approved successfully.",
+            meeting
+        });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }

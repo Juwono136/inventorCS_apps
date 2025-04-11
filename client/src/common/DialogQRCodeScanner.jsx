@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Html5Qrcode, Html5QrcodeScannerState } from "html5-qrcode";
+
+// icons and material-tailwind
 import { Dialog } from "@material-tailwind/react";
-import { Html5Qrcode } from "html5-qrcode";
 import { IoClose } from "react-icons/io5";
 
 const DialogQRCodeScanner = ({ open, handleClose }) => {
@@ -30,7 +32,6 @@ const DialogQRCodeScanner = ({ open, handleClose }) => {
           if (devices && devices.length) {
             let selectedCameraId = devices[0].id;
 
-            // Cari kamera belakang yang bukan ultra wide
             const backCamera = devices.find(
               (device) =>
                 /back|environment/i.test(device.label) &&
@@ -50,7 +51,7 @@ const DialogQRCodeScanner = ({ open, handleClose }) => {
                 }
               },
               (errorMessage) => {
-                // Scan error handling opsional
+                // Scan error handling (optional)
               }
             );
 
@@ -65,12 +66,33 @@ const DialogQRCodeScanner = ({ open, handleClose }) => {
 
       return () => {
         isMounted = false;
-        if (scannerRef.current) {
-          scannerRef.current
-            .stop()
-            .then(() => scannerRef.current.clear())
-            .catch((err) => console.error("Error stopping scanner:", err));
+
+        const scanner = scannerRef.current;
+        const state = scanner?.getState?.();
+
+        if (scanner) {
+          if (state === Html5QrcodeScannerState.SCANNING) {
+            scanner
+              .stop()
+              .then(() => {
+                try {
+                  scanner.clear?.();
+                } catch (err) {
+                  console.error("Error clearing scanner after stop:", err);
+                }
+              })
+              .catch((err) => {
+                console.error("Error stopping scanner:", err);
+              });
+          } else {
+            try {
+              scanner.clear?.();
+            } catch (err) {
+              console.error("Error clearing scanner:", err);
+            }
+          }
         }
+
         setIsReady(false);
       };
     }
@@ -100,7 +122,7 @@ const DialogQRCodeScanner = ({ open, handleClose }) => {
       <div id="qr-reader" ref={qrRef} className={`w-full h-auto`} />
 
       <p className="text-xs text-purple-600 italic mt-3 text-center">
-        Point the camera at the QR code to scan the link.
+        Point the camera at the QR code to scan.
       </p>
     </Dialog>
   );

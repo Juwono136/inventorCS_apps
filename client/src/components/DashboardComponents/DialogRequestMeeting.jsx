@@ -89,9 +89,7 @@ const DialogRequestMeeting = ({
       location,
     };
 
-    dispatch(createMeeting({ meetingData, loanId: id })).then((res) => {
-      dispatch(getMeetingByLoanId(id));
-    });
+    dispatch(createMeeting({ meetingData, loanId: id }));
 
     if (isSuccess) {
       setOpenDialog(!openDialog);
@@ -102,6 +100,7 @@ const DialogRequestMeeting = ({
     if (isSuccess) {
       toast.success(meeting.message);
       dispatch(meetingReset());
+      dispatch(getMeetingByLoanId(id));
       setOpenDialog(!openDialog);
     }
   }, [meeting, isError, isSuccess, message]);
@@ -109,7 +108,7 @@ const DialogRequestMeeting = ({
   return (
     <Dialog
       open={openDialog}
-      size="xs"
+      size="sm"
       className="border-2 border-transparent bg-gradient-to-r from-red-500 to-orange-500"
     >
       {isLoading ? (

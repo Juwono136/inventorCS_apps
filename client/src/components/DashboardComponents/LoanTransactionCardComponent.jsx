@@ -79,7 +79,7 @@ const LoanTransactionCardComponent = ({
                         <button
                           onClick={() => handleCopy(transaction_id)}
                           onTouchStart={() => handleCopy(transaction_id)}
-                          className="text-indigo-500 text-sm hover:text-indigo-800 transition-all hidden md:inline"
+                          className="text-indigo-500 w-full text-sm hover:text-indigo-800 transition-all hidden md:inline"
                         >
                           {copiedId === transaction_id ? (
                             <LuClipboardCheck />
@@ -129,11 +129,11 @@ const LoanTransactionCardComponent = ({
                                   alt="item-image"
                                   className="rounded-lg object-cover object-center h-24 w-24 shadow-md shadow-blue-gray-700/20"
                                 />
-                                <div className="flex flex-col gap-1">
+                                <div className="flex flex-col flex-wrap gap-1">
                                   <a
                                     href={`/item_detail/${item_id}`}
                                     target="_blank"
-                                    className="w-max"
+                                    className="w-full"
                                   >
                                     <h2 className="text-sm text-indigo-900 hover:underline">
                                       {asset_name}

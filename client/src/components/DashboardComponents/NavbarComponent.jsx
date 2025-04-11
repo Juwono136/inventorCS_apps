@@ -32,6 +32,8 @@ import { AiOutlineScan } from "react-icons/ai";
 // components
 import SidebarComponent from "./SidebarComponent";
 import DialogOpenComponent from "./DialogOpenComponent";
+import DialogChangeRoleComponent from "./DialogChangeRoleComponent";
+import DialogQRCodeScanner from "../../common/DialogQRCodeScanner";
 
 // features
 import { logout, reset, selectRole } from "../../features/auth/authSlice";
@@ -40,8 +42,6 @@ import {
   getNotificationByUser,
   markNotificationAsRead,
 } from "../../features/notification/notificationSlice";
-import DialogChangeRoleComponent from "./DialogChangeRoleComponent";
-import DialogQRCodeScanner from "../../common/DialogQRCodeScanner";
 
 const NavbarComponent = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
