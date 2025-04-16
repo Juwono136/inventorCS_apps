@@ -72,6 +72,19 @@ const MoreInfoBorrowedItemComponent = ({
         </DialogHeader>
 
         <DialogBody divider className="overflow-y-auto max-h-[80vh] md:mx-4">
+          {(!selectedItem?.borrow_confirmed_date_by_staff &&
+            selectedItem?.loan_status === "Ready to Pickup" &&
+            meetingInfoByLoanId &&
+            meetingInfoByLoanId?.status === "Approved") ||
+            (selectedItem?.borrow_confirmed_by && (
+              <div className="font-semibold text-xs w-full text-center px-3 py-2 rounded-lg bg-indigo-100/20 border border-indigo-800">
+                <p className="text-indigo-800 italic">
+                  Inform the borrower to confirm the receipt of the loan item.
+                  Waiting for the borrower's confirmation...
+                </p>
+              </div>
+            ))}
+
           {/* loan user info */}
           <LoanUserInfoComponent
             loanItemInfo={selectedItem}

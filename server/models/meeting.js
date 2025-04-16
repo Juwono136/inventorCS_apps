@@ -14,6 +14,10 @@ const meetingSchema = mongoose.Schema({
         type: Date,
         default: null
     },
+    meeting_approved_by: {
+        type: String,
+        default: ""
+    },
     meeting_time: {
         type: String, // Format "HH:mm" (example: "14:30")
         required: true,

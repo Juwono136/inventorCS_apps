@@ -47,6 +47,23 @@ const LoanDetailByUserComponent = ({
             />
           )}
 
+          {foundLoan?.loan_status === "Pending" && (
+            <div className="font-semibold text-xs w-full text-center px-3 py-2 rounded-lg bg-gray-100/20 border border-gray-800">
+              <p className="text-gray-800 italic">
+                Please wait, your loan transaction is currently being
+                processed...
+              </p>
+            </div>
+          )}
+
+          {meetingInfoByLoanId?.status === "Need Approval" && (
+            <div className="font-semibold text-xs w-full text-center px-3 py-2 rounded-lg bg-orange-100/20 border border-orange-800">
+              <p className="text-orange-800 italic">
+                Please wait, our staff will review your meeting request.
+              </p>
+            </div>
+          )}
+
           <Typography className="font-semibold text-xl bg-gradient-to-r from-blue-400 via-purple-500 to-red-500 bg-clip-text text-transparent animate-gradient">
             Loan of Equipment
           </Typography>
@@ -103,12 +120,12 @@ const LoanDetailByUserComponent = ({
               </div>
             </div>
 
-            {foundLoan?.loan_status === "Pending" && (
+            {/* {foundLoan?.loan_status === "Pending" && (
               <p className="text-xs italic text-indigo-800 text-center">
                 Please wait, your loan transaction is currently being
                 processed...
               </p>
-            )}
+            )} */}
 
             {foundLoan?.loan_status === "Ready to Pickup" &&
               !meetingInfoByLoanId && (

@@ -18,19 +18,26 @@ import BackButton from "../../common/BackButton";
 import {
   getLoanTransactionById,
   loanReset,
+  staffConfirmHandover,
   updateStatusToBorrowed,
   updateStatusToReadyToPickup,
   updateStatusToReturned,
 } from "../../features/loanTransaction/loanSlice";
 import { accessToken } from "../../features/token/tokenSlice";
 import { getUserById } from "../../features/user/userSlice";
-import { getMeetingByLoanId } from "../../features/meeting/meetingSlice";
+import {
+  approveMeeting,
+  getMeetingByLoanId,
+} from "../../features/meeting/meetingSlice";
+import DialogHandoverChecklist from "../../components/DashboardComponents/DialogHandoverCheclist";
 
 const LoanTransactionforStaffPage = () => {
   UseDocumentTitle("Loan Transaction detail");
 
   const [openDialog, setOpenDialog] = useState(false);
   const [openMeetingModal, setOpenMeetingModal] = useState(false);
+  const [dialogType, setDialogType] = useState("");
+  const [isHandoverModalOpen, setIsHandoverModalOpen] = useState(false);
 
   const { loanData, isError, isSuccess, message, isLoading } = useSelector(
     (state) => state.loan
@@ -43,8 +50,17 @@ const LoanTransactionforStaffPage = () => {
   const handleOpenMeetingModal = () => setOpenMeetingModal(true);
   const handleCloseMeetingModal = () => setOpenMeetingModal(false);
 
-  const handleOpenDialog = () => {
-    setOpenDialog(!openDialog);
+  const handleOpenHandoverModal = () => setIsHandoverModalOpen(true);
+  const handleCloseHandoverModal = () => setIsHandoverModalOpen(false);
+
+  const handleOpenDialog = (type = "loan") => {
+    setDialogType(type);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogType("");
+    setOpenDialog(false);
   };
 
   const handleStatustoReadyToPickup = (e) => {
@@ -58,7 +74,38 @@ const LoanTransactionforStaffPage = () => {
       dispatch(accessToken(res));
     });
 
-    setOpenDialog(!openDialog);
+    handleCloseDialog();
+  };
+
+  const handleApproveMeeting = (e) => {
+    e.preventDefault();
+    const data = {
+      _id: meetingInfoByLoanId._id,
+    };
+
+    dispatch(approveMeeting(data))
+      .unwrap()
+      .then(() => {
+        dispatch(getMeetingByLoanId(id)); // refresh data meeting
+        toast.success("Meeting approved successfully");
+      });
+
+    handleCloseDialog();
+  };
+
+  const handleConfirmHandoverSubmit = (loanId, checkedItemIds) => {
+    const handoverData = {
+      loanId,
+      checkedItemIds,
+    };
+
+    dispatch(staffConfirmHandover(handoverData))
+      .unwrap()
+      .then(() => {
+        dispatch(getMeetingByLoanId(id)); // refresh data meeting
+        toast.success("Handover confirmed successfully");
+        handleCloseHandoverModal();
+      });
   };
 
   const handleStatusToBorrowed = (e) => {
@@ -72,7 +119,7 @@ const LoanTransactionforStaffPage = () => {
       dispatch(accessToken(res));
     });
 
-    setOpenDialog(!openDialog);
+    handleCloseDialog();
   };
 
   const handleStatusToReturned = (e) => {
@@ -86,7 +133,7 @@ const LoanTransactionforStaffPage = () => {
       dispatch(accessToken(res));
     });
 
-    setOpenDialog(!openDialog);
+    handleCloseDialog();
   };
 
   useEffect(() => {
@@ -94,12 +141,10 @@ const LoanTransactionforStaffPage = () => {
       toast.error(message);
     }
 
-    if (isSuccess) {
-      toast.success(loanData.message);
+    if (isSuccess && loanData?.message) {
+      toast.success(loanData?.message);
+      dispatch(loanReset());
     }
-
-    dispatch(loanReset());
-    dispatch(getMeetingByLoanId(id));
   }, [loanData, isError, isSuccess, message]);
 
   useEffect(() => {
@@ -142,24 +187,46 @@ const LoanTransactionforStaffPage = () => {
       <hr className="w-full border-indigo-100 my-4" />
 
       {/* loan user info */}
-      <LoanDetailforStaffComponent handleOpenDialog={handleOpenDialog} />
+      <LoanDetailforStaffComponent
+        handleOpenDialog={() => handleOpenDialog("loan")}
+        handleOpenMeetingDialog={() => handleOpenDialog("meeting")}
+        handleOpenHandoverModal={handleOpenHandoverModal}
+      />
 
       {/* Change loan status to borrowed open dialog */}
       <DialogOpenComponent
         openDialog={openDialog}
         handleFunc={
-          loanData?.loan_status === "Pending"
-            ? handleStatustoReadyToPickup
-            : loanData?.loan_status === "Ready to Pickup"
-            ? handleStatusToBorrowed
-            : loanData?.loan_status === "Borrowed" ||
-              loanData?.loan_status === "Partially Consumed"
-            ? handleStatusToReturned
+          dialogType === "loan"
+            ? loanData?.loan_status === "Pending"
+              ? handleStatustoReadyToPickup
+              : loanData?.loan_status === "Ready to Pickup"
+              ? handleStatusToBorrowed
+              : loanData?.loan_status === "Borrowed" ||
+                loanData?.loan_status === "Partially Consumed"
+              ? handleStatusToReturned
+              : null
+            : dialogType === "meeting"
+            ? handleApproveMeeting
             : null
         }
-        handleOpenDialog={handleOpenDialog}
-        message="Are you sure want to change the loan status?"
+        handleOpenDialog={handleCloseDialog}
+        message={
+          dialogType === "meeting"
+            ? "Approve this meeting request?"
+            : "Are you sure want to change the loan status?"
+        }
         btnText="Yes"
+      />
+
+      {/* Dialog handover checklist */}
+      <DialogHandoverChecklist
+        open={isHandoverModalOpen}
+        handleClose={handleCloseHandoverModal}
+        handleConfirm={handleConfirmHandoverSubmit}
+        loanData={loanData}
+        isError={isError}
+        message={message}
       />
 
       {/* Dialog component for meeting detail */}

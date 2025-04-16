@@ -59,23 +59,28 @@ const InventoryDetailPage = ({ page, sort }) => {
                 See more
               </a>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6 bg-indigo-200/20 p-6 rounded-md shadow-md">
-              {sortedItems?.slice(0, 5).map((item, i) => (
-                <InventoryCardComponent
-                  key={i}
-                  itemId={item._id}
-                  image={item.asset_img}
-                  title={item.asset_name}
-                  serial_number={item.serial_number}
-                  total_items={item.total_items}
-                  status={item.item_status}
-                  categories={item.categories}
-                  desc={item.desc}
-                  is_consumable={item.is_consumable}
-                  item_program={item.item_program}
-                />
-              ))}
-            </div>
+
+            {items === undefined ? (
+              <Loader />
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6 bg-indigo-200/20 p-6 rounded-md shadow-md">
+                {sortedItems?.slice(0, 5).map((item, i) => (
+                  <InventoryCardComponent
+                    key={i}
+                    itemId={item._id}
+                    image={item.asset_img}
+                    title={item.asset_name}
+                    serial_number={item.serial_number}
+                    total_items={item.total_items}
+                    status={item.item_status}
+                    categories={item.categories}
+                    desc={item.desc}
+                    is_consumable={item.is_consumable}
+                    item_program={item.item_program}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>

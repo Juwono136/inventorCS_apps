@@ -12,7 +12,11 @@ import { getFullDay } from "../../common/Date";
 // features
 import { getMeetingByLoanId } from "../../features/meeting/meetingSlice";
 
-const LoanDetailforStaffComponent = ({ handleOpenDialog }) => {
+const LoanDetailforStaffComponent = ({
+  handleOpenDialog,
+  handleOpenMeetingDialog,
+  handleOpenHandoverModal,
+}) => {
   const [open, setOpen] = useState(0);
 
   const { loanData } = useSelector((state) => state.loan);
@@ -31,6 +35,19 @@ const LoanDetailforStaffComponent = ({ handleOpenDialog }) => {
 
   return (
     <>
+      {(!loanData?.borrow_confirmed_date_by_staff &&
+        loanData?.loan_status === "Ready to Pickup" &&
+        meetingInfoByLoanId &&
+        meetingInfoByLoanId?.status === "Approved") ||
+        (loanData?.borrow_confirmed_by && (
+          <div className="font-semibold text-xs w-full text-center px-3 py-2 rounded-lg bg-indigo-100/20 border border-indigo-800">
+            <p className="text-indigo-800 italic">
+              Inform the borrower to confirm the receipt of the loan item.
+              Waiting for the borrower's confirmation...
+            </p>
+          </div>
+        ))}
+
       <Card className="my-3">
         <div className="flex flex-col justify-center items-center w-full gap-2 mb-2">
           <Typography className="font-semibold text-xl bg-gradient-to-r from-blue-400 via-purple-500 to-red-500 bg-clip-text text-transparent animate-gradient">
@@ -88,6 +105,7 @@ const LoanDetailforStaffComponent = ({ handleOpenDialog }) => {
               </div>
             </div>
 
+            {/* ready to pickup button */}
             {loanData?.loan_status === "Pending" && (
               <Button
                 className="bg-gradient-to-r from-indigo-500 to-purple-800 text-xs py-3 px-6 rounded-lg capitalize"
@@ -96,6 +114,29 @@ const LoanDetailforStaffComponent = ({ handleOpenDialog }) => {
                 Change status to Ready to Pickup
               </Button>
             )}
+
+            {/* approve request meeting button */}
+            {meetingInfoByLoanId?.status === "Need Approval" && (
+              <Button
+                className="bg-gradient-to-r from-green-300 to-orange-400 text-xs py-3 px-6 rounded-lg capitalize"
+                onClick={handleOpenMeetingDialog}
+              >
+                Approve Request Meeting
+              </Button>
+            )}
+
+            {/* button confirm handover loan item*/}
+            {!loanData?.borrow_confirmed_date_by_staff &&
+              loanData?.loan_status === "Ready to Pickup" &&
+              meetingInfoByLoanId &&
+              meetingInfoByLoanId?.status === "Approved" && (
+                <Button
+                  className="bg-gradient-to-r from-indigo-500 to-green-600 text-xs py-3 px-6 rounded-lg capitalize"
+                  onClick={handleOpenHandoverModal}
+                >
+                  Check Loan Item Handover
+                </Button>
+              )}
 
             {/* {loanData?.loan_status === "Ready to Pickup" && (
               <Button

@@ -32,6 +32,16 @@ const loanTransactionSchema = mongoose.Schema({
         item_program: {
             type: String,
             required: true,
+        },
+        staff_checked_handover: {
+            type: Boolean,
+            default: false,
+            required: true
+        },
+        staff_checked_return: {
+            type: Boolean,
+            default: false,
+            required: true
         }
     }],
     purpose_of_loan: {
@@ -44,13 +54,17 @@ const loanTransactionSchema = mongoose.Schema({
         required: true,
         default: null
     },
-    borrower_confirmed_date: { // When the borrower receives the loan item
+    borrow_confirmed_date_by_user: { // When the borrower receives the loan item
         type: Date,
         default: null
     },
-    staff_confirmed_date: { // When the staff confirms the loan item for borrowing
+    borrow_confirmed_date_by_staff: { // When the staff confirms the loan item for borrowing
         type: Date,
         default: null
+    },
+    borrow_confirmed_by: {
+        type: String,
+        default: ""
     },
     expected_return_date: {
         type: Date,
@@ -60,6 +74,18 @@ const loanTransactionSchema = mongoose.Schema({
     return_date: { // When the borrower successfully returns the loan item to the staff
         type: Date,
         default: null
+    },
+    returned_confirmed_date_by_user: {
+        type: Date,
+        default: null
+    },
+    returned_confirmed_date_by_staff: {
+        type: Date,
+        default: null
+    },
+    returned_confirmed_by: {
+        type: String,
+        default: ""
     },
     loan_status: {
         type: String,

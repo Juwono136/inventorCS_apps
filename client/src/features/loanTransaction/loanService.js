@@ -57,6 +57,15 @@ const updateStatusToReadyToPickup = async (data, token) => {
     return response.data
 }
 
+// staff confirm handover loan items
+const staffConfirmHandover = async (loanId, checkedItemIds, token) => {
+    const response = await axios.patch(API_URL + `/confirm_handover/${loanId}`, { checkedItemIds }, {
+        headers: { Authorization: `Bearer ${token}` }
+    })
+
+    return response.data
+}
+
 // update loan status to borrowed
 const updateStatusToBorrowed = async (data, token) => {
     const response = await axios.patch(API_URL + `/borrowed_loan/${data._id}`, data, {
@@ -110,6 +119,7 @@ const loanService = {
     createLoanTransaction,
     markTransactionIsNew,
     updateStatusToReadyToPickup,
+    staffConfirmHandover,
     updateStatusToBorrowed,
     confirmReceiveByBorrower,
     updateStatusToReturned,

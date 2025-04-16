@@ -101,7 +101,7 @@ export const createLoanTransaction = async (req, res) => {
     try {
         const { borrowed_item, purpose_of_loan, borrow_date, expected_return_date } = req.body;
 
-        // Validasi input
+        // input validation
         if (!borrowed_item || !Array.isArray(borrowed_item) || borrowed_item.length === 0 || !purpose_of_loan || !borrow_date || !expected_return_date) {
             return res.status(400).json({ message: "Please fill in all fields." });
         }
@@ -314,6 +314,75 @@ export const updateStatusToReadyToPickup = async (req, res) => {
 
         // console.log(`Scheduled auto-cancel for Loan Transaction ID: ${loanTransactionId} in 3 days`);
 
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+// staff confirms the handover of loan items to the borrower
+export const staffConfirmHandover = async (req, res) => {
+    try {
+        const loanTransactionId = req.params.id;
+        const { checkedItemIds } = req.body;
+
+        // Validate checklist input
+        if (!checkedItemIds || !Array.isArray(checkedItemIds) || checkedItemIds.length === 0) {
+            return res.status(400).json({ message: "Checklist item data is required and must be an array." });
+        }
+
+        const loanTransaction = await LoanTransactions.findById(loanTransactionId);
+
+        if (!loanTransaction) {
+            return res.status(404).json({ message: "Loan transaction not found." });
+        }
+
+        // Validate loan status
+        if (loanTransaction.loan_status !== "Ready to Pickup") {
+            return res.status(400).json({ message: `Current transaction status is "${loanTransaction.loan_status}", cannot proceed with handover confirmation.` });
+        }
+
+        if (loanTransaction.borrowed_confirmed_date_by_staff) {
+            return res.status(400).json({ message: "Items have already been confirmed for handover by staff." });
+        }
+
+        // handover item checklist
+        let allItemsChecked = true;
+        const itemIdsInTransaction = loanTransaction.borrowed_item.map(item => item._id.toString());
+
+        // validate if all checkedItemIds exist in the transaction
+        for (const checkedId of checkedItemIds) {
+            if (!itemIdsInTransaction.includes(checkedId)) {
+                return res.status(400).json({ message: "Please check all the items on the loan list" });
+            }
+        }
+
+        // mark checked items
+        loanTransaction.borrowed_item.forEach(item => {
+            if (checkedItemIds.includes(item._id.toString())) {
+                item.staff_checked_handover = true;
+            }
+            // check if all items have been checked
+            if (!item.staff_checked_handover) {
+                allItemsChecked = false;
+            }
+        });
+
+        // ensure all items in the transaction are checked before confirmation
+        if (!allItemsChecked) {
+            return res.status(400).json({
+                message: "Not all items in this transaction have been checked for handover.",
+            });
+        }
+
+        const staffInfo = await getUserById(req, req.user._id)
+        const stafffName = staffInfo.personal_info.name
+
+        // If all items are checked, update staff confirmation date
+        loanTransaction.borrow_confirmed_date_by_staff = new Date();
+        loanTransaction.borrow_confirmed_by = stafffName;
+        await loanTransaction.save();
+
+        return res.json({ loanTransaction })
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }

@@ -2,7 +2,7 @@ import express from "express";
 import { auth } from "../middleware/auth.js";
 import { authStaff } from "../middleware/authStaff.js";
 import { checkUserProgram } from "../middleware/checkUserProgram.js";
-import { cancelLoanTransaction, confirmReceiveByBorrower, confirmReturnedByBorrower, createLoanTransaction, getAllLoanTransactions, getLoanTransactionById, getLoanTransactionsByUser, markTransactionIsNew, updateStatusToBorrowed, updateStatusToReadyToPickup, updateStatusToReturned } from "../controllers/loanTransaction.js";
+import { cancelLoanTransaction, confirmReceiveByBorrower, confirmReturnedByBorrower, createLoanTransaction, getAllLoanTransactions, getLoanTransactionById, getLoanTransactionsByUser, markTransactionIsNew, staffConfirmHandover, updateStatusToBorrowed, updateStatusToReadyToPickup, updateStatusToReturned } from "../controllers/loanTransaction.js";
 
 const router = express.Router()
 
@@ -14,6 +14,8 @@ router.post("/create_loan", auth, createLoanTransaction)
 
 router.patch("/transaction_is_new/:id", auth, authStaff, markTransactionIsNew)
 router.patch("/ready_to_loan/:id", auth, authStaff, updateStatusToReadyToPickup)
+router.patch("/confirm_handover/:id", auth, authStaff, staffConfirmHandover)
+
 router.patch("/borrowed_loan/:id", auth, authStaff, updateStatusToBorrowed)
 router.patch("/confirm_receive/:id", auth, confirmReceiveByBorrower)
 router.patch("/returned_loan/:id", auth, authStaff, updateStatusToReturned)

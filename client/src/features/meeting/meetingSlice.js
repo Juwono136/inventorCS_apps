@@ -61,6 +61,19 @@ export const getMeetingByLoanId = createAsyncThunk('meeting/loan_id', async (id,
     }
 })
 
+// approve meeting by staff
+export const approveMeeting = createAsyncThunk('meeting/approve', async (data, thunkAPI) => {
+    try {
+        const token = await tokenService.accessToken(data)
+
+        return await meetingService.approveMeeting(data, token)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
 const meetingSlice = createSlice({
     name: 'meeting',
     initialState,
@@ -122,6 +135,21 @@ const meetingSlice = createSlice({
                 state.isLoading = false
                 state.isError = true
                 state.message = action.payload
+            })
+
+            // approve meeting by staff builder
+            .addCase(approveMeeting.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(approveMeeting.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.meetingInfoByLoanId = action.payload;
+            })
+            .addCase(approveMeeting.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
             })
     }
 })

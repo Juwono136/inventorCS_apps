@@ -15,6 +15,8 @@ const AlertNotification = ({ message, type }) => {
   const currentStyle = alertStyles[type] || alertStyles.error;
 
   useEffect(() => {
+    if (!message) return;
+
     // Set timeout to hide the notification after 5 seconds
     const timer = setTimeout(() => {
       setShow(false);
@@ -22,7 +24,7 @@ const AlertNotification = ({ message, type }) => {
 
     // Cleanup the timer on unmount
     return () => clearTimeout(timer);
-  }, []);
+  }, [message]);
 
   if (!show || !message) return null;
 

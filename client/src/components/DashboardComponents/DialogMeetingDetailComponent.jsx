@@ -92,6 +92,17 @@ const DialogMeetingDetailComponent = ({
             </div>
           </div>
 
+          <div className="space-y-2 text-sm">
+            <div className="grid grid-cols-3 gap-2">
+              <span className="text-xs md:text-sm text-gray-800 w-full font-semibold">
+                Meeting Approved By
+              </span>
+              <span className="col-span-2 text-gray-900 text-xs md:text-sm">
+                : {meetingData?.meeting_approved_by || "-"}
+              </span>
+            </div>
+          </div>
+
           {loanData?.loan_status === "Cancelled" && (
             <div className="space-y-2 text-sm pt-4">
               <div className="grid grid-cols-3 gap-2">

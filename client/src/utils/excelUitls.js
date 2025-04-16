@@ -51,7 +51,7 @@ export const downloadExcelTemplate = async (setProgress) => {
         for (let i = 2; i <= 101; i++) {
             worksheet.getCell(`G${i}`).dataValidation = {
                 type: "list",
-                formulae: ["\"Creative Tools,Game Board,IOT,IOT Parts,PC & Laptop,Peripheral,Others\""],
+                formulae: ["\"Creative Tools,Board Game,IOT,IOT Parts,PC & Laptop,Peripheral,Others\""],
                 showErrorMessage: true,
                 errorTitle: "Invalid Category",
                 error: "Please select a valid category from the dropdown list."

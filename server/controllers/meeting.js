@@ -4,6 +4,7 @@ import { createNotification } from './notification.js';
 import { getStaffsForProgram } from './loanTransaction.js';
 import { sendMail } from '../utils/sendMail.js';
 import { getChannel } from '../utils/rabbitmq.js';
+import { getUserById } from '../utils/getUserById.js';
 
 const { CLIENT_URL } = process.env
 
@@ -105,7 +106,7 @@ export const createMeeting = async (req, res) => {
         })
 
         // create notification to borrower
-        await createNotification(loanTransaction.borrower_id, loanTransaction._id, `Meeting request for transaction ID: ${loanTransaction.transaction_id} has been successfully cre ated. Next, please meet with our staff soon to pick up your loan item.`)
+        await createNotification(loanTransaction.borrower_id, loanTransaction._id, `Meeting request for transaction ID: ${loanTransaction.transaction_id} has been successfully created. Next, please meet with our staff soon to pick up your loan item.`)
 
         // create notification to user staff
         const notificationPromises = uniquePrograms.map(async (program) => {
@@ -328,7 +329,7 @@ export const approveMeeting = async (req, res) => {
         const meeting = await Meetings.findById(meetingId).populate({
             path: "loanTransaction_id",
             model: "LoanTransactions",
-            select: "transaction_id borrower_id staff_id borrowed_item",
+            select: "_id transaction_id borrower_id staff_id borrowed_item",
         })
 
         if (!meeting) {
@@ -339,21 +340,34 @@ export const approveMeeting = async (req, res) => {
             return res.status(400).json({ message: "Meeting is already approved." });
         }
 
+        const staffInfo = await getUserById(req, meeting.loanTransaction_id.staff_id)
+        const staffName = staffInfo.personal_info.name
+
+
         meeting.status = "Approved";
         meeting.meeting_confirmed_date = new Date();
+        meeting.meeting_approved_by = staffName;
         await meeting.save();
 
         // create notification to borrower
         await createNotification(
             meeting.loanTransaction_id.borrower_id,
-            meeting.loanTransaction_id.transaction_id,
+            meeting.loanTransaction_id._id,
             `Your meeting request (Transaction ID: ${meeting.loanTransaction_id.transaction_id}) has been approved. Please meet the staff on ${meeting.meeting_date.toDateString()} at ${meeting.meeting_time}.`
         )
 
-        return res.json({
-            message: "Meeting approved successfully.",
-            meeting
-        });
+        // send email notification to borrower
+        // const borrowerInfo = await getUserById(req, meeting.loanTransaction_id.borrower_id)
+        // const borrowerEmail = borrowerInfo.personal_info.email
+        // const url = `${CLIENT_URL}/user-loan/detail/${meeting.loanTransaction_id._id}`
+        // const emailSubject = "Meeting Request Approved"
+        // const emailTitle = "Meeting Request Approved"
+        // const emailText = `Your meeting request has been approved for transaction ID: ${meeting.loanTransaction_id.transaction_id}. Please meet the staff on ${meeting.meeting_date.toDateString()} at ${meeting.meeting_time}.`
+        // const btnEmailText = "View Loan Transaction Info"
+
+        // sendMail(borrowerEmail, url, emailSubject, emailTitle, emailText, btnEmailText);
+
+        return res.json({ meeting });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }

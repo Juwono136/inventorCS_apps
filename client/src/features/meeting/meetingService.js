@@ -29,10 +29,19 @@ const getMeetingByLoanId = async (token, loanId) => {
     return response.data
 }
 
+const approveMeeting = async (data, token) => {
+    const response = await axios.patch(API_URL + `/approve_meeting/${data._id}`, data, {
+        headers: { Authorization: `Bearer ${token}` }
+    })
+
+    return response.data
+}
+
 const meetingService = {
     createMeeting,
     getAllMeetings,
-    getMeetingByLoanId
+    getMeetingByLoanId,
+    approveMeeting
 }
 
 export default meetingService

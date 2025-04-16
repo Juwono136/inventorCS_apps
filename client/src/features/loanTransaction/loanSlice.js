@@ -120,6 +120,19 @@ export const updateStatusToReadyToPickup = createAsyncThunk('loan/ready_to_loan'
     }
 })
 
+// staff confirm handover
+export const staffConfirmHandover = createAsyncThunk('loan/staffConfirmHandover', async ({ loanId, checkedItemIds, token }, thunkAPI) => {
+    try {
+        const tokenData = await tokenService.accessToken(token)
+
+        return await loanService.staffConfirmHandover(loanId, checkedItemIds, tokenData)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
 // update loan status to borrowed
 export const updateStatusToBorrowed = createAsyncThunk('loan/borrowed-status', async (data, thunkAPI) => {
     try {
@@ -315,6 +328,21 @@ export const loanSlice = createSlice({
                 state.loanData = action.payload;
             })
             .addCase(updateStatusToReadyToPickup.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+
+            // staff confirm handover builder
+            .addCase(staffConfirmHandover.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(staffConfirmHandover.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.loanData = action.payload;
+            })
+            .addCase(staffConfirmHandover.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;
