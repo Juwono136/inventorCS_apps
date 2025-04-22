@@ -58,7 +58,7 @@ const InventoryDetailComponent = () => {
         })
       );
       setAvailableItems(availableItems - 1);
-      toast.success("Loan item added");
+      toast.success("Loan item added, please check the cart icon!");
     } else {
       toast.error("No items available to add to cart.");
     }

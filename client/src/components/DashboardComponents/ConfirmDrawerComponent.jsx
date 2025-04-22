@@ -18,11 +18,11 @@ const ConfirmDrawerComponent = ({
 }) => {
   return (
     <Dialog open={openBottom} onClose={closeDrawerBottom} size="xs">
-      <div className="flex justify-center items-center flex-col rounded-lg bg-white p-6 shadow-2xl">
-        <div className="mb-6 flex items-center justify-between w-full">
-          <Typography color="red" className="text-xl font-semibold">
-            Confirm Loan Item!
-          </Typography>
+      <div className="flex justify-center items-center flex-col rounded-lg bg-white p-4 shadow-2xl">
+        <div className="mb-2 flex items-center justify-between w-full">
+          <h2 className="text-base font-semibold text-purple-800">
+            Confirm Loan Item Receipt!
+          </h2>
           <IconButton
             variant="text"
             color="blue-gray"
@@ -31,7 +31,10 @@ const ConfirmDrawerComponent = ({
             <IoClose className="text-lg" />
           </IconButton>
         </div>
-        <Typography color="gray" className="mb-8 pr-4 font-semibold text-sm">
+        <Typography
+          color="gray"
+          className="mb-8 pr-4 text-xs md:text-sm italic"
+        >
           Please check the items you wish to borrow first. Have you received the
           item you borrowed from our staff?
         </Typography>
@@ -44,25 +47,18 @@ const ConfirmDrawerComponent = ({
               onChange={(e) => setItemReceived(e.target.checked)}
               className="mr-2"
             />
-            <p className="text-sm text-gray-900">I have received the items</p>
+            <p className="text-sm text-gray-900 font-semibold">
+              I have received the items
+            </p>
           </label>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full justify-end">
           <Button
-            className="bg-gradient-to-r from-cyan-500 to-lime-800 text-xs py-3 px-6 rounded-lg capitalize"
+            className="bg-gradient-to-r from-purple-500 to-blue-800 text-xs py-2 px-3 rounded-lg capitalize"
             onClick={(e) => handleConfirm(e, true)}
             disabled={!itemReceived}
           >
             Yes, I received it
-          </Button>
-          <Button
-            size="sm"
-            color="red"
-            className="capitalize"
-            variant="outlined"
-            onClick={(e) => handleConfirm(e, false)}
-          >
-            No, I haven't
           </Button>
         </div>
       </div>

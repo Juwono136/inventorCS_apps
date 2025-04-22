@@ -18,10 +18,10 @@ import UseDocumentTitle from "../../common/UseDocumentTitle";
 
 // features
 import {
-  confirmReceiveByBorrower,
   confirmReturnedByBorrower,
   getLoanTransactionsByUser,
   loanReset,
+  userConfirmReceipt,
 } from "../../features/loanTransaction/loanSlice";
 import { accessToken } from "../../features/token/tokenSlice";
 import { getMeetingByLoanId } from "../../features/meeting/meetingSlice";
@@ -46,7 +46,7 @@ const LoanTransactionByUserPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const matchedLoan = loanData?.loanTransactions.find(
+  const matchedLoan = loanData?.loanTransactions?.find(
     (loan) => loan._id === id
   );
 
@@ -63,16 +63,14 @@ const LoanTransactionByUserPage = () => {
   const openDrawerReturned = () => setOpenReturned(true);
   const closeDrawerReturned = () => setOpenReturned(false);
 
-  const handleConfirm = (e, item_received) => {
+  const handleUserConfirmReceipt = (e, item_received) => {
     e.preventDefault();
     const data = {
       _id: id,
       item_received: item_received,
     };
 
-    dispatch(confirmReceiveByBorrower(data)).then((res) => {
-      dispatch(accessToken(res));
-    });
+    dispatch(userConfirmReceipt(data));
 
     setOpenBottom(!openBottom);
   };
@@ -169,13 +167,13 @@ const LoanTransactionByUserPage = () => {
         handleOpenDialog={handleOpenDialog}
       />
 
-      {/* Drawer component for confirm the loan item */}
+      {/* Drawer component for confirm the loan item by borrower */}
       <ConfirmDrawerComponent
         openBottom={openBottom}
         closeDrawerBottom={closeDrawerBottom}
         itemReceived={itemReceived}
         setItemReceived={setItemReceived}
-        handleConfirm={handleConfirm}
+        handleConfirm={handleUserConfirmReceipt}
       />
 
       {/* Drawer componen for confirm returned the loan item */}

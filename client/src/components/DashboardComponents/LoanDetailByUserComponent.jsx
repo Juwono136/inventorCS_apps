@@ -64,6 +64,16 @@ const LoanDetailByUserComponent = ({
             </div>
           )}
 
+          {meetingInfoByLoanId?.status === "Approved" &&
+            !foundLoan?.borrow_confirmed_by && (
+              <div className="font-semibold text-xs w-full text-center px-3 py-2 rounded-lg bg-blue-100/20 border border-blue-gray-800">
+                <p className="text-blue-gray-800 italic">
+                  Your meeting request has been successfully approved. Please
+                  meet with our staff to pick up the loan item.
+                </p>
+              </div>
+            )}
+
           <Typography className="font-semibold text-xl bg-gradient-to-r from-blue-400 via-purple-500 to-red-500 bg-clip-text text-transparent animate-gradient">
             Loan of Equipment
           </Typography>
@@ -134,6 +144,16 @@ const LoanDetailByUserComponent = ({
                   onClick={handleOpenDialog}
                 >
                   Create request meeting
+                </Button>
+              )}
+
+            {!foundLoan?.borrow_confirmed_date_by_user &&
+              foundLoan?.borrow_confirmed_by && (
+                <Button
+                  className="bg-gradient-to-r from-purple-500 to-blue-800 text-xs py-2.5 px-6 rounded-lg capitalize"
+                  onClick={openDrawerBottom}
+                >
+                  Confirm Receipt Loan Item
                 </Button>
               )}
 

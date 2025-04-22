@@ -106,7 +106,7 @@ export const createMeeting = async (req, res) => {
         })
 
         // create notification to borrower
-        await createNotification(loanTransaction.borrower_id, loanTransaction._id, `Meeting request for transaction ID: ${loanTransaction.transaction_id} has been successfully created. Next, please meet with our staff soon to pick up your loan item.`)
+        await createNotification(loanTransaction.borrower_id, loanTransaction._id, `Meeting request for transaction ID: ${loanTransaction.transaction_id} has been successfully created. Please wait, your meeting request is currently being reviewed by our staff.`)
 
         // create notification to user staff
         const notificationPromises = uniquePrograms.map(async (program) => {
@@ -114,19 +114,19 @@ export const createMeeting = async (req, res) => {
             const staffIds = staffMembers.map(staff => staff._id);
 
             // Send email notifications to staff
-            // const staffEmails = staffMembers
-            //     .filter(staff => staff.personal_info.program === program)
-            //     .map(staff => staff.personal_info.email);
+            const staffEmails = staffMembers
+                .filter(staff => staff.personal_info.program === program)
+                .map(staff => staff.personal_info.email);
 
-            // if (staffEmails.length > 0) {
-            //     const url = `${CLIENT_URL}/user-loan/meeting-detail/${newMeeting._id}`;
-            //     const emailSubject = "New Meeting Request Created";
-            //     const emailTitle = "Meeting Request Notification";
-            //     const emailText = `A meeting request has been created for transaction ID: ${loanTransaction.transaction_id}. Please review the meeting details and prepare to meet with the borrower.`;
-            //     const btnEmailText = "View Meeting Details";
+            if (staffEmails.length > 0) {
+                const url = `${CLIENT_URL}/user-loan/meeting-detail/${newMeeting._id}`;
+                const emailSubject = "New Meeting Request Created";
+                const emailTitle = "Meeting Request Notification";
+                const emailText = `A meeting request has been created for transaction ID: ${loanTransaction.transaction_id}. Please review the meeting details and prepare to meet with the borrower.`;
+                const btnEmailText = "View Meeting Details";
 
-            //     sendMail(staffEmails, url, emailSubject, emailTitle, emailText, btnEmailText);
-            // }
+                sendMail(staffEmails, url, emailSubject, emailTitle, emailText, btnEmailText);
+            }
 
             if (staffIds.length > 0) {
                 return createNotification(
@@ -341,12 +341,11 @@ export const approveMeeting = async (req, res) => {
         }
 
         const staffInfo = await getUserById(req, meeting.loanTransaction_id.staff_id)
-        const staffName = staffInfo.personal_info.name
-
+        const staffEmail = staffInfo.personal_info.email
 
         meeting.status = "Approved";
         meeting.meeting_confirmed_date = new Date();
-        meeting.meeting_approved_by = staffName;
+        meeting.meeting_approved_by = staffEmail;
         await meeting.save();
 
         // create notification to borrower
@@ -357,15 +356,15 @@ export const approveMeeting = async (req, res) => {
         )
 
         // send email notification to borrower
-        // const borrowerInfo = await getUserById(req, meeting.loanTransaction_id.borrower_id)
-        // const borrowerEmail = borrowerInfo.personal_info.email
-        // const url = `${CLIENT_URL}/user-loan/detail/${meeting.loanTransaction_id._id}`
-        // const emailSubject = "Meeting Request Approved"
-        // const emailTitle = "Meeting Request Approved"
-        // const emailText = `Your meeting request has been approved for transaction ID: ${meeting.loanTransaction_id.transaction_id}. Please meet the staff on ${meeting.meeting_date.toDateString()} at ${meeting.meeting_time}.`
-        // const btnEmailText = "View Loan Transaction Info"
+        const borrowerInfo = await getUserById(req, meeting.loanTransaction_id.borrower_id)
+        const borrowerEmail = borrowerInfo.personal_info.email
+        const url = `${CLIENT_URL}/user-loan/detail/${meeting.loanTransaction_id._id}`
+        const emailSubject = "Meeting Request Approved"
+        const emailTitle = "Meeting Request Approved"
+        const emailText = `Your meeting request has been approved for transaction ID: ${meeting.loanTransaction_id.transaction_id}. Please meet the staff on ${meeting.meeting_date.toDateString()} at ${meeting.meeting_time}.`
+        const btnEmailText = "View Loan Transaction Info"
 
-        // sendMail(borrowerEmail, url, emailSubject, emailTitle, emailText, btnEmailText);
+        sendMail(borrowerEmail, url, emailSubject, emailTitle, emailText, btnEmailText);
 
         return res.json({ meeting });
     } catch (error) {

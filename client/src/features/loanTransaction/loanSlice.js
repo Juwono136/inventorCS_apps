@@ -121,11 +121,24 @@ export const updateStatusToReadyToPickup = createAsyncThunk('loan/ready_to_loan'
 })
 
 // staff confirm handover
-export const staffConfirmHandover = createAsyncThunk('loan/staffConfirmHandover', async ({ loanId, checkedItemIds, token }, thunkAPI) => {
+export const staffConfirmHandover = createAsyncThunk('loan/staff-confirm-handover', async ({ loanId, checkedItemIds, token }, thunkAPI) => {
     try {
         const tokenData = await tokenService.accessToken(token)
 
         return await loanService.staffConfirmHandover(loanId, checkedItemIds, tokenData)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
+// borrower confirms the loan items (update loan status to borrowed)
+export const userConfirmReceipt = createAsyncThunk('loan/user-confirm-receipt', async (data, thunkAPI) => {
+    try {
+        const tokenData = await tokenService.accessToken(data)
+
+        return await loanService.userConfirmReceipt(data, tokenData)
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
 
@@ -343,6 +356,21 @@ export const loanSlice = createSlice({
                 state.loanData = action.payload;
             })
             .addCase(staffConfirmHandover.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+
+            // borrower confirms the loan items builder
+            .addCase(userConfirmReceipt.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(userConfirmReceipt.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.loanData = action.payload;
+            })
+            .addCase(userConfirmReceipt.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;

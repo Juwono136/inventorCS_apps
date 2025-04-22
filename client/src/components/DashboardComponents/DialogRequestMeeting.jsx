@@ -130,7 +130,7 @@ const DialogRequestMeeting = ({
           {/* Display error message */}
           {isError && <AlertNotification message={message} type="error" />}
 
-          <div className="flex w-full flex-col gap-4">
+          <div className="flex w-full flex-col gap-3">
             <span className="text-[10px] text-red-600 italic font-semibold">
               *) Make sure you choose a meeting date on a weekday (Monday -
               Friday).
