@@ -66,7 +66,7 @@ const staffConfirmHandover = async (loanId, checkedItemIds, token) => {
     return response.data
 }
 
-// borrower confirms the loan items (update loan status to borrowed)
+// borrower confirms the loan items
 const userConfirmReceipt = async (data, token) => {
     const response = await axios.patch(API_URL + `/user_confirm_receipt/${data._id}`, data, {
         headers: { Authorization: `Bearer ${token}` }
