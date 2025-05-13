@@ -26,11 +26,11 @@ let months = [
 export const getDay = (timestamp) => {
   let date = new Date(timestamp);
 
-  return `${date.getDate()} ${months[date.getMonth()]}`;
+  return `${months[date.getMonth()]} ${date.getDate()} `;
 };
 
 export const getFullDay = (timestamp) => {
   let date = new Date(timestamp);
 
-  return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+  return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 };

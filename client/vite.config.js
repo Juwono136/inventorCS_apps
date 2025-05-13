@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => {
         "/api": {
           target: mode === "development"
             ? "http://localhost:5000"
-            : "https://csbi-users.portproject.my.id",
+            : "https://csbi-users.csbihub.id",
           changeOrigin: true,
           secure: mode !== "development",
           ws: true,
@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
         "/service": {
           target: mode === "development"
             ? "http://localhost:5001"
-            : "https://inventorcs-server.portproject.my.id",
+            : "https://inventorcs-server.csbihub.id",
           changeOrigin: true,
           secure: mode !== "development",
           ws: true,

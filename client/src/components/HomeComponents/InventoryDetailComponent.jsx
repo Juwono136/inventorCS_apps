@@ -98,6 +98,10 @@ const InventoryDetailComponent = () => {
             Serial Number: {inventoryById.serial_number}
           </p>
 
+          <p className="text-xs text-blue-gray-800 font-semibold">
+            Is Consumable: {inventoryById.is_consumable ? "Yes" : "No"}
+          </p>
+
           <div className="flex flex-wrap gap-1.5 w-full">
             <div className="inline-block px-3 py-1 border-red-800 border-2 rounded-full">
               <p className="text-xs text-red-700 font-base">

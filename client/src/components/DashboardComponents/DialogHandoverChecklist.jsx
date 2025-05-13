@@ -49,6 +49,7 @@ const DialogHandoverChecklist = ({
     // send the array from checked item id
     handleConfirm(loanData?._id, Array.from(checkedItems));
   };
+
   return (
     <Dialog open={open} size="md">
       <DialogHeader className="justify-between">
@@ -108,7 +109,7 @@ const DialogHandoverChecklist = ({
           variant="gradient"
           className="bg-gradient-to-r from-indigo-500 to-green-600 text-xs py-3 px-6 rounded-lg capitalize"
           onClick={onConfirm}
-          disabled={checkedItems.size === 0} // Nonaktifkan jika tidak ada item yang dipilih
+          disabled={checkedItems.size === 0}
         >
           Confirm ({checkedItems.size} items)
         </Button>

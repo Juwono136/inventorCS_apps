@@ -146,25 +146,12 @@ export const userConfirmReceipt = createAsyncThunk('loan/user-confirm-receipt', 
     }
 })
 
-// update loan status to borrowed
-export const updateStatusToBorrowed = createAsyncThunk('loan/borrowed-status', async (data, thunkAPI) => {
+// staff confirms receiving returned loan items
+export const staffConfirmReturn = createAsyncThunk('loan/staff-confirm-return', async ({ loanId, checkedReturnedItemIds, loan_note, token }, thunkAPI) => {
     try {
-        const token = await tokenService.accessToken(data)
+        const tokenData = await tokenService.accessToken(token)
 
-        return await loanService.updateStatusToBorrowed(data, token)
-    } catch (error) {
-        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
-
-        return thunkAPI.rejectWithValue(message)
-    }
-})
-
-// confirm borrowed loan item by borrower
-export const confirmReceiveByBorrower = createAsyncThunk('/loan/confirm-received', async (data, thunkAPI) => {
-    try {
-        const token = await tokenService.accessToken(data)
-
-        return await loanService.confirmReceiveByBorrower(data, token)
+        return await loanService.staffConfirmReturn(loanId, checkedReturnedItemIds, loan_note, tokenData)
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
 
@@ -173,24 +160,11 @@ export const confirmReceiveByBorrower = createAsyncThunk('/loan/confirm-received
 })
 
 // confirm loan item has already returned by borrower
-export const confirmReturnedByBorrower = createAsyncThunk('/loan/confirm-returned', async (data, thunkAPI) => {
+export const confirmReturnedByBorrower = createAsyncThunk('/loan/user-confirm-returned', async (data, thunkAPI) => {
     try {
-        const token = await tokenService.accessToken(data)
+        const tokenData = await tokenService.accessToken(data)
 
-        return await loanService.confirmReturnedByBorrower(data, token)
-    } catch (error) {
-        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
-
-        return thunkAPI.rejectWithValue(message)
-    }
-})
-
-// update loan status to returned
-export const updateStatusToReturned = createAsyncThunk('loan/returned-status', async (data, thunkAPI) => {
-    try {
-        const token = await tokenService.accessToken(data)
-
-        return await loanService.updateStatusToReturned(data, token)
+        return await loanService.confirmReturnedByBorrower(data, tokenData)
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
 
@@ -376,31 +350,16 @@ export const loanSlice = createSlice({
                 state.message = action.payload;
             })
 
-            // update loan status to borrowed builder
-            .addCase(updateStatusToBorrowed.pending, (state) => {
+            // staff confirms receiving returned loan items builder
+            .addCase(staffConfirmReturn.pending, (state) => {
                 state.isLoading = true;
             })
-            .addCase(updateStatusToBorrowed.fulfilled, (state, action) => {
+            .addCase(staffConfirmReturn.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.isSuccess = true;
                 state.loanData = action.payload;
             })
-            .addCase(updateStatusToBorrowed.rejected, (state, action) => {
-                state.isLoading = false;
-                state.isError = true;
-                state.message = action.payload;
-            })
-
-            // confirm borrowed loan item by borrower builder
-            .addCase(confirmReceiveByBorrower.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(confirmReceiveByBorrower.fulfilled, (state, action) => {
-                state.isLoading = false;
-                state.isSuccess = true;
-                state.loanData = action.payload;
-            })
-            .addCase(confirmReceiveByBorrower.rejected, (state, action) => {
+            .addCase(staffConfirmReturn.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;
@@ -416,21 +375,6 @@ export const loanSlice = createSlice({
                 state.loanData = action.payload;
             })
             .addCase(confirmReturnedByBorrower.rejected, (state, action) => {
-                state.isLoading = false;
-                state.isError = true;
-                state.message = action.payload;
-            })
-
-            // update loan status to returned builder
-            .addCase(updateStatusToReturned.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(updateStatusToReturned.fulfilled, (state, action) => {
-                state.isLoading = false;
-                state.isSuccess = true;
-                state.loanData = action.payload;
-            })
-            .addCase(updateStatusToReturned.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;

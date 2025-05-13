@@ -86,6 +86,7 @@ export const processAutoCancel = async (loanTransactionId) => {
         loanTransaction.loan_status = "Cancelled";
         await loanTransaction.save();
 
+        // create notification for borrower
         await createNotification(
             loanTransaction.borrower_id,
             loanTransaction._id,
@@ -346,8 +347,11 @@ export const staffConfirmHandover = async (req, res) => {
         }
 
         // handover item checklist
+        const borrowedItems = Array.isArray(loanTransaction.borrowed_item)
+            ? loanTransaction.borrowed_item
+            : [];
+        const itemIdsInTransaction = borrowedItems.map(item => item._id.toString());
         let allItemsChecked = true;
-        const itemIdsInTransaction = loanTransaction.borrowed_item.map(item => item._id.toString());
 
         // validate if all checkedItemIds exist in the transaction
         for (const checkedId of checkedItemIds) {
@@ -411,7 +415,10 @@ export const userConfirmReceipt = async (req, res) => {
             return res.status(400).json({ message: "You have already confirmed receipt of these loan items." });
         }
 
-        const isHandoverChecklistComplete = loanTransaction.borrowed_item.every(item => item.staff_checked_handover === true);
+        const borrowedItems = Array.isArray(loanTransaction.borrowed_item)
+            ? loanTransaction.borrowed_item
+            : [];
+        const isHandoverChecklistComplete = borrowedItems.every(item => item.staff_checked_handover === true);
         if (!isHandoverChecklistComplete) {
             return res.status(400).json({ message: "Staff handover checklist is incomplete. Cannot proceed with confirmation." });
         }
@@ -453,377 +460,39 @@ export const userConfirmReceipt = async (req, res) => {
 
         switch (loanTransaction.loan_status) {
             case "Consumed":
-                staffMessage = `Loan transaction with ID: ${loanTransaction.transaction_id} has been updated to "Consumed" by ${req.user.personal_info.name}. All items are consumable.`;
-                borrowerMessage = `Your loan request with ID: ${loanTransaction.transaction_id} has been updated to "Consumed". All items are consumable.`;
+                staffMessage = `The loan item with transaction iD: ${loanTransaction.transaction_id} has been successfully confirmed and received by the borrower. Loan transaction updated to "Consumed" by ${req.user.personal_info.name}. All items are consumable.`;
+                borrowerMessage = `The loan transaction has been successfully received. Your loan request with ID: ${loanTransaction.transaction_id} has been updated to "Consumed". All items are consumable.`;
                 break;
             case "Partially Consumed":
-                staffMessage = `Loan transaction with ID: ${loanTransaction.transaction_id} has been updated to "Partially Consumed" by ${req.user.personal_info.name}. Some items are consumable.`;
-                borrowerMessage = `Your loan request with ID: ${loanTransaction.transaction_id} has been updated to "Partially Consumed". Some items are consumable.`;
+                staffMessage = `The loan item with transaction iD: ${loanTransaction.transaction_id} has been successfully confirmed and received by the borrower. Loan transaction updated to "Partially Consumed" by ${req.user.personal_info.name}. Some items are consumable.`;
+                borrowerMessage = `The loan transaction has been successfully received. Your loan request with ID: ${loanTransaction.transaction_id} has been updated to "Partially Consumed". Some items are consumable.`;
                 break;
             case "Borrowed":
-                staffMessage = `Loan transaction with ID: ${loanTransaction.transaction_id} has been updated to "Borrowed" by ${req.user.personal_info.name}.`;
-                borrowerMessage = `Your Loan request with ID: ${loanTransaction.transaction_id} has been updated to "Borrowed". All items are available for borrowing.`;
+                staffMessage = `The loan item with transaction iD: ${loanTransaction.transaction_id} has been successfully confirmed and received by the borrower. Loan transaction updated to "Borrowed" by ${req.user.personal_info.name}.`;
+                borrowerMessage = `The loan transaction has been successfully received. Your Loan request with ID: ${loanTransaction.transaction_id} has been updated to "Borrowed".`;
                 break;
             default:
                 borrowerMessage = `Your loan request with ID: ${loanTransaction.transaction_id} status has been updated.`;
                 staffMessage = `Loan transaction with ID: ${loanTransaction.transaction_id} status has been updated.`;
         }
 
-        // Send notification to user (borrower)
-        try {
-            await createNotification([loanTransaction.borrower_id], loanTransaction._id, borrowerMessage);
-        } catch (notificationError) {
-            console.error(`Failed to create notification for borrower: ${notificationError.message}`);
-        }
+        // send notification to user staff by program
+        const itemsByProgram = groupItemsByProgram(borrowedItems);
 
-        const staffMembers = await getStaffs(req);
-        const staffIds = staffMembers.map(staff => staff._id);
+        const staffNotificationPromises = Object.entries(itemsByProgram).map(async ([program, items]) => {
+            const staffMembers = await getStaffsForProgram(req, program);
+            const staffIds = staffMembers.map(staff => staff._id);
 
-        try {
-            // Send notification to staff members
-            await createNotification(staffIds, loanTransaction._id, staffMessage);
-        } catch (notificationError) {
-            console.error(`Failed to create notification for staff members: ${notificationError.message}`);
-        }
-
-        // send email notification to borrower
-        const borrowerInfo = await getUserById(req, loanTransaction.borrower_id);
-        const borrowerEmail = borrowerInfo.personal_info.email
-        const url = `${CLIENT_URL}/user-loan/detail/${loanTransaction._id}`
-        const emailSubject = "loan Item Receipt"
-        const emailTitle = "Loan Item Successfully Borrowed"
-        const emailText = `Hi ${borrowerInfo.personal_info.name}, You have successfully borrowed the loan item (${loanTransaction.transaction_id}). Please view the loan item details through the link below. 😊👇`
-        const btnEmailText = "Your Loan Item Detail"
-
-        sendMail(borrowerEmail, url, emailSubject, emailTitle, emailText, btnEmailText);
-
-        res.json({ message: "Confirmation of receiving loan item successfully.", loanTransaction });
-    } catch (error) {
-        return res.status(500).json({ message: error.message });
-    }
-}
-
-// update loan status to borrowed
-export const updateStatusToBorrowed = async (req, res) => {
-    try {
-        const loanTransactionId = req.params.id;
-
-        const loanTransaction = await LoanTransactions.findById(loanTransactionId);
-
-        if (!loanTransaction) {
-            return res.status(404).json({ message: "Loan transaction not found." });
-        }
-
-        if (loanTransaction.loan_status !== "Ready to Pickup") {
-            return res.status(400).json({ message: "Transaction is not in Ready to Pickup status." });
-        }
-
-        let allItemsConsumable = true;
-        let hasConsumableItem = false;
-
-        for (const item of loanTransaction.borrowed_item) {
-            const inventory = await Inventories.findById(item.inventory_id);
-
-            if (inventory.draft === true) {
-                return res.status(400).json({ message: `Cannot borrow item ${inventory.asset_name}. Inventory is in draft status.` });
+            try {
+                // Send notification to staff members based on their program
+                await createNotification(staffIds, loanTransaction._id, staffMessage);
+            } catch (notificationError) {
+                console.error(`Failed to create notification for staff members: ${notificationError.message}`);
             }
+        });
 
-            if (item.is_consumable) {
-                hasConsumableItem = true;
-            } else {
-                allItemsConsumable = false;
-            }
-
-            // inventory.total_items -= item.quantity;
-            await inventory.save();
-        }
-
-        if (allItemsConsumable) {
-            loanTransaction.loan_status = "Consumed";
-        } else if (hasConsumableItem) {
-            loanTransaction.loan_status = "Partially Consumed";
-        } else {
-            loanTransaction.loan_status = "Borrowed";
-        }
-
-        loanTransaction.staff_id = req.user._id;
-        await loanTransaction.save();
-
-        // Determine the notification message based on the loan status
-        let borrowerMessage;
-        let staffMessage;
-
-        switch (loanTransaction.loan_status) {
-            case "Consumed":
-                staffMessage = `Loan transaction with ID: ${loanTransaction._id} has been updated to "Consumed" by ${req.user.personal_info.name}. All items are consumable.`;
-                borrowerMessage = `Your loan request with ID: ${loanTransaction._id} has been updated to "Consumed" by ${req.user.personal_info.name}. All items are consumable.`;
-                break;
-            case "Partially Consumed":
-                staffMessage = `Loan transaction with ID: ${loanTransaction._id} has been updated to "Partially Consumed" by ${req.user.personal_info.name}. Some items are consumable.`;
-                borrowerMessage = `Your loan request with ID: ${loanTransaction._id} has been updated to "Partially Consumed" by ${req.user.personal_info.name}. Some items are consumable.`;
-                break;
-            case "Borrowed":
-                staffMessage = `Loan transaction with ID: ${loanTransaction._id} has been updated to "Borrowed" by ${req.user.personal_info.name}.`;
-                borrowerMessage = `Your Loan request with ID: ${loanTransaction._id} has been updated to "Borrowed" by ${req.user.personal_info.name}. All items are available for borrowing.`;
-                break;
-            default:
-                borrowerMessage = `Your loan request with ID: ${loanTransaction._id} status has been updated.`;
-                staffMessage = `Loan transaction with ID: ${loanTransaction._id} status has been updated.`;
-        }
-
-        // Send notification to user (borrower)
-        try {
-            await createNotification([loanTransaction.borrower_id], loanTransaction._id, borrowerMessage);
-        } catch (notificationError) {
-            console.error(`Failed to create notification for borrower: ${notificationError.message}`);
-        }
-
-        const staffMembers = await getStaffs(req);
-        const staffIds = staffMembers.map(staff => staff._id);
-
-        try {
-            // Send notification to staff members
-            await createNotification(staffIds, loanTransaction._id, staffMessage);
-        } catch (notificationError) {
-            console.error(`Failed to create notification for staff members: ${notificationError.message}`);
-        }
-
-        // send email notification to borrower
-        const borrowerInfo = await getUserById(req, loanTransaction.borrower_id);
-        const borrowerEmail = borrowerInfo.personal_info.email
-        const url = `${CLIENT_URL}/user-loan/detail/${loanTransaction._id}`
-        const emailSubject = "Your Loan status updated"
-        const emailTitle = "Loan Item is updated"
-        const emailText = `Hi ${borrowerInfo.personal_info.name}, Have you received your loan item with transaction ID: ${loanTransaction._id} from our staff? Please confirm through the link below. 😊👇`
-        const btnEmailText = "Confirm loan item"
-
-        sendMail(borrowerEmail, url, emailSubject, emailTitle, emailText, btnEmailText);
-
-        res.json({ message: "Loan status updated and ready to borrow", loanTransaction });
-
-    } catch (error) {
-        return res.status(500).json({ message: error.message });
-    }
-};
-
-// confirm borrowed loan item by borrower
-export const confirmReceiveByBorrower = async (req, res) => {
-    try {
-        const loanTransactionId = req.params.id
-        const { item_received } = req.body; //boolean
-        const loanTransaction = await LoanTransactions.findById(loanTransactionId)
-
-        if (!loanTransaction) {
-            return res.status(404).json({ message: "Loan transaction not found." });
-        }
-
-        if (loanTransaction.loan_status !== "Borrowed" && loanTransaction.loan_status !== "Partially Consumed" && loanTransaction.loan_status !== "Consumed") {
-            return res.status(400).json({ message: "Transaction is not in Borrowed/Consumed/Partially Consumed status. Please contact our staff." });
-        }
-
-        if (loanTransaction.borrower_confirmed_date) {
-            return res.status(400).json({ message: "You have already confirmed the receipt of your loan items." });
-        }
-
-        // Get borrower and staff details
-        const borrowerInfo = await getUserById(req, loanTransaction.borrower_id);
-        const borrowerEmail = borrowerInfo.personal_info.email
-
-        const staffMembers = await getStaffs(req);
-        const staffIds = staffMembers.map(staff => staff._id);
-
-        const url = `${CLIENT_URL}/user-loan/detail/${loanTransaction._id}`
-
-        if (item_received) {
-            loanTransaction.borrower_confirmed_date = new Date()
-            await loanTransaction.save()
-
-            // send notification to borrower
-            await createNotification([loanTransaction.borrower_id], loanTransaction._id, `Hi ${borrowerInfo.personal_info.name}, Your loan transaction with ID: ${loanTransaction._id} has already confirmed at ${new Date(loanTransaction.borrower_confirmed_date).toLocaleString()}.`)
-
-            // send email notification to borrower (received)
-            const emailSubject = "Loan Item Confirmation Updated"
-            const emailTitle = "Your loan item has already confirmed"
-            const emailText = `Hi ${borrowerInfo.personal_info.name}, Loan transaction ID: ${loanTransaction._id} has been confirmed as received at ${new Date(loanTransaction.borrower_confirmed_date).toLocaleString()}.`
-            const btnEmailText = "View Loan Item Details"
-
-            sendMail(borrowerEmail, url, emailSubject, emailTitle, emailText, btnEmailText)
-
-            // send notification to staff (received)
-            await createNotification(staffIds, loanTransaction._id, `Loan Transaction with ID: ${loanTransaction.id} has already confirmed by ${borrowerInfo.personal_info.name} at ${new Date(loanTransaction.borrower_confirmed_date).toLocaleString()}.`);
-
-            return res.status(200).json({
-                message: "Loan items successfully confirmed as received by borrower.",
-                loanTransaction
-            });
-        } else {
-            loanTransaction.loan_status = "Ready to Pickup";
-            loanTransaction.borrower_confirmed_date = null;
-
-            await loanTransaction.save();
-
-            // send notification to borrower (not received)
-            await createNotification([loanTransaction.borrower_id], loanTransaction._id, `Hi ${borrowerInfo.personal_info.name}, You have confirmed that you have not received the loan item with transaction ID: ${loanTransaction._id}. Please confirm again with our staff.`)
-
-            // send email notification to borrower (not received)
-            const emailSubject = "Loan Item Not Received"
-            const emailTitle = "Loan Item Not Received"
-            const emailText = `Hi ${borrowerInfo.personal_info.name}, Your Loan transaction ID: ${loanTransaction._id} is marked as not received. Please check the loan transaction or contact our staff.`
-            const btnEmailText = "View Loan Item Details"
-
-            sendMail(borrowerEmail, url, emailSubject, emailTitle, emailText, btnEmailText)
-
-            // send notification to staff (not received)
-            await createNotification(staffIds, loanTransaction._id, `Loan Transaction by ${borrowerInfo.personal_info.name} with ID: ${loanTransaction.id} is marked as 'not received'. Loan status set back to 'Ready to Pickup'.`);
-
-            return res.status(200).json({
-                message: "Loan items are not received. Loan status set back to 'Ready to Pickup'.",
-                loanTransaction
-            });
-        }
-    } catch (error) {
-        return res.status(500).json({ message: error.message });
-    }
-}
-
-export const confirmReturnedByBorrower = async (req, res) => {
-    try {
-        const loanTransactionId = req.params.id
-        const { item_returned } = req.body; //boolean
-        const loanTransaction = await LoanTransactions.findById(loanTransactionId)
-
-        if (!loanTransaction) {
-            return res.status(404).json({ message: "Loan transaction not found." });
-        }
-
-        if (loanTransaction.loan_status !== "Returned") {
-            return res.status(400).json({ message: "Transaction is not in Returned status. Please contact our staff." });
-        }
-
-        if (loanTransaction.return_date) {
-            return res.status(400).json({ message: "You have already confirmed returned to the loan item." })
-        }
-
-        // Get borrower and staff details
-        const borrowerInfo = await getUserById(req, loanTransaction.borrower_id);
-        const borrowerEmail = borrowerInfo.personal_info.email
-
-        const staffMembers = await getStaffs(req);
-        const staffIds = staffMembers.map(staff => staff._id);
-
-        const url = `${CLIENT_URL}/user-loan/detail/${loanTransaction._id}`
-
-        if (item_returned) {
-            loanTransaction.return_date = new Date();
-            await loanTransaction.save();
-
-            // send notification to borrower
-            await createNotification([loanTransaction.borrower_id], loanTransaction._id, `Hi ${borrowerInfo.personal_info.name}, Your loan transaction with ID: ${loanTransaction._id} has already confirmed as "Returned" at ${new Date(loanTransaction.borrower_confirmed_date).toLocaleString()}.`)
-
-            // send email notification to borrower (received)
-            const emailSubject = "Loan Item Update to Returned"
-            const emailTitle = "Your loan item has already returned"
-            const emailText = `Hi ${borrowerInfo.personal_info.name}, Loan transaction ID: ${loanTransaction._id} has been confirmed as 'Returned' at ${loanTransaction.borrower_confirmed_date}. If you want to borrow the item again, please visit our website. Thank you 😃👍.`
-            const btnEmailText = "View Loan Item Details"
-
-            sendMail(borrowerEmail, url, emailSubject, emailTitle, emailText, btnEmailText)
-
-            // send notification to staff (received)
-            await createNotification(staffIds, loanTransaction._id, `Loan Transaction with ID: ${loanTransaction.id} has already confirmed as 'Returned' by ${borrowerInfo.personal_info.name} at ${new Date(loanTransaction.borrower_confirmed_date).toLocaleString()}.`);
-
-            return res.status(200).json({
-                message: "Loan items successfully confirmed as Returned by borrower.",
-                loanTransaction
-            });
-        } else {
-            let allItemsConsumable = true;
-            let hasConsumableItem = false;
-
-            for (const item of loanTransaction.borrowed_item) {
-                const inventory = await Inventories.findById(item.inventory_id);
-
-                if (item.is_consumable) {
-                    hasConsumableItem = true;
-                } else {
-                    allItemsConsumable = false;
-                }
-
-                inventory.total_items -= item.quantity;
-                await inventory.save();
-            }
-
-            if (allItemsConsumable) {
-                loanTransaction.loan_status = "Consumed";
-            } else if (hasConsumableItem) {
-                loanTransaction.loan_status = "Partially Consumed";
-            } else {
-                loanTransaction.loan_status = "Borrowed";
-            }
-
-            loanTransaction.return_date = null;
-            await loanTransaction.save();
-
-            // send notification to borrower (not received)
-            await createNotification([loanTransaction.borrower_id], loanTransaction._id, `Hi ${borrowerInfo.personal_info.name}, You have confirmed that you have not returned the loan item with transaction ID: ${loanTransaction._id}.`)
-
-            // send email notification to borrower (not received)
-            const emailSubject = "Loan Item Not Returned"
-            const emailTitle = "Loan Item Not Returned by borrower"
-            const emailText = `Hi ${borrowerInfo.personal_info.name}, Your Loan transaction ID: ${loanTransaction._id} is marked as not returned. Please check the loan transaction or contact our staff.`
-            const btnEmailText = "View Loan Item Details"
-
-            sendMail(borrowerEmail, url, emailSubject, emailTitle, emailText, btnEmailText)
-
-            // send notification to staff (not received)
-            await createNotification(staffIds, loanTransaction._id, `Loan Transaction by ${borrowerInfo.personal_info.name} with ID: ${loanTransaction.id} is marked as 'not returned'. Loan status set back to ${loanTransaction.loan_status}.`);
-
-            return res.status(200).json({
-                message: `Loan items are not confirmed. Loan status set back to ${loanTransaction.loan_status}.`,
-                loanTransaction
-            });
-        }
-    } catch (error) {
-        return res.status(500).json({ message: error.message });
-    }
-}
-
-// update loan status to returned
-export const updateStatusToReturned = async (req, res) => {
-    try {
-        const loanTransactionId = req.params.id;
-        const loanTransaction = await LoanTransactions.findById(loanTransactionId);
-
-        if (!loanTransaction) {
-            return res.status(404).json({ message: "Loan transaction not found." });
-        }
-
-        if (loanTransaction.loan_status !== "Borrowed" && loanTransaction.loan_status !== "Partially Consumed") {
-            return res.status(400).json({ message: "Transaction is not in a valid status to be returned." });
-        }
-
-        if (loanTransaction.loan_status === "Returned") {
-            return res.status(400).json({ message: "You have already changed the loan status to Returned" })
-        }
-
-        if (loanTransaction.borrower_confirmed_date === null) {
-            return res.status(400).json({ message: "Borrower must confirm the loan item first." });
-        }
-
-        // Restore inventory for each item in the loan
-        for (const item of loanTransaction.borrowed_item) {
-            const inventory = await Inventories.findById(item.inventory_id);
-            inventory.total_items += item.quantity;
-            await inventory.save();
-        }
-
-        loanTransaction.loan_status = "Returned";
-        loanTransaction.staff_id = req.user._id;
-
-        await loanTransaction.save();
-
-        // Define notification messages
-        const borrowerMessage = `Your loan with ID: ${loanTransaction._id} has been updated to "Returned" by ${req.user.personal_info.name}.`;
-        const staffMessage = `Loan transaction with ID: ${loanTransaction._id} has been marked as "Returned" by ${req.user.personal_info.name}.`;
+        // Wait for all notification promises to complete
+        await Promise.all(staffNotificationPromises);
 
         // Send notification to borrower
         try {
@@ -832,23 +501,240 @@ export const updateStatusToReturned = async (req, res) => {
             console.error(`Failed to create notification for borrower: ${notificationError.message}`);
         }
 
-        // Send notification to all staff members
-        const staffMembers = await getStaffs(req);
-        const staffIds = staffMembers.map(staff => staff._id);
+        // send email notification to borrower
+        const borrowerInfo = await getUserById(req, loanTransaction.borrower_id);
+        const borrowerEmail = borrowerInfo.personal_info.email
+        const url = `${CLIENT_URL}/user-loan/detail/${loanTransaction._id}`
+        const emailSubject = "loan Item Receipt"
+        const emailTitle = "Loan Item Successfully Borrowed"
+        const btnEmailText = "Your Loan Item Detail"
 
-        try {
-            // Send notification to staff members
-            await createNotification(staffIds, loanTransaction._id, staffMessage);
-        } catch (notificationError) {
-            console.error(`Failed to create notification for staff members: ${notificationError.message}`);
+        if (loanTransaction.loan_status === "Consumed") {
+            const emailText = `Hi ${borrowerInfo.personal_info.name}, the loan transaction has been successfully received. Your loan item status with ID: ${loanTransaction.transaction_id} is "Consumed", So, you don't need to returned that item. Thank you for borrowing the loan items through inventorCS.`
+
+            sendMail(borrowerEmail, url, emailSubject, emailTitle, emailText, btnEmailText);
+        } else {
+            const emailText = `Hi ${borrowerInfo.personal_info.name}, You have successfully borrowed the loan item (${loanTransaction.transaction_id}). Please view the loan item details through the link below. 😊👇`
+
+            sendMail(borrowerEmail, url, emailSubject, emailTitle, emailText, btnEmailText);
         }
 
-        res.json({ message: "Loan status updated to returned.", loanTransaction });
+        res.json({ message: "Confirmation of receiving loan item successfully.", loanTransaction });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+// staff confirms receiving the returned item
+export const staffConfirmReturn = async (req, res) => {
+    try {
+        const loanTransactionId = req.params.id;
+        const { checkedReturnedItemIds, loan_note } = req.body;
+
+        // validate checklist input
+        if (checkedReturnedItemIds && !Array.isArray(checkedReturnedItemIds)) {
+            return res.status(400).json({ message: "Return checklist data must be an array if provided." });
+        }
+
+        if (!loan_note) {
+            return res.status(400).json({ message: "Loan Note cannot be blank." })
+        }
+
+        const loanTransaction = await LoanTransactions.findById(loanTransactionId);
+
+        if (!loanTransaction) {
+            return res.status(404).json({ message: "Loan transaction not found." });
+        }
+
+        // validate status
+        const validStatuses = ["Borrowed", "Partially Consumed"];
+        if (!validStatuses.includes(loanTransaction.loan_status)) {
+            return res.status(400).json({ message: `Current status is "${loanTransaction.loan_status}", cannot process return.` });
+        }
+        if (loanTransaction.returned_confirmed_date_by_staff) {
+            return res.status(400).json({ message: "Return already confirmed by staff." });
+        }
+
+        // determine returnable items
+        const borrowedItems = Array.isArray(loanTransaction.borrowed_item)
+            ? loanTransaction.borrowed_item
+            : [];
+
+        const returnableItems = borrowedItems.filter(item => !item.is_consumable);
+        let allChecked = true;
+
+        if (returnableItems.length > 0) {
+            if (!checkedReturnedItemIds || checkedReturnedItemIds.length === 0) {
+                return res.status(400).json({ message: "Return checklist items are required as there are items to return." });
+            }
+            const returnableIds = returnableItems.map(i => i._id.toString());
+
+            // validate all provided IDs
+            for (const id of checkedReturnedItemIds) {
+                if (!returnableIds.includes(id)) {
+                    return res.status(400).json({ message: `Checklist ID '${id}' is invalid.` });
+                }
+            }
+
+            // mark checked
+            loanTransaction.borrowed_item = loanTransaction.borrowed_item.map(item => {
+                if (!item.is_consumable && checkedReturnedItemIds.includes(item._id.toString())) {
+                    return { ...item, staff_checked_return: true };
+                }
+                return item;
+            });
+
+            // verify all returned items checked
+            returnableItems.forEach(item => {
+                const updated = loanTransaction.borrowed_item.find(i => i._id.equals(item._id));
+                if (!updated || !updated.staff_checked_return) allChecked = false;
+            });
+
+            if (!allChecked) {
+                return res.status(400).json({ message: "Not all items have been checked." });
+            }
+        }
+
+        // create notification and email to borrower
+        const borrowerInfo = await getUserById(req, loanTransaction.borrower_id);
+        const borrowerName = borrowerInfo.personal_info.name;
+        // const borrowerEmail = borrowerInfo.personal_info.email;
+        // const url = `${CLIENT_URL}/user-loan/detail/${loanTransaction._id}`;
+        const borrowerMessage = `Hi ${borrowerName}, your returned items for transaction ID: ${loanTransaction.transaction_id} have been processed and confirmed by our staff. Please confirm the item return process to complete the loan transaction.`;
+
+        await createNotification([loanTransaction.borrower_id], loanTransaction._id, borrowerMessage);
+
+        // sendMail(
+        //     borrowerEmail,
+        //     url,
+        //     "Loan Item Return Confirmation",
+        //     "Your returned items have been confirmed by staff",
+        //     borrowerMessage,
+        //     "Confirm Loan Item"
+        // );
+
+        const staffInfo = await getUserById(req, req.user._id)
+        const stafffEmail = staffInfo.personal_info.email
+
+        // create notification for user staff
+        const itemsByProgram = groupItemsByProgram(loanTransaction.borrowed_item);
+        const staffNotificationPromises = Object.entries(itemsByProgram).map(async ([program, items]) => {
+            const staffMembers = await getStaffsForProgram(req, program);
+            const staffIds = staffMembers.map(staff => staff._id);
+
+            const staffMessage = `Return for loan transaction ID: ${loanTransaction.transaction_id} has been checked and confirmed by ${staffInfo.personal_info.name}.`;
+
+            try {
+                // Send notification to staff members based on their program
+                await createNotification(staffIds, loanTransaction._id, staffMessage);
+            } catch (notificationError) {
+                console.error(`Failed to create notification for staff members: ${notificationError.message}`);
+            }
+        });
+
+        // Wait for all notification promises to complete
+        await Promise.all(staffNotificationPromises);
+
+        // save checklist and set staff confirmation date
+        loanTransaction.returned_confirmed_date_by_staff = new Date();
+        loanTransaction.returned_confirmed_by = stafffEmail;
+        loanTransaction.loan_note = loan_note;
+        await loanTransaction.save();
+
+        return res.json({ loanTransaction })
 
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
-};
+}
+
+// borrower confirms that the return process is complete
+export const confirmReturnedByBorrower = async (req, res) => {
+    try {
+        const loanTransactionId = req.params.id;
+
+        const loanTransaction = await LoanTransactions.findById(loanTransactionId)
+
+        if (!loanTransaction) {
+            return res.status(404).json({ message: "Loan transaction not found." });
+        }
+
+        const validReturnStatuses = ["Borrowed", "Partially Consumed"];
+        if (!validReturnStatuses.includes(loanTransaction.loan_status)) {
+            return res.status(400).json({ message: `Current transaction status is "${loanTransaction.loan_status}", cannot confirm return.` });
+        }
+        if (!loanTransaction.returned_confirmed_date_by_staff) {
+            return res.status(400).json({ message: "Staff has not yet confirmed receiving the returned items. Please wait for staff confirmation." });
+        }
+        if (loanTransaction.returned_confirmed_date_by_user || loanTransaction.return_date) {
+            return res.status(400).json({ message: "You have already confirmed the return of these items." });
+        }
+
+        const borrowedItems = loanTransaction.borrowed_item.filter(item => !item.is_consumable);
+
+        for (const item of borrowedItems) {
+            const inventory = await Inventories.findById(item.inventory_id);
+
+            if (!inventory) {
+                return res.status(404).json({ message: `Inventory item ${item.inventory_id} not found.` });
+            }
+
+            if (inventory.draft === true) {
+                return res.status(400).json({ message: `Cannot returned. Item ${inventory.asset_name} is in draft status.` });
+            }
+
+            inventory.total_items += item.quantity;
+            await inventory.save();
+        }
+
+        // create notification and email to borrower
+        const borrowerInfo = await getUserById(req, loanTransaction.borrower_id);
+        const borrowerName = borrowerInfo.personal_info.name;
+        const borrowerEmail = borrowerInfo.personal_info.email;
+        const url = `${CLIENT_URL}/user-loan/detail/${loanTransaction._id}`;
+        const borrowerMessage = `Hi ${borrowerName}, your returned items for transaction ID: ${loanTransaction.transaction_id} have been successfully received by our staff. Thank you for borrowing and returning the loan items through inventorCS.`;
+
+        await createNotification([loanTransaction.borrower_id], loanTransaction._id, borrowerMessage);
+
+        sendMail(
+            borrowerEmail,
+            url,
+            "The loan items have been returned.",
+            "Thank you for confirming the return",
+            borrowerMessage,
+            "See loan item details"
+        );
+
+        // create notification for user staff
+        const itemsByProgram = groupItemsByProgram(loanTransaction.borrowed_item);
+        const staffNotificationPromises = Object.entries(itemsByProgram).map(async ([program, items]) => {
+            const staffMembers = await getStaffsForProgram(req, program);
+            const staffIds = staffMembers.map(staff => staff._id);
+
+            const staffMessage = `Loan transaction with ID: ${loanTransaction.transaction_id} has been successfully returned by ${borrowerName}. Loan Transaction Complete.`;
+
+            try {
+                // Send notification to staff members based on their program
+                await createNotification(staffIds, loanTransaction._id, staffMessage);
+            } catch (notificationError) {
+                console.error(`Failed to create notification for staff members: ${notificationError.message}`);
+            }
+        });
+
+        // Wait for all notification promises to complete
+        await Promise.all(staffNotificationPromises);
+
+        loanTransaction.loan_status = "Returned";
+        loanTransaction.returned_confirmed_date_by_user = new Date();
+        loanTransaction.return_date = new Date();
+        await loanTransaction.save();
+
+        res.json({ message: "Thank you for confirming. Loan items successfully returned.", loanTransaction });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 
 // cancel loan transaction
 export const cancelLoanTransaction = async (req, res) => {

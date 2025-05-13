@@ -23,7 +23,6 @@ import {
   loanReset,
   userConfirmReceipt,
 } from "../../features/loanTransaction/loanSlice";
-import { accessToken } from "../../features/token/tokenSlice";
 import { getMeetingByLoanId } from "../../features/meeting/meetingSlice";
 
 const LoanTransactionByUserPage = () => {
@@ -83,9 +82,7 @@ const LoanTransactionByUserPage = () => {
       item_returned: item_returned,
     };
 
-    dispatch(confirmReturnedByBorrower(data)).then((res) => {
-      dispatch(accessToken(res));
-    });
+    dispatch(confirmReturnedByBorrower(data));
 
     setOpenReturned(!openReturned);
   };

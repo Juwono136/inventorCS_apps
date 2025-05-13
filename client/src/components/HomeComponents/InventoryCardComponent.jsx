@@ -16,6 +16,7 @@ const InventoryCardComponent = ({
   total_items,
   status,
   categories,
+  is_consumable,
   item_program,
 }) => {
   const { user, isLoggedOut } = useSelector((state) => state.auth);
@@ -57,6 +58,10 @@ const InventoryCardComponent = ({
             <span className="text-purple-00 bg-purple-100 px-1.5 py-1 rounded-md">
               {availableItems}
             </span>
+          </p>
+
+          <p className="text-xs text-blue-gray-700 my-1">
+            Is Consumable: {is_consumable ? "Yes" : "No"}
           </p>
 
           <div className="flex gap-1 items-center w-full my-2 font-semibold text-[0.6rem] md:text-xs text-gray-900">

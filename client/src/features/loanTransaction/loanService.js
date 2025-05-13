@@ -75,27 +75,9 @@ const userConfirmReceipt = async (data, token) => {
     return response.data
 }
 
-// update loan status to borrowed
-const updateStatusToBorrowed = async (data, token) => {
-    const response = await axios.patch(API_URL + `/borrowed_loan/${data._id}`, data, {
-        headers: { Authorization: `Bearer ${token}` }
-    })
-
-    return response.data
-}
-
-// confirm borrowed loan item by borrower
-const confirmReceiveByBorrower = async (data, token) => {
-    const response = await axios.patch(API_URL + `/confirm_receive/${data._id}`, { item_received: data.item_received }, {
-        headers: { Authorization: `Bearer ${token}` }
-    })
-
-    return response.data
-}
-
-// update loan status to returned
-const updateStatusToReturned = async (data, token) => {
-    const response = await axios.patch(API_URL + `/returned_loan/${data._id}`, data, {
+// staff confirms receiving returned loan items
+const staffConfirmReturn = async (loanId, checkedReturnedItemIds, loan_note, token) => {
+    const response = await axios.patch(API_URL + `/confirm_return_by_staff/${loanId}`, { checkedReturnedItemIds, loan_note }, {
         headers: { Authorization: `Bearer ${token}` }
     })
 
@@ -104,7 +86,7 @@ const updateStatusToReturned = async (data, token) => {
 
 // confirm loan item has already returned by borrower
 const confirmReturnedByBorrower = async (data, token) => {
-    const response = await axios.patch(API_URL + `/confirm_returned/${data._id}`, { item_returned: data.item_returned }, {
+    const response = await axios.patch(API_URL + `/user_confirm_returned/${data._id}`, data, {
         headers: { Authorization: `Bearer ${token}` }
     })
 
@@ -120,7 +102,6 @@ const cancelLoanTransaction = async (data, token) => {
     return response.data
 }
 
-
 const loanService = {
     getAllLoanTransactions,
     getLoanTransactionsByUser,
@@ -130,9 +111,7 @@ const loanService = {
     updateStatusToReadyToPickup,
     staffConfirmHandover,
     userConfirmReceipt,
-    updateStatusToBorrowed,
-    confirmReceiveByBorrower,
-    updateStatusToReturned,
+    staffConfirmReturn,
     confirmReturnedByBorrower,
     cancelLoanTransaction
 }

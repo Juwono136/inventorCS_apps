@@ -10,6 +10,8 @@ import { MdOutlineMeetingRoom } from "react-icons/md";
 import DialogOpenComponent from "../../components/DashboardComponents/DialogOpenComponent";
 import LoanDetailforStaffComponent from "../../components/DashboardComponents/LoanDetailforStaffComponent";
 import DialogMeetingDetailComponent from "../../components/DashboardComponents/DialogMeetingDetailComponent";
+import DialogHandoverChecklist from "../../components/DashboardComponents/DialogHandoverChecklist";
+import DialogStaffConfirmReturn from "../../components/DashboardComponents/DialogStaffConfirmReturn";
 import Loader from "../../common/Loader";
 import UseDocumentTitle from "../../common/UseDocumentTitle";
 import BackButton from "../../common/BackButton";
@@ -19,9 +21,8 @@ import {
   getLoanTransactionById,
   loanReset,
   staffConfirmHandover,
-  updateStatusToBorrowed,
+  staffConfirmReturn,
   updateStatusToReadyToPickup,
-  updateStatusToReturned,
 } from "../../features/loanTransaction/loanSlice";
 import { accessToken } from "../../features/token/tokenSlice";
 import { getUserById } from "../../features/user/userSlice";
@@ -29,7 +30,6 @@ import {
   approveMeeting,
   getMeetingByLoanId,
 } from "../../features/meeting/meetingSlice";
-import DialogHandoverChecklist from "../../components/DashboardComponents/DialogHandoverCheclist";
 
 const LoanTransactionforStaffPage = () => {
   UseDocumentTitle("Loan Transaction detail");
@@ -38,6 +38,8 @@ const LoanTransactionforStaffPage = () => {
   const [openMeetingModal, setOpenMeetingModal] = useState(false);
   const [dialogType, setDialogType] = useState("");
   const [isHandoverModalOpen, setIsHandoverModalOpen] = useState(false);
+  const [isSConfirmReturnModalOpen, setIsConfirmReturnModalOpen] =
+    useState(false);
 
   const { loanData, isError, isSuccess, message, isLoading } = useSelector(
     (state) => state.loan
@@ -52,6 +54,10 @@ const LoanTransactionforStaffPage = () => {
 
   const handleOpenHandoverModal = () => setIsHandoverModalOpen(true);
   const handleCloseHandoverModal = () => setIsHandoverModalOpen(false);
+
+  const handleOpenConfirmReturnModal = () => setIsConfirmReturnModalOpen(true);
+  const handleCloseConfirmReturnModal = () =>
+    setIsConfirmReturnModalOpen(false);
 
   const handleOpenDialog = (type = "loan") => {
     setDialogType(type);
@@ -108,32 +114,23 @@ const LoanTransactionforStaffPage = () => {
       });
   };
 
-  const handleStatusToBorrowed = (e) => {
-    e.preventDefault();
-
+  const handleConfirmReturnSubmit = (
+    loanId,
+    checkedReturnedItemIds,
+    loan_note
+  ) => {
     const data = {
-      _id: id,
+      loanId,
+      checkedReturnedItemIds,
+      loan_note,
     };
 
-    dispatch(updateStatusToBorrowed(data)).then((res) => {
-      dispatch(accessToken(res));
-    });
-
-    handleCloseDialog();
-  };
-
-  const handleStatusToReturned = (e) => {
-    e.preventDefault();
-
-    const data = {
-      _id: id,
-    };
-
-    dispatch(updateStatusToReturned(data)).then((res) => {
-      dispatch(accessToken(res));
-    });
-
-    handleCloseDialog();
+    dispatch(staffConfirmReturn(data))
+      .unwrap()
+      .then(() => {
+        toast.success("Successfully confirmed the return of the loan item.");
+        handleCloseConfirmReturnModal();
+      });
   };
 
   useEffect(() => {
@@ -191,6 +188,7 @@ const LoanTransactionforStaffPage = () => {
         handleOpenDialog={() => handleOpenDialog("loan")}
         handleOpenMeetingDialog={() => handleOpenDialog("meeting")}
         handleOpenHandoverModal={handleOpenHandoverModal}
+        handleOpenConfirmReturnModal={handleOpenConfirmReturnModal}
       />
 
       {/* Change loan status to borrowed open dialog */}
@@ -200,11 +198,6 @@ const LoanTransactionforStaffPage = () => {
           dialogType === "loan"
             ? loanData?.loan_status === "Pending"
               ? handleStatustoReadyToPickup
-              : loanData?.loan_status === "Ready to Pickup"
-              ? handleStatusToBorrowed
-              : loanData?.loan_status === "Borrowed" ||
-                loanData?.loan_status === "Partially Consumed"
-              ? handleStatusToReturned
               : null
             : dialogType === "meeting"
             ? handleApproveMeeting
@@ -224,6 +217,16 @@ const LoanTransactionforStaffPage = () => {
         open={isHandoverModalOpen}
         handleClose={handleCloseHandoverModal}
         handleConfirm={handleConfirmHandoverSubmit}
+        loanData={loanData}
+        isError={isError}
+        message={message}
+      />
+
+      {/* Dialog staff confirm return  */}
+      <DialogStaffConfirmReturn
+        open={isSConfirmReturnModalOpen}
+        handleClose={handleCloseConfirmReturnModal}
+        handleConfirm={handleConfirmReturnSubmit}
         loanData={loanData}
         isError={isError}
         message={message}

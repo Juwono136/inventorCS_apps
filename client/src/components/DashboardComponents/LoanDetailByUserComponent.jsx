@@ -102,41 +102,9 @@ const LoanDetailByUserComponent = ({
             <TableLoanItemInfoComponent loanItemInfo={foundLoan} />
           </div>
 
-          {/* Button changeloan status */}
+          {/* Button change loan status */}
           <div className="flex w-full flex-col items-center justify-center mt-8 gap-4">
-            <div className="flex flex-col gap-2 bg-indigo-400/10 px-10 py-2 rounded-md border border-indigo-500/30">
-              <div className="flex w-full justify-center items-center">
-                <span className=" text-xs text-blue-800">
-                  Borrower Confirm Date
-                </span>
-                <span className=" text-blue-900 text-xs">
-                  :{" "}
-                  {foundLoan?.borrower_confirmed_date
-                    ? getFullDay(foundLoan?.borrower_confirmed_date)
-                    : "-"}
-                </span>
-              </div>
-
-              <div className="flex w-full justify-center items-center">
-                <span className=" text-xs text-green-800">
-                  Returned Confirmation Date
-                </span>
-                <span className=" text-green-900 text-xs">
-                  :{" "}
-                  {foundLoan?.return_date
-                    ? getFullDay(foundLoan?.return_date)
-                    : "-"}
-                </span>
-              </div>
-            </div>
-
-            {/* {foundLoan?.loan_status === "Pending" && (
-              <p className="text-xs italic text-indigo-800 text-center">
-                Please wait, your loan transaction is currently being
-                processed...
-              </p>
-            )} */}
-
+            {/* request meeting button */}
             {foundLoan?.loan_status === "Ready to Pickup" &&
               !meetingInfoByLoanId && (
                 <Button
@@ -147,6 +115,7 @@ const LoanDetailByUserComponent = ({
                 </Button>
               )}
 
+            {/* confirm receipt loan item button */}
             {!foundLoan?.borrow_confirmed_date_by_user &&
               foundLoan?.borrow_confirmed_by && (
                 <Button
@@ -157,27 +126,104 @@ const LoanDetailByUserComponent = ({
                 </Button>
               )}
 
+            {/* confirm returned loan item button */}
             {(foundLoan?.loan_status === "Borrowed" ||
-              foundLoan?.loan_status === "Partially Consumed" ||
-              foundLoan?.loan_status === "Consumed") && (
-              <Button
-                className="bg-gradient-to-r from-cyan-500 to-lime-800 text-white text-xs py-3 px-6 rounded-lg capitalize"
-                onClick={openDrawerBottom}
-                disabled={foundLoan?.borrower_confirmed_date ? true : false}
-              >
-                Confirm loan items
-              </Button>
-            )}
+              foundLoan?.loan_status === "Partially Consumed") &&
+              !foundLoan?.returned_confirmed_date_by_user && (
+                <Button
+                  className="bg-gradient-to-r from-teal-500 to-green-800 text-white text-xs py-3 px-6 rounded-lg capitalize"
+                  onClick={openDrawerReturned}
+                >
+                  Confirm Returned Loan Item
+                </Button>
+              )}
 
-            {foundLoan?.loan_status === "Returned" && (
-              <Button
-                className="bg-gradient-to-r from-lime-500 to-green-800 text-white text-xs py-3 px-6 rounded-lg capitalize"
-                onClick={openDrawerReturned}
-                disabled={foundLoan?.return_date ? true : false}
-              >
-                Confirm loan item has already returned
-              </Button>
-            )}
+            {/* confirm user and staff information */}
+            <div className="flex gap-4 flex-col md:flex-row w-full justify-center">
+              {/* confirm user information */}
+              <div className="flex flex-col gap-2 bg-indigo-400/10 px-10 py-4 w-full font-semibold rounded-md border border-indigo-500/30">
+                <p className="text-xs text-indigo-800 w-full text-center bg-indigo-100/40 p-1 rounded-md">
+                  Confirm User Information:
+                </p>
+
+                <hr className="border-1 mb-2 border-indigo-800" />
+
+                <div className="flex w-full flex-col justify-center items-center">
+                  <span className=" text-xs text-gray-800">
+                    Borrowed Confirmed By Staff:
+                  </span>
+                  <span className=" text-gray-900 text-xs">
+                    {foundLoan?.borrow_confirmed_by
+                      ? foundLoan?.borrow_confirmed_by
+                      : "-"}
+                  </span>
+                </div>
+
+                <div className="flex w-full flex-col justify-center items-center">
+                  <span className=" text-xs text-gray-800">
+                    Borrowed Confirmed Date:
+                  </span>
+                  <span className=" text-gray-900 text-xs">
+                    {foundLoan?.borrow_confirmed_date_by_user
+                      ? getFullDay(foundLoan?.borrow_confirmed_date_by_user)
+                      : "-"}
+                  </span>
+                </div>
+
+                <div className="flex w-full flex-col justify-center items-center">
+                  <span className=" text-xs text-gray-800">
+                    Returned Confirmed Date:
+                  </span>
+                  <span className=" text-gray-900 text-xs">
+                    {foundLoan?.return_date
+                      ? getFullDay(foundLoan?.return_date)
+                      : "-"}
+                  </span>
+                </div>
+              </div>
+
+              {/* confirm staff information */}
+              <div className="flex flex-col gap-2 bg-orange-400/10 px-10 py-4 w-full font-semibold rounded-md border border-orange-500/30">
+                <p className="text-xs text-orange-800 w-full text-center bg-orange-100/40 p-1 rounded-md">
+                  Confirm Staff Information:
+                </p>
+
+                <hr className="border-1 mb-2 border-orange-800" />
+
+                <div className="flex w-full flex-col justify-center items-center">
+                  <span className=" text-xs text-gray-800">
+                    Borrowed Confirmed Date:
+                  </span>
+                  <span className=" text-gray-900 text-xs">
+                    {foundLoan?.borrow_confirmed_date_by_staff
+                      ? getFullDay(foundLoan?.borrow_confirmed_date_by_staff)
+                      : "-"}
+                  </span>
+                </div>
+
+                <div className="flex w-full flex-col justify-center items-center">
+                  <span className=" text-xs text-gray-800">
+                    Returned Confirmed Date:
+                  </span>
+                  <span className=" text-gray-900 text-xs">
+                    {foundLoan?.return_date
+                      ? getFullDay(foundLoan?.return_date)
+                      : "-"}
+                  </span>
+                </div>
+
+                <div className="flex w-full flex-col justify-center items-center">
+                  <span className=" text-xs text-gray-800">
+                    Returned Confirmed By:
+                  </span>
+                  <span className=" text-gray-900 text-xs">
+                    {foundLoan?.returned_confirmed_by
+                      ? foundLoan?.returned_confirmed_by
+                      : "-"}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </CardBody>
       </Card>

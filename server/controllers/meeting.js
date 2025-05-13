@@ -119,7 +119,7 @@ export const createMeeting = async (req, res) => {
                 .map(staff => staff.personal_info.email);
 
             if (staffEmails.length > 0) {
-                const url = `${CLIENT_URL}/user-loan/meeting-detail/${newMeeting._id}`;
+                const url = `${CLIENT_URL}/user-loan/detail-loan/${newMeeting.loanTransaction_id._id}`;
                 const emailSubject = "New Meeting Request Created";
                 const emailTitle = "Meeting Request Notification";
                 const emailText = `A meeting request has been created for transaction ID: ${loanTransaction.transaction_id}. Please review the meeting details and prepare to meet with the borrower.`;

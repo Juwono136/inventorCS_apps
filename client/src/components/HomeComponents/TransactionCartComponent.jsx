@@ -40,7 +40,15 @@ const TransactionCartComponent = ({
         <div className="flex basis-3/4 flex-col gap-2">
           {cartItems?.map(
             (
-              { _id, title, item_program, image, total_items, quantity },
+              {
+                _id,
+                title,
+                item_program,
+                image,
+                total_items,
+                quantity,
+                is_consumable,
+              },
               index
             ) => (
               <div
@@ -68,7 +76,7 @@ const TransactionCartComponent = ({
                     </h2>
                   </div>
 
-                  <a href={`/item_detail/${_id}`} className="w-full">
+                  <a href={`/item_detail/${_id}`} className="w-full lg:w-max">
                     <h2 className="text-base text-indigo-900 hover:underline">
                       {title}
                     </h2>
@@ -81,6 +89,9 @@ const TransactionCartComponent = ({
                   </p>
 
                   <div className="flex flex-col gap-2 mt-2">
+                    <p className="text-gray-600 text-xs">
+                      Is Consumable: {is_consumable ? "Yes" : "No"}
+                    </p>
                     <p className="text-gray-700 text-xs">Quantity:</p>
                     <div className="flex items-center gap-2">
                       <IconButton
