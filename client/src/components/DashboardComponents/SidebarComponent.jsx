@@ -10,7 +10,7 @@ import {
   Drawer,
   Card,
 } from "@material-tailwind/react";
-import { IoClose, IoSettingsOutline } from "react-icons/io5";
+import { IoClose, IoSettingsOutline, IoHomeOutline } from "react-icons/io5";
 import { FaPowerOff } from "react-icons/fa";
 import {
   MdOutlineInventory2,
@@ -81,6 +81,17 @@ const SidebarComponent = ({ isDrawerOpen = false, closeDrawer }) => {
           <hr className="my-2 border-blue-gray-50" />
 
           <List>
+            <NavLink
+              to="/dashboard"
+              onClick={closeDrawer}
+              className={getNavLinkClass}
+            >
+              <ListItem className="flex gap-2 items-center text-indigo-800">
+                <IoHomeOutline className="text-md" />
+                Home
+              </ListItem>
+            </NavLink>
+
             {user?.selectedRole === 2 && (
               <>
                 <NavLink
