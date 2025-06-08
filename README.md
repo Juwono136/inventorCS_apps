@@ -1,17 +1,7 @@
 # InventorCS Project App
 
-### Running Client
+### Running Client and Server
 
 ```
-cd client
-npm install
-npm run dev
-```
-
-### Running server
-
-```
-cd server
-npm install
 npm start
 ```
