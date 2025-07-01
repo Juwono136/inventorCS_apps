@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 
 // icons and material-tailwind
 import { MdOutlineInventory2 } from "react-icons/md";
@@ -6,6 +6,7 @@ import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { FaArrowRotateLeft } from "react-icons/fa6";
 import { HiOutlineShoppingCart } from "react-icons/hi";
 import { BsCartCheck } from "react-icons/bs";
+import { TbTools } from "react-icons/tb";
 
 const StaffDashboardCardComponent = ({ inventories, meeting, loanData }) => {
   const calculateStats = (dataArray, filterFn = null, dateField = "createdAt") => {
@@ -41,6 +42,7 @@ const StaffDashboardCardComponent = ({ inventories, meeting, loanData }) => {
 
     const borrowedItems = loanTransactions?.filter((item) => item?.loan_status === "Borrowed");
     const returnedItems = loanTransactions?.filter((item) => item?.loan_status === "Returned");
+    const consumedItems = loanTransactions?.filter((item) => item?.loan_status === "Consumed");
 
     return [
       {
@@ -75,14 +77,23 @@ const StaffDashboardCardComponent = ({ inventories, meeting, loanData }) => {
         href: "/borrowed-item?page=1&search=&tab=borrowedItems&loanStatus=",
         gradient: "from-orange-400 to-orange-600",
       },
+      {
+        title: "Total Consumed Items",
+        value: consumedItems.length,
+        ...calculateStats(consumedItems),
+        icon: TbTools,
+        href: "/borrowed-item?page=1&search=&tab=borrowedItems&loanStatus=",
+        gradient: "from-indigo-400 to-indigo-600",
+      },
     ];
   }, [inventories, loanData, meeting]);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 w-full">
       {/* total inventories card */}
       {summaryData.map((item, index) => {
         const IconComponent = item.icon;
+
         return (
           <a
             href={item.href}
@@ -96,7 +107,7 @@ const StaffDashboardCardComponent = ({ inventories, meeting, loanData }) => {
               </div>
               <div className="text-sm text-gray-800 font-semibold">{item.title}</div>
             </div>
-            <h1 className="text-2xl md:text-3xl text-gray-800">{item.value}</h1>
+            <h1 className="text-2xl md:text-4xl text-gray-800">{item.value}</h1>
             <div className="flex items-center gap-1">
               {item.change !== 0 && (
                 <>

@@ -51,6 +51,7 @@ function App() {
 
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [limit, setLimit] = useState(500);
   const { user, isLoggedOut } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
@@ -117,6 +118,7 @@ function App() {
                 sort={sortInventory}
                 categories={categories}
                 search={search}
+                limit={limit}
               />
             }
           />

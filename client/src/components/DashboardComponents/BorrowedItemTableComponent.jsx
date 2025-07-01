@@ -5,13 +5,7 @@ import { useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 // icons and material-tailwind
-import {
-  Card,
-  CardHeader,
-  Typography,
-  CardBody,
-  Chip,
-} from "@material-tailwind/react";
+import { Card, CardHeader, Typography, CardBody, Chip } from "@material-tailwind/react";
 import { RxCaretSort } from "react-icons/rx";
 
 // components
@@ -59,9 +53,7 @@ const BorrowedItemTableComponent = ({ refreshTrigger }) => {
     endDate: "",
   });
 
-  const { loanData, isLoading, isError, message } = useSelector(
-    (state) => state.loan
-  );
+  const { loanData, isLoading, isError, message } = useSelector((state) => state.loan);
   const { allUsersInfor } = useSelector((state) => state.user);
 
   const { users } = allUsersInfor;
@@ -72,9 +64,7 @@ const BorrowedItemTableComponent = ({ refreshTrigger }) => {
     : "";
 
   const formattedEndDate = borrowDateRange.endDate
-    ? new Date(
-        new Date(borrowDateRange.endDate).setHours(23, 59, 59, 999)
-      ).toISOString()
+    ? new Date(new Date(borrowDateRange.endDate).setHours(23, 59, 59, 999)).toISOString()
     : "";
 
   const dispatch = useDispatch();
@@ -139,9 +129,7 @@ const BorrowedItemTableComponent = ({ refreshTrigger }) => {
   }, [page, search, loanStatus, borrowDateRange, isError, message]);
 
   const handleOpenDialog = (id) => {
-    const selectedData = data?.loanTransactions?.find(
-      (item) => item._id === id
-    );
+    const selectedData = data?.loanTransactions?.find((item) => item._id === id);
 
     const borrower = getBorrowerInfo(selectedData.borrower_id);
 
@@ -187,8 +175,7 @@ const BorrowedItemTableComponent = ({ refreshTrigger }) => {
     const selectedSortField = sortFileMap[column];
     if (selectedSortField) {
       const newOrder =
-        sortLoanStatus.sort === selectedSortField &&
-        sortLoanStatus.order === "asc"
+        sortLoanStatus.sort === selectedSortField && sortLoanStatus.order === "asc"
           ? "desc"
           : "asc";
       setSortLoanStatus({ sort: selectedSortField, order: newOrder });
@@ -203,10 +190,7 @@ const BorrowedItemTableComponent = ({ refreshTrigger }) => {
             <Typography className="text-indigo-400 text-sm font-semibold md:text-xl">
               Recent Loan Transactions
             </Typography>
-            <Typography
-              color="gray"
-              className="mt-1 font-normal text-xs md:text-sm"
-            >
+            <Typography color="gray" className="mt-1 font-normal text-xs md:text-sm">
               These are details about the last loan of equipment transactions
             </Typography>
           </div>
@@ -237,7 +221,7 @@ const BorrowedItemTableComponent = ({ refreshTrigger }) => {
             </div>
           ) : data?.loanTransactions?.length > 0 ? (
             <table className="w-full table-auto text-left">
-              <thead className="sticky top-0">
+              <thead className="sticky top-0 z-10">
                 <tr>
                   {TABLE_HEAD.map((head, index) => (
                     <th
@@ -275,9 +259,7 @@ const BorrowedItemTableComponent = ({ refreshTrigger }) => {
                     index
                   ) => {
                     const isLast = index === data.loanTransactions.length - 1;
-                    const classes = isLast
-                      ? "p-4"
-                      : "p-4 border-b border-blue-gray-50";
+                    const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
 
                     const statusLoanColors = {
                       Pending: "blue-gray",
@@ -310,14 +292,7 @@ const BorrowedItemTableComponent = ({ refreshTrigger }) => {
                             <h1 className="font-normal text-blue-gray-800 text-xs md:text-sm">
                               {transaction_id}
                             </h1>
-                            {is_new && (
-                              <Chip
-                                size="sm"
-                                color="red"
-                                variant="filled"
-                                value="New"
-                              />
-                            )}
+                            {is_new && <Chip size="sm" color="red" variant="filled" value="New" />}
                           </div>
                         </td>
 
@@ -380,11 +355,7 @@ const BorrowedItemTableComponent = ({ refreshTrigger }) => {
 
         {data?.totalLoans > 0 && (
           <Pagination
-            totalPage={
-              search
-                ? Math.ceil(data?.totalLoans / data?.limit)
-                : data?.totalPages
-            }
+            totalPage={search ? Math.ceil(data?.totalLoans / data?.limit) : data?.totalPages}
             page={page}
             setPage={setPage}
             bgColor="deep-purple"

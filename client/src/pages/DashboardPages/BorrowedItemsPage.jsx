@@ -2,13 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 // icons and material-tailwind
-import {
-  Tab,
-  TabPanel,
-  Tabs,
-  TabsBody,
-  TabsHeader,
-} from "@material-tailwind/react";
+import { Tab, TabPanel, Tabs, TabsBody, TabsHeader } from "@material-tailwind/react";
 import { MdOutlineRefresh } from "react-icons/md";
 
 // components
@@ -74,17 +68,13 @@ const BorrowedItemsPage = () => {
     <Layout>
       <DynamicBreadcrumbs />
       <div className="flex gap-3 items-center justify-between mb-2">
-        <h3 className="text-base font-bold text-indigo-500/60 sm:text-xl">
-          Borrowed Items Info
-        </h3>
+        <h3 className="text-base font-bold text-indigo-500/60 sm:text-xl">Borrowed Items Info</h3>
         <button
           onClick={handleRefresh}
           className="text-green-600 hover:text-green-900 flex gap-1 justify-center items-center bg-green-50 rounded-md p-1 md:px-2 md:py-1"
         >
           <MdOutlineRefresh
-            className={`w-6 h-6 md:w-5 md:h-5 ${
-              refreshTrigger ? "animate-spin" : ""
-            }`}
+            className={`w-6 h-6 md:w-5 md:h-5 ${refreshTrigger ? "animate-spin" : ""}`}
           />
           <p className="text-xs hidden md:inline">Refresh page</p>
         </button>
@@ -104,18 +94,14 @@ const BorrowedItemsPage = () => {
             <Tab
               value="borrowedItems"
               onClick={() => handleTabChange("borrowedItems")}
-              className={`${
-                activeTab === "borrowedItems" ? "font-bold" : ""
-              } w-auto text-sm p-2`}
+              className={`${activeTab === "borrowedItems" ? "font-bold" : ""} w-auto text-sm p-2`}
             >
               Borrowed Items
             </Tab>
             <Tab
               value="meetingRequests"
               onClick={() => handleTabChange("meetingRequests")}
-              className={`${
-                activeTab === "meetingRequests" ? "font-bold" : ""
-              } w-auto text-sm p-2`}
+              className={`${activeTab === "meetingRequests" ? "font-bold" : ""} w-auto text-sm p-2`}
             >
               Meeting Requests
             </Tab>

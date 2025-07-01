@@ -1,90 +1,92 @@
 import mongoose from "mongoose";
 
-const inventorySchema = mongoose.Schema({
+const inventorySchema = mongoose.Schema(
+  {
     asset_id: {
-        type: String,
-        required: true,
-        unique: true,
-        index: true
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
     },
     asset_name: {
-        type: String,
-        required: true,
-        index: true
+      type: String,
+      required: true,
+      index: true,
     },
     asset_img: {
-        type: String,
-        default: "https://api.dicebear.com/9.x/icons/svg?seed=Chase",
+      type: String,
+      default: "https://api.dicebear.com/9.x/icons/svg?seed=Chase",
     },
     serial_number: {
-        type: String,
-        default: ""
+      type: String,
+      default: "",
     },
     categories: {
-        type: [String], // ["Creative Tools", "Board Game", "IOT", "IOT Parts", "PC & Laptop", "Peripheral", "Others"]
-        required: true,
-        default: [],
-        index: true
+      type: [String], // ["Creative Tools", "Board Game", "IOT", "IOT Parts", "PC & Laptop", "Peripheral", "Others"]
+      required: true,
+      default: [],
+      index: true,
     },
     item_program: {
-        type: String,
-        required: true,
-        index: true
+      type: String,
+      required: true,
+      index: true,
     },
     desc: {
-        type: String,
-        maxlength: 500,
-        default: ""
-        // required: true
+      type: String,
+      maxlength: 500,
+      default: "",
+      // required: true
     },
     location: {
-        type: String,
-        required: true,
-        default: ""
+      type: String,
+      required: true,
+      default: "",
     },
     room_number: {
-        type: String,
-        required: true,
-        default: "",
+      type: String,
+      required: true,
+      default: "",
     },
     cabinet: {
-        type: String,
-        required: true,
-        default: "",
+      type: String,
+      required: true,
+      default: "",
     },
     total_items: {
-        type: Number,
-        required: true,
-        default: 0
+      type: Number,
+      required: true,
+      default: 0,
     },
     total_likes: {
-        type: Number,
-        default: 0
+      type: Number,
+      default: 0,
     },
     item_status: {
-        type: String,
-        required: true,
-        default: "Available",
-        enum: ['Available', 'Maintenance', 'Lost', 'Out of Stock', 'Damaged']
+      type: String,
+      required: true,
+      default: "Available",
+      enum: ["Available", "Maintenance", "Lost", "Out of Stock", "Damaged"],
     },
     draft: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
     added_by: {
-        type: String, // user id
-        required: true
+      type: String, // user id
+      required: true,
     },
     is_consumable: {
-        type: Boolean,
-        required: true,
-        default: false
-    }
-}, {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+  },
+  {
     timestamps: {
-        createdAt: 'publishedAt'
-    }
-})
+      createdAt: "publishedAt",
+    },
+  }
+);
 
-export default mongoose.model('Inventories', inventorySchema)
-
+export default mongoose.model("Inventories", inventorySchema);

@@ -1,7 +1,21 @@
-import React, { useEffect, useRef, useState } from "react";
-import { categoryData } from "../../data/categoryData";
-import ChartHeader from "../../common/ChartHeader";
+import { useMemo, useRef, useState } from "react";
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+
+// components
+import ChartHeader from "../../common/ChartHeader";
+
+const COLORS = [
+  "#3b82f6",
+  "#8b5cf6",
+  "#ef4444",
+  "#10b981",
+  "#f59e0b",
+  "#6366f1",
+  "#14b8a6",
+  "#ec4899",
+  "#eab308",
+  "#22c55e",
+];
 
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
@@ -18,7 +32,7 @@ const CustomTooltip = ({ active, payload }) => {
             Items: {data.value}
           </p>
           <p className="text-gray-600 text-sm">
-            Percentage: {((data.value / payload[0].payload.total) * 100).toFixed(1)}%
+            Percentage: {((data.value / data.payload.total) * 100).toFixed(1)}%
           </p>
         </div>
       </div>
@@ -40,22 +54,45 @@ const CustomLegend = ({ payload }) => {
   );
 };
 
-const InventoryByCategoryChartComponent = () => {
-  const [range, setRange] = useState("week");
-  const [data, setData] = useState(categoryData.week);
+const InventoryByCategoryChartComponent = ({ inventories }) => {
+  const [range, setRange] = useState("year");
   const chartRef = useRef(null);
 
-  const currentData = categoryData[range];
-  const total = currentData.reduce((sum, item) => sum + item.value, 0);
-  const dataWithTotal = currentData.map((item) => ({ ...item, total }));
+  const filteredData = useMemo(() => {
+    if (!inventories?.items?.length) return [];
 
-  useEffect(() => {
-    setData(categoryData[range]);
-  }, [range]);
+    const now = new Date();
+    let startDate;
 
-  const handleRangeChange = (e) => {
-    setRange(e.target.value);
-  };
+    if (range === "week") {
+      startDate = new Date(now);
+      startDate.setDate(now.getDate() - 6);
+    } else if (range === "month") {
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    } else if (range === "year") {
+      startDate = new Date(now.getFullYear(), 0, 1);
+    }
+
+    const recentItems = inventories.items.filter((item) => {
+      const created = new Date(item.publishedAt);
+      return created >= startDate && created <= now;
+    });
+
+    const grouped = recentItems.reduce((acc, curr) => {
+      const category = curr.categories?.[0] || "Uncategorized"; // ambil elemen pertama dari array
+      acc[category] = (acc[category] || 0) + 1;
+      return acc;
+    }, {});
+
+    const total = recentItems.length;
+
+    return Object.entries(grouped).map(([name, value], index) => ({
+      name,
+      value,
+      color: COLORS[index % COLORS.length],
+      total,
+    }));
+  }, [inventories, range]);
 
   return (
     <div
@@ -63,28 +100,36 @@ const InventoryByCategoryChartComponent = () => {
       ref={chartRef}
     >
       <h2 className="text-sm md:text-lg text-gray-800 font-semibold mb-6">Inventory By Category</h2>
-      <ChartHeader timeRange={range} setTimeRange={handleRangeChange} chartRef={chartRef} />
+      <ChartHeader
+        timeRange={range}
+        setTimeRange={(e) => setRange(e.target.value)}
+        chartRef={chartRef}
+      />
 
-      <div className="h-96 md:h-96 lg:h-80 bg-gradient-to-br from-purple-50/50 to-blue-50/50 rounded-lg p-4">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={dataWithTotal}
-              cx="50%"
-              cy="50%"
-              innerRadius={60}
-              outerRadius={100}
-              paddingAngle={2}
-              dataKey="value"
-            >
-              {dataWithTotal.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color} />
-              ))}
-            </Pie>
-            <Tooltip content={<CustomTooltip />} />
-            <Legend content={<CustomLegend />} />
-          </PieChart>
-        </ResponsiveContainer>
+      <div className="h-96 md:h-96 lg:h-80 bg-gradient-to-br from-purple-50/50 to-blue-50/50 rounded-lg p-4 flex items-center justify-center">
+        {filteredData.length === 0 ? (
+          <p className="text-gray-500 text-sm font-medium">Data is not available for this time.</p>
+        ) : (
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={filteredData}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={100}
+                paddingAngle={2}
+                dataKey="value"
+              >
+                {filteredData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip content={<CustomTooltip />} />
+              <Legend content={<CustomLegend />} />
+            </PieChart>
+          </ResponsiveContainer>
+        )}
       </div>
     </div>
   );

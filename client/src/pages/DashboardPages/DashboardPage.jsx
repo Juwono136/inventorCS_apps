@@ -14,7 +14,7 @@ import { getInventoriesByProgram } from "../../features/inventory/inventorySlice
 import { getAllMeetings } from "../../features/meeting/meetingSlice";
 import { getAllLoanTransactions } from "../../features/loanTransaction/loanSlice";
 
-const DashboardPage = ({ page, sort, categories, search }) => {
+const DashboardPage = ({ page, sort, categories, search, limit }) => {
   UseDocumentTitle("Dashboard");
 
   const { userInfor } = useSelector((state) => state.user);
@@ -25,10 +25,10 @@ const DashboardPage = ({ page, sort, categories, search }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getInventoriesByProgram({ page, sort, categories, search }));
+    dispatch(getInventoriesByProgram({ page, sort, categories, search, limit }));
     dispatch(getAllMeetings({ page, sort, categories, search }));
     dispatch(getAllLoanTransactions({ page, sort, categories, search }));
-  }, [page, sort, categories, search, dispatch]);
+  }, [page, sort, categories, search, limit, dispatch]);
 
   return (
     <Layout>
@@ -50,16 +50,16 @@ const DashboardPage = ({ page, sort, categories, search }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
         {/* Loan vs return item component */}
-        <LoanReturnTrendChartComponent />
+        <LoanReturnTrendChartComponent loanData={loanData} />
 
         {/* Inventory by category component */}
-        <InventoryByCategoryChartComponent />
+        <InventoryByCategoryChartComponent inventories={inventories} />
       </div>
 
-      <div className="flex w-full pt-4">
-        {/* Inventory stock chart component */}
+      {/* Inventory stock chart component */}
+      {/* <div className="flex w-full pt-4">
         <InventoryStockChartComponent />
-      </div>
+      </div> */}
     </Layout>
   );
 };
