@@ -18,7 +18,9 @@
     "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
     "framer-motion": "^11.3.19",
+    "html-to-image": "^1.11.13",
     "html5-qrcode": "^2.3.8",
+    "jspdf": "^3.0.1",
     "moment": "^2.30.1",
     "react": "^18.3.1",
     "react-countdown": "^2.3.6",
@@ -30,6 +32,7 @@
     "react-router-dom": "^6.25.1",
     "react-router-hash-link": "^2.4.3",
     "react-tailwindcss-datepicker": "^1.7.2",
+    "recharts": "^3.0.0",
     "redux": "^5.0.1",
     "redux-thunk": "^3.1.0",
     "use-debounce": "^10.0.4"

@@ -88,7 +88,7 @@ const SidebarComponent = ({ isDrawerOpen = false, closeDrawer }) => {
             >
               <ListItem className="flex gap-2 items-center text-indigo-800">
                 <IoHomeOutline className="text-md" />
-                Home
+                Dashboard
               </ListItem>
             </NavLink>
 

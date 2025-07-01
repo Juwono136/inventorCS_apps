@@ -104,8 +104,8 @@ const MoreInfoBorrowedItemComponent = ({
             </span>
             <span className=" text-blue-900 text-xs">
               :{" "}
-              {selectedItem?.borrower_confirmed_date
-                ? getFullDay(selectedItem?.borrower_confirmed_date)
+              {selectedItem?.borrow_confirmed_date_by_user
+                ? getFullDay(selectedItem?.borrow_confirmed_date_by_user)
                 : "-"}
             </span>
           </div>

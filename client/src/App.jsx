@@ -44,7 +44,7 @@ function App() {
   });
   const [sortInventory, setSortInventory] = useState({
     sort: "asset_name",
-    order: "asc",
+    order: "desc",
   });
   const [program, setProgram] = useState("");
   const [categories, setCategories] = useState("");
@@ -74,19 +74,13 @@ function App() {
           {/* Home page routes */}
           <Route path="/" element={<NavbarComponent />}>
             <Route index element={<Home page={page} sort={sortInventory} />} />
-            <Route
-              path="mycarts"
-              element={<MyCartPage page={page} sort={sortInventory} />}
-            />
+            <Route path="mycarts" element={<MyCartPage page={page} sort={sortInventory} />} />
 
             {/* Auth page routes */}
             <Route path="signin" element={<SigninPage />} />
             <Route path="signup" element={<SingupPage />} />
             <Route path="forgot" element={<ForgotPasswordPage />} />
-            <Route
-              path="user/activate/:token"
-              element={<ActivationEmailPage />}
-            />
+            <Route path="user/activate/:token" element={<ActivationEmailPage />} />
 
             {/* inventory routes */}
             <Route
@@ -115,7 +109,17 @@ function App() {
           <Route path="user/reset/:token" element={<ResetPasswordPage />} />
 
           {/* Dashboard routes */}
-          <Route path="dashboard" element={<DashboardPage />} />
+          <Route
+            path="dashboard"
+            element={
+              <DashboardPage
+                page={page}
+                sort={sortInventory}
+                categories={categories}
+                search={search}
+              />
+            }
+          />
           <Route path="profile" element={<MyProfilePage />} />
           <Route path="settings" element={<MySettingsPage />} />
 

@@ -40,21 +40,20 @@ const LoanDetailforStaffComponent = ({
         loanData?.loan_status === "Ready to Pickup" &&
         meetingInfoByLoanId &&
         meetingInfoByLoanId?.status === "Approved") ||
-        (loanData?.borrow_confirmed_by &&
-          !loanData?.borrow_confirmed_date_by_user && (
-            <div className="font-semibold text-xs w-full text-center px-3 py-2 rounded-lg bg-indigo-100/20 border border-indigo-800">
-              <p className="text-indigo-800 italic">
-                Inform the borrower to confirm the receipt of the loan item.
-                Waiting for the borrower's confirmation...
-              </p>
-            </div>
-          ))}
+        (loanData?.borrow_confirmed_by && !loanData?.borrow_confirmed_date_by_user && (
+          <div className="font-semibold text-xs w-full text-center px-3 py-2 rounded-lg bg-indigo-100/20 border border-indigo-800">
+            <p className="text-indigo-800 italic">
+              Inform the borrower to confirm the receipt of the loan item. Waiting for the
+              borrower's confirmation...
+            </p>
+          </div>
+        ))}
 
       {loanData?.returned_confirmed_by && !loanData?.return_date && (
         <div className="font-semibold text-xs w-full text-center px-3 py-2 rounded-lg bg-orange-100/20 border border-orange-800">
           <p className="text-orange-800 italic">
-            Inform the borrower to confirm the returned loan item. Waiting for
-            the borrower's confirmation...
+            Inform the borrower to confirm the returned loan item. Waiting for the borrower's
+            confirmation...
           </p>
         </div>
       )}
@@ -64,9 +63,7 @@ const LoanDetailforStaffComponent = ({
           <Typography className="font-semibold text-xl bg-gradient-to-r from-blue-400 via-purple-500 to-red-500 bg-clip-text text-transparent animate-gradient">
             Loan of Equipment
           </Typography>
-          <p className="text-xs text-blue-gray-800">
-            {loanData?.transaction_id}
-          </p>
+          <p className="text-xs text-blue-gray-800">{loanData?.transaction_id}</p>
         </div>
 
         <CardBody>
@@ -81,9 +78,7 @@ const LoanDetailforStaffComponent = ({
           <hr className="border-indigo-100 my-2" />
 
           <div className="grid gap-2 my-4">
-            <span className="font-medium text-xs text-blue-800 w-full">
-              Item List:
-            </span>
+            <span className="font-medium text-xs text-blue-800 w-full">Item List:</span>
             {/* table loan item detail */}
             <TableLoanItemInfoComponent loanItemInfo={loanData} />
           </div>
@@ -146,20 +141,14 @@ const LoanDetailforStaffComponent = ({
                 <hr className="border-1 mb-2 border-indigo-800" />
 
                 <div className="flex w-full flex-col justify-center items-center">
-                  <span className=" text-xs text-gray-800">
-                    Borrowed Confirmed By Staff:
-                  </span>
+                  <span className=" text-xs text-gray-800">Borrowed Confirmed By Staff:</span>
                   <span className=" text-gray-900 text-xs">
-                    {loanData?.borrow_confirmed_by
-                      ? loanData?.borrow_confirmed_by
-                      : "-"}
+                    {loanData?.borrow_confirmed_by ? loanData?.borrow_confirmed_by : "-"}
                   </span>
                 </div>
 
                 <div className="flex w-full flex-col justify-center items-center">
-                  <span className=" text-xs text-gray-800">
-                    Borrowed Confirmed Date:
-                  </span>
+                  <span className=" text-xs text-gray-800">Borrowed Confirmed Date:</span>
                   <span className=" text-gray-900 text-xs">
                     {loanData?.borrow_confirmed_date_by_user
                       ? getFullDay(loanData?.borrow_confirmed_date_by_user)
@@ -168,13 +157,9 @@ const LoanDetailforStaffComponent = ({
                 </div>
 
                 <div className="flex w-full flex-col justify-center items-center">
-                  <span className=" text-xs text-gray-800">
-                    Returned Confirmed Date:
-                  </span>
+                  <span className=" text-xs text-gray-800">Returned Confirmed Date:</span>
                   <span className=" text-gray-900 text-xs">
-                    {loanData?.return_date
-                      ? getFullDay(loanData?.return_date)
-                      : "-"}
+                    {loanData?.return_date ? getFullDay(loanData?.return_date) : "-"}
                   </span>
                 </div>
               </div>
@@ -188,9 +173,7 @@ const LoanDetailforStaffComponent = ({
                 <hr className="border-1 mb-2 border-orange-800" />
 
                 <div className="flex w-full flex-col justify-center items-center">
-                  <span className=" text-xs text-gray-800">
-                    Borrowed Confirmed Date:
-                  </span>
+                  <span className=" text-xs text-gray-800">Borrowed Confirmed Date:</span>
                   <span className=" text-gray-900 text-xs">
                     {loanData?.borrow_confirmed_date_by_staff
                       ? getFullDay(loanData?.borrow_confirmed_date_by_staff)
@@ -199,9 +182,7 @@ const LoanDetailforStaffComponent = ({
                 </div>
 
                 <div className="flex w-full flex-col justify-center items-center">
-                  <span className=" text-xs text-gray-800">
-                    Returned Confirmed Date:
-                  </span>
+                  <span className=" text-xs text-gray-800">Returned Confirmed Date:</span>
                   <span className=" text-gray-900 text-xs">
                     {loanData?.returned_confirmed_date_by_staff
                       ? getFullDay(loanData?.returned_confirmed_date_by_staff)
@@ -210,13 +191,9 @@ const LoanDetailforStaffComponent = ({
                 </div>
 
                 <div className="flex w-full flex-col justify-center items-center">
-                  <span className=" text-xs text-gray-800">
-                    Returned Confirmed By:
-                  </span>
+                  <span className=" text-xs text-gray-800">Returned Confirmed By:</span>
                   <span className=" text-gray-900 text-xs">
-                    {loanData?.returned_confirmed_by
-                      ? loanData?.returned_confirmed_by
-                      : "-"}
+                    {loanData?.returned_confirmed_by ? loanData?.returned_confirmed_by : "-"}
                   </span>
                 </div>
               </div>

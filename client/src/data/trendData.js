@@ -1,0 +1,30 @@
+export const trendData = {
+  week: [
+    { period: "Mon", loans: 12, returns: 8 },
+    { period: "Tue", loans: 19, returns: 15 },
+    { period: "Wed", loans: 23, returns: 18 },
+    { period: "Thu", loans: 17, returns: 22 },
+    { period: "Fri", loans: 25, returns: 20 },
+    { period: "Sat", loans: 15, returns: 12 },
+    { period: "Sun", loans: 8, returns: 10 },
+  ],
+  month: [
+    { period: "Week 1", loans: 145, returns: 132 },
+    { period: "Week 2", loans: 167, returns: 148 },
+    { period: "Week 3", loans: 183, returns: 175 },
+    { period: "Week 4", loans: 199, returns: 190 },
+  ],
+  year: [
+    { period: "Jan", loans: 589, returns: 542 },
+    { period: "Feb", loans: 623, returns: 598 },
+    { period: "Mar", loans: 678, returns: 645 },
+    { period: "Apr", loans: 634, returns: 612 },
+    { period: "May", loans: 589, returns: 567 },
+    { period: "Jun", loans: 712, returns: 689 },
+    { period: "Aug", loans: 601, returns: 591 },
+    { period: "Sep", loans: 881, returns: 811 },
+    { period: "Oct", loans: 542, returns: 402 },
+    { period: "Nov", loans: 697, returns: 501 },
+    { period: "Dec", loans: 402, returns: 387 },
+  ],
+};

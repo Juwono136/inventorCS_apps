@@ -31,9 +31,7 @@ const Layout = ({ children }) => {
         <SidebarComponent />
         <div className="flex flex-col flex-grow overflow-hidden">
           <NavbarComponent />
-          <main className="flex-grow overflow-x-auto px-6 py-4">
-            {children}
-          </main>
+          <main className="flex-grow overflow-x-auto px-6 py-4">{children}</main>
         </div>
       </div>
       <FooterDashboardComponent />

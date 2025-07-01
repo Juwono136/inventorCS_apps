@@ -1,0 +1,32 @@
+export const inventoryDataSet = {
+  week: [
+    { name: "Laptops", stock: 45, min: 20 },
+    { name: "Tablets", stock: 12, min: 15 },
+    { name: "Monitors", stock: 38, min: 25 },
+    { name: "Keyboards", stock: 9, min: 10 },
+    { name: "Mice", stock: 66, min: 30 },
+    { name: "Printers", stock: 22, min: 10 },
+    { name: "Cables", stock: 6, min: 20 },
+    { name: "Headphones", stock: 32, min: 15 },
+  ],
+  month: [
+    { name: "Laptops", stock: 48, min: 20 },
+    { name: "Tablets", stock: 14, min: 15 },
+    { name: "Monitors", stock: 35, min: 25 },
+    { name: "Keyboards", stock: 12, min: 10 },
+    { name: "Mice", stock: 62, min: 30 },
+    { name: "Printers", stock: 18, min: 10 },
+    { name: "Cables", stock: 10, min: 20 },
+    { name: "Headphones", stock: 28, min: 15 },
+  ],
+  year: [
+    { name: "Laptops", stock: 50, min: 20 },
+    { name: "Tablets", stock: 16, min: 15 },
+    { name: "Monitors", stock: 40, min: 25 },
+    { name: "Keyboards", stock: 15, min: 10 },
+    { name: "Mice", stock: 70, min: 30 },
+    { name: "Printers", stock: 25, min: 10 },
+    { name: "Cables", stock: 15, min: 20 },
+    { name: "Headphones", stock: 30, min: 15 },
+  ],
+};
