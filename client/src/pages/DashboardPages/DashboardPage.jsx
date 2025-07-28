@@ -1,60 +1,98 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+
+// icons and material-tailwind
+import { MdOutlineInventory2, MdAccessTime } from "react-icons/md";
 
 // components
 import Layout from "./Layout";
 import UseDocumentTitle from "../../common/UseDocumentTitle";
-import StaffDashboardCardComponent from "../../components/DashboardComponents/StaffDashboardCardComponent";
-import InventoryStockChartComponent from "../../components/DashboardComponents/InventoryStockChartComponent";
-import LoanReturnTrendChartComponent from "../../components/DashboardComponents/LoanReturnTrendChartComponent";
-import InventoryByCategoryChartComponent from "../../components/DashboardComponents/InventoryByCategoryChartComponent";
 
 // features
-import { getInventoriesByProgram } from "../../features/inventory/inventorySlice";
-import { getAllMeetings } from "../../features/meeting/meetingSlice";
-import { getAllLoanTransactions } from "../../features/loanTransaction/loanSlice";
+import StaffDashboardComponent from "../../components/DashboardComponents/StaffDashboardComponent";
+import UserDashboardComponent from "../../components/DashboardComponents/UserDashboardComponent";
 
 const DashboardPage = ({ page, sort, categories, search, limit }) => {
   UseDocumentTitle("Dashboard");
 
   const { userInfor } = useSelector((state) => state.user);
-  const { inventories } = useSelector((state) => state.inventory);
-  const { meeting } = useSelector((state) => state.meeting);
-  const { loanData } = useSelector((state) => state.loan);
+  const { user } = useSelector((state) => state.auth);
 
-  const dispatch = useDispatch();
+  const currentTime = new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date());
 
-  useEffect(() => {
-    dispatch(getInventoriesByProgram({ page, sort, categories, search, limit }));
-    dispatch(getAllMeetings({ page, sort, categories, search }));
-    dispatch(getAllLoanTransactions({ page, sort, categories, search }));
-  }, [page, sort, categories, search, limit, dispatch]);
+  const getRoleBadge = (role) => {
+    switch (role) {
+      case 1:
+        return { label: "Admin", className: "bg-green-50 text-green-700 border-green-300" };
+      case 2:
+        return { label: "Staff", className: "bg-orange-50 text-orange-700 border-orange-300" };
+      default:
+        return { label: "User", className: "bg-blue-50 text-blue-700 border-blue-300" };
+    }
+  };
 
   return (
     <Layout>
-      <div className="flex gap-2">
-        <h3 className="text-xl font-bold text-indigo-500/60 pointer-events-none pb-2">Dashboard</h3>
-      </div>
-      <h3 className="text-sm font-semibold text-gray-800/60 pointer-events-none mb-2 md:mb-0">
-        Welcome, <span className="text-indigo-600/80">{userInfor?.personal_info?.name}</span>
-      </h3>
+      <div className="flex gap-2 flex-col lg:justify-between lg:flex-row">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-3 mb-2">
+            <h3 className="text-xl font-bold text-indigo-500/60 pointer-events-none">Dashboard</h3>
+            {user && (
+              <span
+                className={`text-xs font-medium border px-3 py-1 rounded-full ${
+                  getRoleBadge(user.selectedRole).className
+                }`}
+              >
+                {getRoleBadge(user.selectedRole).label}
+              </span>
+            )}
+          </div>
+          <h3 className="text-sm md:text-lg font-semibold text-gray-800/60 pointer-events-none">
+            Welcome, <span className="text-indigo-800/80">{userInfor?.personal_info?.name}</span>
+          </h3>
+          <p className="flex items-center gap-1 text-xs text-gray-600">
+            <MdAccessTime />
+            {currentTime}
+          </p>
+        </div>
 
-      <div className="flex w-full flex-col pt-4">
-        {/* staff dashboard card components */}
-        <StaffDashboardCardComponent
-          inventories={inventories}
-          meeting={meeting}
-          loanData={loanData}
+        <div className="text-xs text-blue-900">
+          <a
+            href="/inventory-list"
+            className="flex items-center justify-center gap-2 border px-4 py-2 border-blue-600 rounded-md hover:bg-blue-800 hover:text-white transition-all"
+          >
+            <MdOutlineInventory2 className="w-4 h-4" />
+            View All Inventory
+          </a>
+        </div>
+      </div>
+
+      {/* staff dashboard component */}
+      {user?.selectedRole === 2 && (
+        <StaffDashboardComponent
+          page={page}
+          sort={sort}
+          categories={categories}
+          search={search}
+          limit={limit}
         />
-      </div>
+      )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-        {/* Loan vs return item component */}
-        <LoanReturnTrendChartComponent loanData={loanData} />
+      {/* admin dashboard component */}
+      {user?.selectedRole === 1 && (
+        <div className="pt-4 text-green-700 text-sm font-medium">
+          🛠️ Admin dashboard coming soon...
+        </div>
+      )}
 
-        {/* Inventory by category component */}
-        <InventoryByCategoryChartComponent inventories={inventories} />
-      </div>
+      {/* user dashboard component */}
+      {user?.selectedRole === 0 && <UserDashboardComponent />}
 
       {/* Inventory stock chart component */}
       {/* <div className="flex w-full pt-4">

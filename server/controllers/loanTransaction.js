@@ -1016,12 +1016,73 @@ export const getLoanTransactionsByUser = async (req, res) => {
   try {
     const userId = req.user._id;
 
-    const loanTransactions = await LoanTransactions.find({ borrower_id: userId })
+    const page = parseInt(req.query.page) - 1 || 0;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || "";
+    let sort = req.query.sort || "borrow_date";
+    let loan_status = req.query.loanStatus || "All";
+    let { borrow_date_start, borrow_date_end } = req.query;
+
+    const query = {
+      borrower_id: userId,
+    };
+
+    // Apply search filter
+    if (search) {
+      query["$or"] = [
+        { transaction_id: { $regex: search, $options: "i" } },
+        { loan_status: { $regex: search, $options: "i" } },
+        { "borrowed_item.inventory_id.asset_name": { $regex: search, $options: "i" } },
+      ];
+    }
+
+    // Filter by loan_status
+    const validLoanStatuses = [
+      "Pending",
+      "Ready to Pickup",
+      "Borrowed",
+      "Partially Consumed",
+      "Consumed",
+      "Returned",
+      "Cancelled",
+    ];
+
+    if (loan_status !== "All") {
+      loan_status = loan_status.split(",");
+      query["loan_status"] = { $in: loan_status };
+    }
+
+    // Filter by borrow_date range
+    if (borrow_date_start || borrow_date_end) {
+      query["borrow_date"] = {};
+      if (borrow_date_start) query["borrow_date"].$gte = new Date(borrow_date_start);
+      if (borrow_date_end) query["borrow_date"].$lte = new Date(borrow_date_end);
+    }
+
+    // Sorting
+    req.query.sort ? (sort = req.query.sort.split(",")) : (sort = [sort]);
+    let sortBy = {};
+    sortBy[sort[0]] = sort[1] ? sort[1] : "desc";
+
+    // Get total count for pagination
+    const totalLoans = await LoanTransactions.countDocuments(query);
+
+    const loanTransactions = await LoanTransactions.find(query)
       .populate("borrowed_item.inventory_id", "_id asset_name asset_id serial_number asset_img")
+      .sort(sortBy)
+      .skip(page * limit)
+      .limit(limit)
       .lean()
       .exec();
 
-    res.json({ loanTransactions });
+    res.json({
+      totalLoans,
+      totalPages: Math.ceil(totalLoans / limit),
+      page: page + 1,
+      limit,
+      loan_statuses: validLoanStatuses,
+      loanTransactions,
+    });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

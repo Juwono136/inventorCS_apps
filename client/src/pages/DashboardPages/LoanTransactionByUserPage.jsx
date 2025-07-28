@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -35,9 +35,7 @@ const LoanTransactionByUserPage = () => {
   const [itemReceived, setItemReceived] = useState(false);
   const [openMeetingModal, setOpenMeetingModal] = useState(false);
 
-  const { loanData, isLoading, isSuccess, isError, message } = useSelector(
-    (state) => state.loan
-  );
+  const { loanData, isLoading, isSuccess, isError, message } = useSelector((state) => state.loan);
   const { userInfor } = useSelector((state) => state.user);
   const { meetingInfoByLoanId } = useSelector((state) => state.meeting);
 
@@ -45,9 +43,7 @@ const LoanTransactionByUserPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const matchedLoan = loanData?.loanTransactions?.find(
-    (loan) => loan._id === id
-  );
+  const matchedLoan = loanData?.loanTransactions?.find((loan) => loan._id === id);
 
   const handleOpenDialog = () => {
     setOpenDialog(!openDialog);

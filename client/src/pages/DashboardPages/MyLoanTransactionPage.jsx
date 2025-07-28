@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
+import { useSearchParams } from "react-router-dom";
+import { useDebounce } from "use-debounce";
 
 // components
 import Layout from "./Layout";
@@ -15,6 +17,10 @@ import {
   getLoanTransactionsByUser,
   loanReset,
 } from "../../features/loanTransaction/loanSlice";
+import SearchElement from "../../common/SearchElement";
+import FilterCheckBox from "../../common/FilterCheckBox";
+import FilterByDate from "../../common/FilterByDate";
+import Pagination from "../../common/Pagination";
 
 const MyLoanTransactionPage = () => {
   UseDocumentTitle("My Loan Transactions");
@@ -29,16 +35,40 @@ const MyLoanTransactionPage = () => {
     Cancelled: "red",
   };
 
-  const { loanData, isLoading, isError, message } = useSelector(
-    (state) => state.loan
-  );
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentPage = parseInt(searchParams.get("page")) || 1;
+  const searchQuery = searchParams.get("search") || "";
+  const [loanStatus, setLoanStatus] = useState("");
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [sortLoanStatus, setSortLoanStatus] = useState({
+    sort: "borrow_date",
+    order: "desc",
+  });
+  const [borrowDateRange, setBorrowDateRange] = useState({
+    startDate: "",
+    endDate: "",
+  });
+
+  const { loanData, isLoading, isError, message } = useSelector((state) => state.loan);
   const [openCancelLoan, setOpenCancelLoan] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [cancelationReason, setCancelationReason] = useState("");
 
+  const data = loanData;
+
   const dispatch = useDispatch();
+  const [debouncedSearch] = useDebounce(search, 500);
 
   const [copiedId, setCopiedId] = useState(null);
+
+  const formattedStartDate = borrowDateRange.startDate
+    ? new Date(borrowDateRange.startDate).toISOString()
+    : "";
+
+  const formattedEndDate = borrowDateRange.endDate
+    ? new Date(new Date(borrowDateRange.endDate).setHours(23, 59, 59, 999)).toISOString()
+    : "";
 
   const handleOpenCancelLoan = (id) => {
     setOpenCancelLoan(!openCancelLoan);
@@ -70,14 +100,62 @@ const MyLoanTransactionPage = () => {
     });
   };
 
+  // Sets the page when the component is first mounted to match the URL.
   useEffect(() => {
-    dispatch(getLoanTransactionsByUser());
+    setPage(currentPage);
+  }, []);
+
+  // Sync search with URL
+  useEffect(() => {
+    if (searchQuery !== search) {
+      setSearch(searchQuery);
+    }
+  }, [searchQuery]);
+
+  // Reset page to 1 when search changes
+  useEffect(() => {
+    if (debouncedSearch) {
+      setPage(1);
+      setSearchParams({ search: debouncedSearch, page: 1 });
+    }
+  }, [debouncedSearch]);
+
+  useEffect(() => {
+    if (page === currentPage) {
+      dispatch(
+        getLoanTransactionsByUser({
+          page,
+          sort: sortLoanStatus,
+          loanStatus,
+          search: debouncedSearch || "",
+          borrow_date_start: formattedStartDate,
+          borrow_date_end: formattedEndDate,
+        })
+      );
+    }
+  }, [
+    dispatch,
+    page,
+    currentPage,
+    sortLoanStatus,
+    loanStatus,
+    debouncedSearch,
+    formattedStartDate,
+    formattedEndDate,
+  ]);
+
+  useEffect(() => {
+    setSearchParams({
+      page,
+      search,
+      loanStatus,
+    });
 
     if (isError) {
       toast.error(message);
       dispatch(loanReset());
     }
-  }, [dispatch, isError, message]);
+  }, [dispatch, page, search, loanStatus, isError, message]);
 
   return (
     <Layout>
@@ -86,6 +164,25 @@ const MyLoanTransactionPage = () => {
         My Loan Transactions
       </h3>
       <hr className="w-full border-indigo-100 my-4" />
+
+      <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-center">
+        <SearchElement setSearch={setSearch} />
+
+        <FilterCheckBox
+          filterValues={data?.loan_statuses || []}
+          setFilter={(val) => {
+            setLoanStatus(val);
+          }}
+          setPage={setPage}
+          filterTitle="Filter by Loan Status"
+        />
+
+        <FilterByDate
+          dateRange={borrowDateRange}
+          setDateRange={setBorrowDateRange}
+          placeholder="Filter by Borrow Date"
+        />
+      </div>
 
       {isLoading ? (
         <div className="flex justify-center">
@@ -99,10 +196,7 @@ const MyLoanTransactionPage = () => {
 
           <p className="mt-8 text-sm text-indigo-900">
             Want to borrow an item?{" "}
-            <a
-              href="/inventory-list"
-              className="text-blue-gray-900 underline hover:font-semibold"
-            >
+            <a href="/inventory-list" className="text-blue-gray-900 underline hover:font-semibold">
               Click here.
             </a>
           </p>
@@ -119,6 +213,15 @@ const MyLoanTransactionPage = () => {
           handleCancelLoan={handleCancelLoan}
           cancelationReason={cancelationReason}
           setCancelationReason={setCancelationReason}
+        />
+      )}
+
+      {data?.totalLoans > 0 && (
+        <Pagination
+          totalPage={search ? Math.ceil(data?.totalLoans / data?.limit) : data?.totalPages}
+          page={page}
+          setPage={setPage}
+          bgColor="indigo"
         />
       )}
     </Layout>
