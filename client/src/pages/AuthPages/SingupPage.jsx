@@ -111,8 +111,9 @@ const SingupPage = () => {
                   htmlFor="binusian_id"
                   className="flex text-sm font-medium leading-6 text-gray-900"
                 >
-                  Binusian ID
+                  Binusian ID <span className="text-red-600">*</span>
                 </label>
+
                 <div className="mt-2">
                   <input
                     id="binusian_id"
@@ -128,7 +129,7 @@ const SingupPage = () => {
 
               <div>
                 <label htmlFor="name" className="flex text-sm font-medium leading-6 text-gray-900">
-                  Your name
+                  Your name <span className="text-red-600">*</span>
                 </label>
                 <div className="mt-2">
                   <input
@@ -145,7 +146,7 @@ const SingupPage = () => {
 
               <div>
                 <label htmlFor="email" className="flex text-sm font-medium leading-6 text-gray-900">
-                  Email address
+                  Email address <span className="text-red-600">*</span>
                 </label>
                 <div className="mt-2">
                   <input
@@ -165,7 +166,7 @@ const SingupPage = () => {
                   htmlFor="select"
                   className="flex text-sm font-medium leading-6 text-gray-900"
                 >
-                  Program
+                  Program <span className="text-red-600">*</span>
                 </label>
                 <div className="mt-1 relative">
                   <select
@@ -201,7 +202,7 @@ const SingupPage = () => {
                     htmlFor="password"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    Password
+                    Password<span className="text-red-600">*</span>
                   </label>
                 </div>
                 <div className="mt-2 relative">
@@ -223,6 +224,11 @@ const SingupPage = () => {
                     )}
                   </div>
                 </div>
+
+                <div className="text-xs p-2 mt-3 bg-indigo-100 rounded-md text-gray-800 italic">
+                  *) Password should be 6 to 20 characters long with a numeric, 1 lowercase and 1
+                  uppercase letter
+                </div>
               </div>
 
               <div>
@@ -231,7 +237,7 @@ const SingupPage = () => {
                     htmlFor="confirmPassword"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    Confirm Password
+                    Confirm Password<span className="text-red-600">*</span>
                   </label>
                 </div>
                 <div className="mt-2">
