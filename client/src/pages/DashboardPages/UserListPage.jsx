@@ -18,26 +18,10 @@ import UseDocumentTitle from "../../common/UseDocumentTitle";
 import { getAllUsersInfor } from "../../features/user/userSlice";
 // import { accessToken } from "../../features/token/tokenSlice";
 
-const UserListPage = ({
-  sort,
-  setSort,
-  program,
-  setProgram,
-  page,
-  setPage,
-  search,
-  setSearch,
-}) => {
+const UserListPage = ({ sort, setSort, program, setProgram, page, setPage, search, setSearch }) => {
   UseDocumentTitle("User List");
 
-  const TABLE_HEAD = [
-    "No.",
-    "Member Info",
-    "Program & Address",
-    "Role",
-    "Status",
-    "Joined At",
-  ];
+  const TABLE_HEAD = ["No.", "Member Info", "Program & Address", "Role", "Status", "Joined At"];
 
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page"));
@@ -45,8 +29,9 @@ const UserListPage = ({
   // const [deleteUserId, setDeleteUserId] = useState(null);
 
   const { user } = useSelector((state) => state.auth);
-  const { allUsersInfor, userInfor, isLoading, isError, isSuccess, message } =
-    useSelector((state) => state.user);
+  const { allUsersInfor, userInfor, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.user
+  );
   const { users, totalPage, limit, totalUsers } = allUsersInfor;
 
   const dispatch = useDispatch();
@@ -96,10 +81,7 @@ const UserListPage = ({
 
     const selectedSortField = sortFileMap[column];
     if (selectedSortField) {
-      const newOrder =
-        sort.sort === selectedSortField && sort.order === "asc"
-          ? "desc"
-          : "asc";
+      const newOrder = sort.sort === selectedSortField && sort.order === "asc" ? "desc" : "asc";
       setSort({ sort: selectedSortField, order: newOrder });
     }
   };
@@ -149,11 +131,7 @@ const UserListPage = ({
               <Loader />
             </div>
           ) : (
-            <UserTableComponent
-              users={users}
-              TABLE_HEAD={TABLE_HEAD}
-              handleSort={handleSort}
-            />
+            <UserTableComponent users={users} TABLE_HEAD={TABLE_HEAD} handleSort={handleSort} />
           )}
         </div>
 

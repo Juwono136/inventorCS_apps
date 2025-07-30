@@ -119,67 +119,71 @@ const LoanReturnTrendChartComponent = ({ loanData }) => {
         chartRef={chartRef}
       />
 
-      <div className="h-80 bg-gradient-to-br from-green-50/50 to-blue-50/50 rounded-lg p-4">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={filteredChartData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-            <defs>
-              <linearGradient id="loanGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#10b981" stopOpacity={1} />
-                <stop offset="100%" stopColor="#34d399" stopOpacity={0.1} />
-              </linearGradient>
-              <linearGradient id="returnGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#3b82f6" stopOpacity={1} />
-                <stop offset="100%" stopColor="#60a5fa" stopOpacity={0.1} />
-              </linearGradient>
-              <linearGradient id="consumedGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#f97316" stopOpacity={1} />
-                <stop offset="100%" stopColor="#fdba74" stopOpacity={0.1} />
-              </linearGradient>
-            </defs>
+      <div className="h-80 bg-gradient-to-br from-green-50/50 to-blue-50/50 rounded-lg p-4 flex items-center justify-center">
+        {filteredChartData.length === 0 ? (
+          <p className="text-gray-500 text-sm font-medium">No data available.</p>
+        ) : (
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={filteredChartData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+              {/* ... all existing LineChart children here (CartesianGrid, Tooltip, Line, etc.) */}
+              <defs>
+                <linearGradient id="loanGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#10b981" stopOpacity={1} />
+                  <stop offset="100%" stopColor="#34d399" stopOpacity={0.1} />
+                </linearGradient>
+                <linearGradient id="returnGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#3b82f6" stopOpacity={1} />
+                  <stop offset="100%" stopColor="#60a5fa" stopOpacity={0.1} />
+                </linearGradient>
+                <linearGradient id="consumedGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#f97316" stopOpacity={1} />
+                  <stop offset="100%" stopColor="#fdba74" stopOpacity={0.1} />
+                </linearGradient>
+              </defs>
 
-            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" strokeOpacity={0.6} />
-            <XAxis
-              dataKey="period"
-              tick={{ fontSize: 12, fill: "#64748b" }}
-              axisLine={{ stroke: "#cbd5e1" }}
-            />
-            <YAxis
-              tick={{ fontSize: 12, fill: "#64748b" }}
-              axisLine={{ stroke: "#cbd5e1" }}
-              allowDecimals={false}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            <Legend wrapperStyle={{ paddingTop: "20px", fontSize: 12 }} iconType="circle" />
-
-            <Line
-              type="monotone"
-              dataKey="loans"
-              stroke="#10b981"
-              strokeWidth={3}
-              dot={{ fill: "#10b981", strokeWidth: 2, r: 6 }}
-              activeDot={{ r: 8, stroke: "#10b981", strokeWidth: 2 }}
-              name="Loans"
-            />
-            <Line
-              type="monotone"
-              dataKey="returns"
-              stroke="#3b82f6"
-              strokeWidth={3}
-              dot={{ fill: "#3b82f6", strokeWidth: 2, r: 6 }}
-              activeDot={{ r: 8, stroke: "#3b82f6", strokeWidth: 2 }}
-              name="Returns"
-            />
-            <Line
-              type="monotone"
-              dataKey="consumed"
-              stroke="#f97316"
-              strokeWidth={3}
-              dot={{ fill: "#f97316", strokeWidth: 2, r: 6 }}
-              activeDot={{ r: 8, stroke: "#f97316", strokeWidth: 2 }}
-              name="Consumed"
-            />
-          </LineChart>
-        </ResponsiveContainer>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" strokeOpacity={0.6} />
+              <XAxis
+                dataKey="period"
+                tick={{ fontSize: 12, fill: "#64748b" }}
+                axisLine={{ stroke: "#cbd5e1" }}
+              />
+              <YAxis
+                tick={{ fontSize: 12, fill: "#64748b" }}
+                axisLine={{ stroke: "#cbd5e1" }}
+                allowDecimals={false}
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Legend wrapperStyle={{ paddingTop: "20px", fontSize: 12 }} iconType="circle" />
+              <Line
+                type="monotone"
+                dataKey="loans"
+                stroke="#10b981"
+                strokeWidth={3}
+                dot={{ fill: "#10b981", strokeWidth: 2, r: 6 }}
+                activeDot={{ r: 8, stroke: "#10b981", strokeWidth: 2 }}
+                name="Loans"
+              />
+              <Line
+                type="monotone"
+                dataKey="returns"
+                stroke="#3b82f6"
+                strokeWidth={3}
+                dot={{ fill: "#3b82f6", strokeWidth: 2, r: 6 }}
+                activeDot={{ r: 8, stroke: "#3b82f6", strokeWidth: 2 }}
+                name="Returns"
+              />
+              <Line
+                type="monotone"
+                dataKey="consumed"
+                stroke="#f97316"
+                strokeWidth={3}
+                dot={{ fill: "#f97316", strokeWidth: 2, r: 6 }}
+                activeDot={{ r: 8, stroke: "#f97316", strokeWidth: 2 }}
+                name="Consumed"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
       </div>
     </div>
   );

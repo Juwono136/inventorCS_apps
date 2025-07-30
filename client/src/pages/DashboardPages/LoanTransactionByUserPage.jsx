@@ -93,7 +93,7 @@ const LoanTransactionByUserPage = () => {
   }, [loanData, id, navigate]);
 
   useEffect(() => {
-    if (isError) {
+    if (isError && message) {
       toast.error(message);
     }
 

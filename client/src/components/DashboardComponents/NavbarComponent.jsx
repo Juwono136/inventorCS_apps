@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { formatDistanceToNow } from "date-fns";
@@ -42,6 +42,7 @@ import {
   getNotificationByUser,
   markNotificationAsRead,
 } from "../../features/notification/notificationSlice";
+import { markTransactionIsNew } from "../../features/loanTransaction/loanSlice";
 
 const NavbarComponent = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -55,9 +56,7 @@ const NavbarComponent = () => {
   const navigate = useNavigate();
 
   const { user } = useSelector((state) => state.auth);
-  const { notification } = useSelector(
-    (state) => state.notification.notifications
-  );
+  const { notifications } = useSelector((state) => state.notification);
   const { personal_info } = useSelector((state) => state.user.userInfor);
   const { avatar } = personal_info || "";
   const roles = user?.userRoles || [];
@@ -105,6 +104,7 @@ const NavbarComponent = () => {
 
   const handleNotificationClick = (id, loanId) => {
     dispatch(markNotificationAsRead(id));
+    dispatch(markTransactionIsNew(loanId));
 
     if (user.selectedRole === 2) {
       navigate(`/user-loan/detail-loan/${loanId}`);
@@ -114,11 +114,18 @@ const NavbarComponent = () => {
   };
 
   useEffect(() => {
-    dispatch(getNotificationByUser());
+    dispatch(
+      getNotificationByUser({
+        page: 1,
+        search: "",
+        startDate: "",
+        endDate: "",
+      })
+    );
   }, [dispatch]);
 
-  const unreadNotifications = Array.isArray(notification)
-    ? notification.filter((notif) => !notif.is_read).slice(0, 3)
+  const unreadNotifications = Array.isArray(notifications?.notifications)
+    ? notifications.notifications.filter((notif) => !notif.is_read).slice(0, 3)
     : [];
 
   return (
@@ -150,11 +157,7 @@ const NavbarComponent = () => {
             </div>
 
             {/* profile icon button */}
-            <Menu
-              open={isMenuProfileOpen}
-              handler={setIsMenuProfileOpen}
-              placement="bottom-end"
-            >
+            <Menu open={isMenuProfileOpen} handler={setIsMenuProfileOpen} placement="bottom-end">
               <MenuHandler>
                 <Button
                   variant="text"
@@ -197,9 +200,7 @@ const NavbarComponent = () => {
                   className="flex items-center gap-2 rounded hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
                 >
                   <CiPower className="h-4 w-4 text-red-500" strokeWidth={2} />
-                  <ListItemPrefix className="text-sm text-red-500">
-                    Sign Out
-                  </ListItemPrefix>
+                  <ListItemPrefix className="text-sm text-red-500">Sign Out</ListItemPrefix>
                 </MenuItem>
               </MenuList>
             </Menu>
@@ -220,10 +221,7 @@ const NavbarComponent = () => {
 
             {/* notification menu */}
             <Menu placement="bottom-end">
-              <Badge
-                color="red"
-                invisible={unreadNotifications?.length > 0 ? false : true}
-              >
+              <Badge color="red" invisible={unreadNotifications?.length > 0 ? false : true}>
                 <MenuHandler>
                   <button className="bg-white rounded-full p-1.5 hover:bg-gray-300">
                     <IoNotificationsOutline className="text-xl text-indigo-900 font-semibold" />
@@ -235,12 +233,7 @@ const NavbarComponent = () => {
                   unreadNotifications?.map((notif) => (
                     <MenuItem
                       key={notif._id}
-                      onClick={() =>
-                        handleNotificationClick(
-                          notif._id,
-                          notif.loan_transaction._id
-                        )
-                      }
+                      onClick={() => handleNotificationClick(notif._id, notif.loan_transaction._id)}
                       className="flex items-start flex-col gap-4 py-2 pl-2 pr-8"
                     >
                       <div className="flex justify-center items-center gap-2">
@@ -255,11 +248,7 @@ const NavbarComponent = () => {
                           >
                             {notif.message}
                           </Typography>
-                          <Typography
-                            variant="small"
-                            color="gray"
-                            className="text-xs"
-                          >
+                          <Typography variant="small" color="gray" className="text-xs">
                             {formatDistanceToNow(new Date(notif.createdAt), {
                               addSuffix: true,
                             })}
@@ -276,10 +265,7 @@ const NavbarComponent = () => {
                   </MenuItem>
                 )}
                 <MenuItem>
-                  <a
-                    href="/notifications"
-                    className=" text-xs text-indigo-700 hover:underline"
-                  >
+                  <a href="/notifications" className=" text-xs text-indigo-700 hover:underline">
                     See more notifications
                   </a>
                 </MenuItem>

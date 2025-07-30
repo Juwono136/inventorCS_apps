@@ -148,6 +148,9 @@ const SingupPage = () => {
                 <label htmlFor="email" className="flex text-sm font-medium leading-6 text-gray-900">
                   Email address <span className="text-red-600">*</span>
                 </label>
+                <div className="text-xs text-gray-700 italic">
+                  *) Please login using binus email (@binus.ac.id or @binus.edu)
+                </div>
                 <div className="mt-2">
                   <input
                     id="email"

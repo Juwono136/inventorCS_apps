@@ -147,10 +147,10 @@ const BorrowedItemTableComponent = ({ refreshTrigger }) => {
     setOpenDialog(!openDialog);
   };
 
-  // const getBorrowerInfo = (borrowerId) => {
-  //   const borrower = users?.find((user) => user._id === borrowerId);
-  //   return borrower || {};
-  // };
+  const getBorrowerInfo = (borrowerId) => {
+    const borrower = users?.find((user) => user._id === borrowerId);
+    return borrower || {};
+  };
 
   const handleSort = (column) => {
     const sortFileMap = {
