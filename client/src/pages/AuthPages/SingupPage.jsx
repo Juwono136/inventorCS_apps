@@ -15,13 +15,15 @@ import { reset, signup } from "../../features/auth/authSlice";
 const SingupPage = () => {
   const programMenu = [
     "Business Information Systems",
-    "Business Managaement & Marketing",
+    "Business Management & Marketing",
     "Communications",
     "Computer Science",
     "Finance International Program",
     "International Business",
     "Graphic Design and New Media",
     "Digital Business",
+    "Overseas Program",
+    "Other Program",
   ];
 
   const [showPassword, setShowPassword] = useState(false);
@@ -37,13 +39,10 @@ const SingupPage = () => {
     isSuccess: "",
   });
 
-  const { binusian_id, name, email, program, password, confirmPassword } =
-    formData;
+  const { binusian_id, name, email, program, password, confirmPassword } = formData;
   const dispatch = useDispatch();
 
-  const { user, isLoading, isError, isSuccess, message } = useSelector(
-    (state) => state.auth
-  );
+  const { user, isLoading, isError, isSuccess, message } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (isError) {
@@ -101,7 +100,7 @@ const SingupPage = () => {
         <div className="flex min-h-full flex-1 flex-col justify-center px-6 pb-12 pt-2  lg:px-8">
           <div className="sm:mx-auto sm:w-full sm:max-w-sm">
             <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-              Join With Us Now
+              Join Us Now
             </h2>
           </div>
 
@@ -128,10 +127,7 @@ const SingupPage = () => {
               </div>
 
               <div>
-                <label
-                  htmlFor="name"
-                  className="flex text-sm font-medium leading-6 text-gray-900"
-                >
+                <label htmlFor="name" className="flex text-sm font-medium leading-6 text-gray-900">
                   Your name
                 </label>
                 <div className="mt-2">
@@ -148,10 +144,7 @@ const SingupPage = () => {
               </div>
 
               <div>
-                <label
-                  htmlFor="email"
-                  className="flex text-sm font-medium leading-6 text-gray-900"
-                >
+                <label htmlFor="email" className="flex text-sm font-medium leading-6 text-gray-900">
                   Email address
                 </label>
                 <div className="mt-2">

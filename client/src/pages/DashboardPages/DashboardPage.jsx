@@ -10,6 +10,7 @@ import UseDocumentTitle from "../../common/UseDocumentTitle";
 // features
 import StaffDashboardComponent from "../../components/DashboardComponents/StaffDashboardComponent";
 import UserDashboardComponent from "../../components/DashboardComponents/UserDashboardComponent";
+import AdminDashboardComponent from "../../components/DashboardComponents/AdminDashboardComponent";
 
 const DashboardPage = ({ page, sort, categories, search, limit }) => {
   UseDocumentTitle("Dashboard");
@@ -54,7 +55,10 @@ const DashboardPage = ({ page, sort, categories, search, limit }) => {
             )}
           </div>
           <h3 className="text-sm md:text-lg font-semibold text-gray-800/60 pointer-events-none">
-            Welcome, <span className="text-indigo-800/80">{userInfor?.personal_info?.name}</span>
+            Welcome,{" "}
+            <span className="text-indigo-800/80">
+              {userInfor?.personal_info?.name?.split(" ").slice(0, 2).join(" ")}
+            </span>
           </h3>
           <p className="flex items-center gap-1 text-xs text-gray-600">
             <MdAccessTime />
@@ -85,14 +89,10 @@ const DashboardPage = ({ page, sort, categories, search, limit }) => {
       )}
 
       {/* admin dashboard component */}
-      {user?.selectedRole === 1 && (
-        <div className="pt-4 text-green-700 text-sm font-medium">
-          🛠️ Admin dashboard coming soon...
-        </div>
-      )}
+      {user?.selectedRole === 1 && <AdminDashboardComponent />}
 
       {/* user dashboard component */}
-      {user?.selectedRole === 0 && <UserDashboardComponent />}
+      {user?.selectedRole === 0 && <UserDashboardComponent limit={limit} />}
 
       {/* Inventory stock chart component */}
       {/* <div className="flex w-full pt-4">

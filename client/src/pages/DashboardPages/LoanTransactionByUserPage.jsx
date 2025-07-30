@@ -102,7 +102,17 @@ const LoanTransactionByUserPage = () => {
       dispatch(loanReset());
     }
     dispatch(loanReset());
-    dispatch(getLoanTransactionsByUser());
+    dispatch(
+      getLoanTransactionsByUser({
+        page: 1,
+        sort: { sort: "borrow_date", order: "desc" },
+        loanStatus: "",
+        search: "",
+        borrow_date_start: "",
+        borrow_date_end: "",
+        limit: "",
+      })
+    );
     dispatch(getMeetingByLoanId(id));
   }, [isError, isSuccess, message]);
 

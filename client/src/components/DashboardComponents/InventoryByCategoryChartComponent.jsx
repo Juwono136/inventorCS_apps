@@ -79,7 +79,7 @@ const InventoryByCategoryChartComponent = ({ inventories }) => {
     });
 
     const grouped = recentItems.reduce((acc, curr) => {
-      const category = curr.categories?.[0] || "Uncategorized"; // ambil elemen pertama dari array
+      const category = curr.categories?.[0] || "Uncategorized";
       acc[category] = (acc[category] || 0) + 1;
       return acc;
     }, {});

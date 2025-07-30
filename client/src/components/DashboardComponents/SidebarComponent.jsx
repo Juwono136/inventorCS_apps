@@ -3,13 +3,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 // icons and material-tailwind
-import {
-  IconButton,
-  List,
-  ListItem,
-  Drawer,
-  Card,
-} from "@material-tailwind/react";
+import { IconButton, List, ListItem, Drawer, Card } from "@material-tailwind/react";
 import { IoClose, IoSettingsOutline, IoHomeOutline } from "react-icons/io5";
 import { FaPowerOff } from "react-icons/fa";
 import {
@@ -81,11 +75,7 @@ const SidebarComponent = ({ isDrawerOpen = false, closeDrawer }) => {
           <hr className="my-2 border-blue-gray-50" />
 
           <List>
-            <NavLink
-              to="/dashboard"
-              onClick={closeDrawer}
-              className={getNavLinkClass}
-            >
+            <NavLink to="/dashboard" onClick={closeDrawer} className={getNavLinkClass}>
               <ListItem className="flex gap-2 items-center text-indigo-800">
                 <IoHomeOutline className="text-md" />
                 Dashboard
@@ -94,22 +84,14 @@ const SidebarComponent = ({ isDrawerOpen = false, closeDrawer }) => {
 
             {user?.selectedRole === 2 && (
               <>
-                <NavLink
-                  to="/inventories"
-                  onClick={closeDrawer}
-                  className={getNavLinkClass}
-                >
+                <NavLink to="/inventories" onClick={closeDrawer} className={getNavLinkClass}>
                   <ListItem className="flex gap-2 items-center text-indigo-800">
                     <MdOutlineInventory2 className="text-md" />
                     Our Inventories
                   </ListItem>
                 </NavLink>
 
-                <NavLink
-                  to="/borrowed-item"
-                  onClick={closeDrawer}
-                  className={getNavLinkClass}
-                >
+                <NavLink to="/borrowed-item" onClick={closeDrawer} className={getNavLinkClass}>
                   <ListItem className="flex gap-2 items-center text-indigo-800">
                     <BsCartCheck className="text-md" />
                     Borrowed Items
@@ -119,11 +101,7 @@ const SidebarComponent = ({ isDrawerOpen = false, closeDrawer }) => {
             )}
 
             {user?.selectedRole === 1 && (
-              <NavLink
-                to="/users"
-                onClick={closeDrawer}
-                className={getNavLinkClass}
-              >
+              <NavLink to="/users" onClick={closeDrawer} className={getNavLinkClass}>
                 <ListItem className="flex gap-2 items-center text-indigo-800">
                   <LuUserCog className="text-md" />
                   Users List
@@ -131,40 +109,28 @@ const SidebarComponent = ({ isDrawerOpen = false, closeDrawer }) => {
               </NavLink>
             )}
 
-            <NavLink
-              to="/user-loan"
-              onClick={closeDrawer}
-              className={getNavLinkClass}
-            >
+            <NavLink to="/user-loan" onClick={closeDrawer} className={getNavLinkClass}>
               <ListItem className="flex gap-2 items-center text-indigo-800">
                 <MdAddShoppingCart className="text-md" />
                 My Loan Transactions
               </ListItem>
             </NavLink>
 
-            <NavLink
-              to="/notifications"
-              onClick={closeDrawer}
-              className={getNavLinkClass}
-            >
+            <NavLink to="/notifications" onClick={closeDrawer} className={getNavLinkClass}>
               <ListItem className="flex gap-2 items-center text-indigo-800">
                 <MdOutlineNotificationsActive className="text-md" />
                 Notifications
               </ListItem>
             </NavLink>
 
-            <NavLink
-              to="/profile"
-              onClick={closeDrawer}
-              className={getNavLinkClass}
-            >
+            <NavLink to="/profile" onClick={closeDrawer} className={getNavLinkClass}>
               <ListItem className="flex gap-2 items-center text-indigo-800">
                 <CgProfile className="text-md" />
                 My Profile
               </ListItem>
             </NavLink>
 
-            <NavLink
+            {/* <NavLink
               to="/settings"
               onClick={closeDrawer}
               className={getNavLinkClass}
@@ -173,7 +139,7 @@ const SidebarComponent = ({ isDrawerOpen = false, closeDrawer }) => {
                 <IoSettingsOutline className="text-md" />
                 Settings
               </ListItem>
-            </NavLink>
+            </NavLink> */}
 
             <ListItem
               className="flex gap-2 items-center text-red-700 hover:text-red-900"

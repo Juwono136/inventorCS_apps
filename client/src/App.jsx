@@ -123,7 +123,8 @@ function App() {
             }
           />
           <Route path="profile" element={<MyProfilePage />} />
-          <Route path="settings" element={<MySettingsPage />} />
+
+          {/* <Route path="settings" element={<MySettingsPage />} /> */}
 
           {/* inventory routes */}
           <Route

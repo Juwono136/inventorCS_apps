@@ -85,7 +85,16 @@ const MyLoanTransactionPage = () => {
       .unwrap()
       .then((res) => {
         toast.success(res.message);
-        dispatch(getLoanTransactionsByUser());
+        dispatch(
+          getLoanTransactionsByUser({
+            page,
+            sort: sortLoanStatus,
+            loanStatus,
+            search: debouncedSearch || "",
+            borrow_date_start: formattedStartDate,
+            borrow_date_end: formattedEndDate,
+          })
+        );
       });
 
     setOpenCancelLoan(!openCancelLoan);

@@ -35,13 +35,15 @@ const MyProfilePage = () => {
 
   const programMenu = [
     "Business Information Systems",
-    "Business Managaement & Marketing",
+    "Business Management & Marketing",
     "Communications",
     "Computer Science",
     "Finance International Program",
     "International Business",
     "Graphic Design and New Media",
     "Digital Business",
+    "Overseas Program",
+    "Other Program",
   ];
 
   const roleMap = {
@@ -51,9 +53,7 @@ const MyProfilePage = () => {
   };
 
   const { user } = useSelector((state) => state.auth);
-  const { userInfor, isLoading, isError, isSuccess, message } = useSelector(
-    (state) => state.user
-  );
+  const { userInfor, isLoading, isError, isSuccess, message } = useSelector((state) => state.user);
 
   const initialState = {
     address: userInfor?.personal_info?.address || "",
@@ -225,10 +225,7 @@ const MyProfilePage = () => {
               </div>
 
               <div>
-                <SocialComponent
-                  social_links={data.social_links}
-                  joinedAt={data.joinedAt}
-                />
+                <SocialComponent social_links={data.social_links} joinedAt={data.joinedAt} />
               </div>
             </div>
 
@@ -236,10 +233,7 @@ const MyProfilePage = () => {
             <div className="flex basis-3/4 gap-1 md:gap-8 flex-col md:flex-row">
               <div className="basis-1/2">
                 <div className="mb-6">
-                  <label
-                    htmlFor="binusian_id"
-                    className="text-gray-800 text-sm"
-                  >
+                  <label htmlFor="binusian_id" className="text-gray-800 text-sm">
                     Binusian ID <span className="text-red-600">*</span>
                   </label>
                   <input
@@ -285,12 +279,10 @@ const MyProfilePage = () => {
                 </div>
 
                 <div className="mb-3 mt-5">
-                  <h3 className="text-xs text-red-500 italic underline">
-                    Attention:
-                  </h3>
+                  <h3 className="text-xs text-red-500 italic underline">Attention:</h3>
                   <p className="text-xs text-red-300">
-                    Changing the password here will automatically update your
-                    password when you log in!
+                    Changing the password here will automatically update your password when you log
+                    in!
                   </p>
                 </div>
 
@@ -347,10 +339,7 @@ const MyProfilePage = () => {
                 </div>
 
                 <div className="mb-0">
-                  <label
-                    htmlFor="bio"
-                    className="block text-sm leading-6 text-gray-900"
-                  >
+                  <label htmlFor="bio" className="block text-sm leading-6 text-gray-900">
                     My Bio
                   </label>
                   <textarea
@@ -367,8 +356,7 @@ const MyProfilePage = () => {
                 </div>
 
                 <p className="mb-1 text-gray-600 text-xs text-right">
-                  {characterLimit - data.bio.length}/{characterLimit} characters
-                  left
+                  {characterLimit - data.bio.length}/{characterLimit} characters left
                 </p>
               </div>
 
@@ -390,10 +378,7 @@ const MyProfilePage = () => {
                 </div>
 
                 <div className="mb-6">
-                  <label
-                    htmlFor="select"
-                    className="block text-sm leading-6 text-gray-900"
-                  >
+                  <label htmlFor="select" className="block text-sm leading-6 text-gray-900">
                     Program
                   </label>
                   <div className="mt-1 relative">
@@ -425,10 +410,7 @@ const MyProfilePage = () => {
                 </div>
 
                 <div className="mb-6">
-                  <label
-                    htmlFor="select"
-                    className="block text-sm leading-6 text-gray-900"
-                  >
+                  <label htmlFor="select" className="block text-sm leading-6 text-gray-900">
                     Address
                   </label>
                   <div className="mt-1 relative">

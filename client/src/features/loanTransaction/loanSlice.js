@@ -83,7 +83,7 @@ export const getLoanTransactionById = createAsyncThunk("loan/fetchById", async (
 export const getLoanTransactionsByUser = createAsyncThunk(
   "loan/by_user",
   async (
-    { token, page, sort, loanStatus, search, borrow_date_start, borrow_date_end },
+    { token, page, sort, loanStatus, search, borrow_date_start, borrow_date_end, limit },
     thunkAPI
   ) => {
     try {
@@ -94,6 +94,7 @@ export const getLoanTransactionsByUser = createAsyncThunk(
         search,
         borrow_date_start,
         borrow_date_end,
+        limit,
       };
 
       const tokenData = await tokenService.accessToken(token);
