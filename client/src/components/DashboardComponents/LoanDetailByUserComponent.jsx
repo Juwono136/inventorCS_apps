@@ -56,7 +56,7 @@ const LoanDetailByUserComponent = ({
           {meetingInfoByLoanId?.status === "Need Approval" && (
             <div className="font-semibold text-xs w-full text-center px-3 py-2 rounded-lg bg-orange-100/20 border border-orange-800">
               <p className="text-orange-800 italic">
-                Please wait, our staff will review your meeting request.
+                Please wait, our staff will process your meeting request.
               </p>
             </div>
           )}
@@ -65,10 +65,44 @@ const LoanDetailByUserComponent = ({
             <div className="font-semibold text-xs w-full text-center px-3 py-2 rounded-lg bg-blue-100/20 border border-blue-gray-800">
               <p className="text-blue-gray-800 italic">
                 Your meeting request has been successfully approved. Please meet with our staff to
-                pick up the loan item.
+                pick up the loan item, or you can contact our staff via email or phone number for
+                futher information.
               </p>
             </div>
           )}
+
+          {/* request meeting button */}
+          {foundLoan?.loan_status === "Ready to Pickup" && !meetingInfoByLoanId && (
+            <Button
+              className="bg-gradient-to-r from-red-500 to-orange-800 text-xs py-2.5 px-6 rounded-lg capitalize mt-1.5"
+              onClick={handleOpenDialog}
+            >
+              Create request meeting
+            </Button>
+          )}
+
+          {/* confirm receipt loan item button */}
+          {!foundLoan?.borrow_confirmed_date_by_user && foundLoan?.borrow_confirmed_by && (
+            <Button
+              className="bg-gradient-to-r from-purple-500 to-blue-800 text-xs py-2.5 px-6 rounded-lg capitalize"
+              onClick={openDrawerBottom}
+            >
+              Confirm Receipt Loan Item
+            </Button>
+          )}
+
+          {/* confirm returned loan item button */}
+          {(foundLoan?.loan_status === "Borrowed" ||
+            foundLoan?.loan_status === "Partially Consumed") &&
+            foundLoan?.returned_confirmed_date_by_staff &&
+            !foundLoan?.returned_confirmed_date_by_user && (
+              <Button
+                className="bg-gradient-to-r from-teal-500 to-green-800 text-white text-xs py-3 px-6 rounded-lg capitalize"
+                onClick={openDrawerReturned}
+              >
+                Confirm Returned Loan Item
+              </Button>
+            )}
 
           <Typography className="font-semibold text-xl bg-gradient-to-r from-blue-400 via-purple-500 to-red-500 bg-clip-text text-transparent animate-gradient">
             Loan of Equipment

@@ -18,12 +18,7 @@ import {
   meetingReset,
 } from "../../features/meeting/meetingSlice";
 
-const DialogRequestMeeting = ({
-  loanData,
-  openDialog,
-  setOpenDialog,
-  handleOpenDialog,
-}) => {
+const DialogRequestMeeting = ({ loanData, openDialog, setOpenDialog, handleOpenDialog }) => {
   const timeOptions = [
     "09:00",
     "09:30",
@@ -53,9 +48,7 @@ const DialogRequestMeeting = ({
 
   const { id } = useParams();
 
-  const { meeting, isError, isSuccess, message, isLoading } = useSelector(
-    (state) => state.meeting
-  );
+  const { meeting, isError, isSuccess, message, isLoading } = useSelector((state) => state.meeting);
 
   const foundLoan = loanData?.loanTransactions?.find((loan) => loan._id === id);
   // console.log(foundLoan);
@@ -132,16 +125,12 @@ const DialogRequestMeeting = ({
 
           <div className="flex w-full flex-col gap-3">
             <span className="text-[10px] text-red-600 italic font-semibold">
-              *) Make sure you choose a meeting date on a weekday (Monday -
-              Friday).
+              *) Make sure you choose a meeting date on a weekday (Monday - Friday).
             </span>
 
             {/* Meeting Location */}
             <div className="flex flex-col w-full gap-1">
-              <label
-                htmlFor="location"
-                className="text-gray-900 lg:text-sm text-xs font-medium"
-              >
+              <label htmlFor="location" className="text-gray-900 lg:text-sm text-xs font-medium">
                 Location:
               </label>
               <select
@@ -186,28 +175,47 @@ const DialogRequestMeeting = ({
             {/* Meeting Time */}
             <div className="flex flex-col w-full gap-1">
               {/* Time Picker */}
-              <label className="text-sm font-medium text-gray-900 block">
-                Meeting Time:
-              </label>
+              <label className="text-sm font-medium text-gray-900 block">Meeting Time:</label>
               <ul id="timetable" className="grid w-full grid-cols-3 gap-2 mb-5">
-                {timeOptions.map((time, index) => (
-                  <li key={index}>
-                    <input
-                      type="radio"
-                      id={`time-${index}`}
-                      value={time}
-                      name="timetable"
-                      className="hidden peer"
-                      onChange={() => handleTimeChange(time)}
-                    />
-                    <label
-                      htmlFor={`time-${index}`}
-                      className="inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center hover:text-gray-900 bg-white border rounded-lg cursor-pointer text-gray-500 border-gray-200 peer-checked:border-indigo-700 peer-checked:bg-blue-50 peer-checked:text-indigo-700 hover:bg-gray-50 "
-                    >
-                      {time}
-                    </label>
-                  </li>
-                ))}
+                {timeOptions.map((time, index) => {
+                  const selectedDate = new Date(meeting_date?.startDate);
+                  const now = new Date();
+                  const [hours, minutes] = time.split(":");
+                  const timeDate = new Date(selectedDate);
+                  timeDate.setHours(hours, minutes, 0, 0);
+
+                  // Check if selectedDate is today
+                  const isSameDay = selectedDate.toDateString() === now.toDateString();
+
+                  // Disable if selected time already passed today
+                  const isDisabled = isSameDay && timeDate < now;
+
+                  return (
+                    <li key={index}>
+                      <input
+                        type="radio"
+                        id={`time-${index}`}
+                        value={time}
+                        name="timetable"
+                        className="hidden peer"
+                        onChange={() => handleTimeChange(time)}
+                        disabled={isDisabled}
+                      />
+                      <label
+                        htmlFor={`time-${index}`}
+                        className={`inline-flex items-center justify-center w-full px-2 py-1 text-sm font-medium text-center border rounded-lg cursor-pointer
+                            ${
+                              isDisabled
+                                ? "bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed"
+                                : "bg-white text-gray-500 border-gray-200 hover:text-gray-900 hover:bg-gray-50 peer-checked:border-indigo-700 peer-checked:bg-blue-50 peer-checked:text-indigo-700"
+                            }
+                          `}
+                      >
+                        {time}
+                      </label>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           </div>

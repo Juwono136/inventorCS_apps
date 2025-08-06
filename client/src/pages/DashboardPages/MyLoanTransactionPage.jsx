@@ -50,6 +50,7 @@ const MyLoanTransactionPage = () => {
     endDate: "",
   });
 
+  const { user } = useSelector((state) => state.auth);
   const { loanData, isLoading, isError, message } = useSelector((state) => state.loan);
   const [openCancelLoan, setOpenCancelLoan] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
@@ -169,9 +170,18 @@ const MyLoanTransactionPage = () => {
   return (
     <Layout>
       <DynamicBreadcrumbs />
-      <h3 className="text-base text-center md:text-left font-bold text-indigo-500/60 pointer-events-none sm:text-xl">
-        My Loan Transactions
-      </h3>
+      <div className="flex items-center justify-between flex-col md:flex-row gap-2">
+        <h3 className="text-base text-center md:text-left font-bold text-indigo-500/60 pointer-events-none sm:text-xl">
+          My Loan Transactions
+        </h3>
+
+        <a
+          href="/inventory-list"
+          className="text-xs border-2 border-indigo-700 py-1 px-2 rounded-md hover:bg-indigo-400 transition-all hover:text-white"
+        >
+          Borrow more items
+        </a>
+      </div>
       <hr className="w-full border-indigo-100 my-4" />
 
       <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-center">
@@ -222,6 +232,7 @@ const MyLoanTransactionPage = () => {
           handleCancelLoan={handleCancelLoan}
           cancelationReason={cancelationReason}
           setCancelationReason={setCancelationReason}
+          role={user.selectedRole}
         />
       )}
 

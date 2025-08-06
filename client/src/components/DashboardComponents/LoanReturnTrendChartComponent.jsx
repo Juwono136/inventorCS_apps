@@ -74,8 +74,8 @@ const LoanReturnTrendChartComponent = ({ loanData }) => {
     }
 
     loanData?.loanTransactions?.forEach((tx) => {
-      // Loans
-      if (tx.borrow_confirmed_date_by_user) {
+      // Borrowed
+      if (tx.borrow_confirmed_date_by_user && tx.loan_status === "Borrowed") {
         const borrowDate = new Date(tx.borrow_confirmed_date_by_user);
         if (borrowDate >= startDate && borrowDate <= now) {
           const label = formatLabel(borrowDate, range);
@@ -125,7 +125,6 @@ const LoanReturnTrendChartComponent = ({ loanData }) => {
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={filteredChartData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-              {/* ... all existing LineChart children here (CartesianGrid, Tooltip, Line, etc.) */}
               <defs>
                 <linearGradient id="loanGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#10b981" stopOpacity={1} />
@@ -161,7 +160,7 @@ const LoanReturnTrendChartComponent = ({ loanData }) => {
                 strokeWidth={3}
                 dot={{ fill: "#10b981", strokeWidth: 2, r: 6 }}
                 activeDot={{ r: 8, stroke: "#10b981", strokeWidth: 2 }}
-                name="Loans"
+                name="Borrowed"
               />
               <Line
                 type="monotone"

@@ -58,7 +58,7 @@ const InventoryDetailComponent = () => {
         })
       );
       setAvailableItems(availableItems - 1);
-      toast.success("Loan item added, please check the cart icon!");
+      toast.success("Loan item added, please check the cart icon!", { duration: 4000 });
     } else {
       toast.error("No items available to add to cart.");
     }
@@ -104,17 +104,13 @@ const InventoryDetailComponent = () => {
 
           <div className="flex flex-wrap gap-1.5 w-full">
             <div className="inline-block px-3 py-1 border-red-800 border-2 rounded-full">
-              <p className="text-xs text-red-700 font-base">
-                #{inventoryById.categories}
-              </p>
+              <p className="text-xs text-red-700 font-base">#{inventoryById.categories}</p>
             </div>
           </div>
         </div>
 
         <div className="flex flex-col my-2 gap-2">
-          <h4 className="text-indigo-700 font-semibold text-sm underline">
-            Description:
-          </h4>
+          <h4 className="text-indigo-700 font-semibold text-sm underline">Description:</h4>
           <p className="text-sm text-gray-700">{inventoryById.desc}</p>
         </div>
 
@@ -129,9 +125,7 @@ const InventoryDetailComponent = () => {
           <div className="w-max">
             <Chip
               size="sm"
-              value={
-                availableItems > 0 ? inventoryById.item_status : "Out of Stock"
-              }
+              value={availableItems > 0 ? inventoryById.item_status : "Out of Stock"}
               color={
                 availableItems > 0
                   ? statusColorMap[inventoryById.item_status]

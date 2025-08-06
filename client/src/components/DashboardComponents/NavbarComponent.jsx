@@ -28,6 +28,7 @@ import {
 import { FiUsers } from "react-icons/fi";
 import { CiPower } from "react-icons/ci";
 import { AiOutlineScan } from "react-icons/ai";
+import { FaCartShopping } from "react-icons/fa6";
 
 // components
 import SidebarComponent from "./SidebarComponent";
@@ -55,7 +56,10 @@ const NavbarComponent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { user } = useSelector((state) => state.auth);
+  const cartItems = useSelector((state) => state.loan.cartItems);
+  const cartCount = cartItems.reduce((count, item) => count + item.quantity, 0);
+
+  const { user, isLoggedOut } = useSelector((state) => state.auth);
   const { notifications } = useSelector((state) => state.notification);
   const { personal_info } = useSelector((state) => state.user.userInfor);
   const { avatar } = personal_info || "";
@@ -219,11 +223,29 @@ const NavbarComponent = () => {
               ""
             )}
 
+            {isLoggedOut ? (
+              ""
+            ) : (
+              <a
+                href="/mycarts"
+                className="flex items-center justify-center gap-2 bg-white text-indigo-500 text-xs font-semibold p-2 rounded-full transition-all hover:bg-indigo-100"
+              >
+                <FaCartShopping className="text-xl" />
+                {cartCount === 0 ? (
+                  ""
+                ) : (
+                  <span className="bg-indigo-700 text-white text-sm rounded-full px-1.5 py-0.5">
+                    {cartCount}
+                  </span>
+                )}
+              </a>
+            )}
+
             {/* notification menu */}
             <Menu placement="bottom-end">
               <Badge color="red" invisible={unreadNotifications?.length > 0 ? false : true}>
                 <MenuHandler>
-                  <button className="bg-white rounded-full p-1.5 hover:bg-gray-300">
+                  <button className="bg-white rounded-full p-2 hover:bg-gray-300">
                     <IoNotificationsOutline className="text-xl text-indigo-900 font-semibold" />
                   </button>
                 </MenuHandler>

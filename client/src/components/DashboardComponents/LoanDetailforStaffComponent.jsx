@@ -60,6 +60,51 @@ const LoanDetailforStaffComponent = ({
 
       <Card className="my-3">
         <div className="flex flex-col justify-center items-center w-full gap-2 mb-2">
+          {/* ready to pickup button */}
+          {loanData?.loan_status === "Pending" && (
+            <Button
+              className="bg-gradient-to-r from-indigo-500 to-purple-800 text-xs py-3 px-6 rounded-lg capitalize"
+              onClick={handleOpenDialog}
+            >
+              Change status to Ready to Pickup
+            </Button>
+          )}
+
+          {/* approve request meeting button */}
+          {meetingInfoByLoanId?.status === "Need Approval" && (
+            <Button
+              className="bg-gradient-to-r from-green-300 to-orange-400 text-xs py-3 px-6 rounded-lg capitalize"
+              onClick={handleOpenMeetingDialog}
+            >
+              Approve Request Meeting
+            </Button>
+          )}
+
+          {/* confirm handover loan item button */}
+          {!loanData?.borrow_confirmed_date_by_staff &&
+            loanData?.loan_status === "Ready to Pickup" &&
+            meetingInfoByLoanId &&
+            meetingInfoByLoanId?.status === "Approved" && (
+              <Button
+                className="bg-gradient-to-r from-indigo-500 to-green-600 text-xs py-3 px-6 rounded-lg capitalize"
+                onClick={handleOpenHandoverModal}
+              >
+                Check Loan Item Handover
+              </Button>
+            )}
+
+          {/* check loan items for return button */}
+          {(loanData?.loan_status === "Borrowed" ||
+            loanData?.loan_status === "Partially Consumed") &&
+            !loanData?.returned_confirmed_date_by_staff && (
+              <Button
+                className="bg-gradient-to-r from-blue-800 to-purple-800 text-xs py-3 px-6 rounded-lg capitalize"
+                onClick={handleOpenConfirmReturnModal}
+              >
+                Check Loan Items For Return
+              </Button>
+            )}
+
           <Typography className="font-semibold text-xl bg-gradient-to-r from-blue-400 via-purple-500 to-red-500 bg-clip-text text-transparent animate-gradient">
             Loan of Equipment
           </Typography>

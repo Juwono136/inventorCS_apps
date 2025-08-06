@@ -25,14 +25,19 @@ const LoanTransactionCardComponent = ({
   handleCancelLoan,
   cancelationReason,
   setCancelationReason,
+  role,
 }) => {
   const [isQRCodeModalOpen, setQRCodeModalOpen] = useState(false);
   const [qrCodeValue, setQRCodeValue] = useState("");
   const [qrCodeTransactionId, setQRCodeTransactionId] = useState("");
 
-  const handleOpenQRCodeModal = (value, transactionId) => {
+  const handleOpenQRCodeModal = (id, transactionId) => {
+    const baseUrl = window.location.origin;
+    const url =
+      role === 2 ? `${baseUrl}/user-loan/detail-loan/${id}` : `${baseUrl}/user-loan/detail/${id}`;
+
     setQRCodeModalOpen(true);
-    setQRCodeValue(value);
+    setQRCodeValue(url);
     setQRCodeTransactionId(transactionId);
   };
 
@@ -42,18 +47,13 @@ const LoanTransactionCardComponent = ({
   };
 
   const sortedTransactions = loanData?.loanTransactions
-    ? [...loanData?.loanTransactions].sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-      )
+    ? [...loanData?.loanTransactions].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     : [];
 
   return (
     <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
       {sortedTransactions?.map(
-        (
-          { _id, transaction_id, borrow_date, loan_status, borrowed_item },
-          index
-        ) => {
+        ({ _id, transaction_id, borrow_date, loan_status, borrowed_item }, index) => {
           return (
             <div
               className="flex flex-col gap-3 p-3 md:p-4 rounded-md border border-indigo-100 bg-indigo-100/30 shadow-lg shadow-black/5 saturate-200 backdrop-blur-sm"
@@ -81,78 +81,52 @@ const LoanTransactionCardComponent = ({
                           onTouchStart={() => handleCopy(transaction_id)}
                           className="text-indigo-500 w-full text-sm hover:text-indigo-800 transition-all hidden md:inline"
                         >
-                          {copiedId === transaction_id ? (
-                            <LuClipboardCheck />
-                          ) : (
-                            <FaRegCopy />
-                          )}
+                          {copiedId === transaction_id ? <LuClipboardCheck /> : <FaRegCopy />}
                         </button>
                       </div>
                     </div>
 
-                    <p className="text-xs text-gray-500">
-                      Borrow Date: {getFullDay(borrow_date)}
-                    </p>
+                    <p className="text-xs text-gray-500">Borrow Date: {getFullDay(borrow_date)}</p>
 
                     {/* Item info card */}
                     {borrowed_item
                       ?.slice(0, 1)
-                      .map(
-                        (
-                          {
-                            inventory_id,
-                            quantity,
-                            is_consumable,
-                            item_program,
-                          },
-                          index
-                        ) => {
-                          const {
-                            asset_name,
-                            asset_img,
-                            _id: item_id,
-                          } = inventory_id;
-                          return (
-                            <div
-                              className="flex flex-col gap-3 w-full mt-3"
-                              key={index}
-                            >
-                              <div className="flex items-center gap-1.5">
-                                <BsPatchCheck className="font-bold text-xs text-purple-900" />
-                                <h2 className="font-semibold text-xs bg-gradient-to-r from-blue-400 via-purple-800 to-red-700 bg-clip-text text-transparent animate-gradient">
-                                  {item_program}
-                                </h2>
-                              </div>
-                              <div className="flex flex-col md:flex-row gap-2">
-                                <img
-                                  src={asset_img}
-                                  alt="item-image"
-                                  className="rounded-lg object-cover object-center h-24 w-24 shadow-md shadow-blue-gray-700/20"
-                                />
-                                <div className="flex flex-col flex-wrap gap-1">
-                                  <a
-                                    href={`/item_detail/${item_id}`}
-                                    target="_blank"
-                                    className="w-full"
-                                  >
-                                    <h2 className="text-sm text-indigo-900 hover:underline">
-                                      {asset_name}
-                                    </h2>
-                                  </a>
-                                  <p className="text-xs text-gray-500">
-                                    Quantity: {quantity}
-                                  </p>
+                      .map(({ inventory_id, quantity, is_consumable, item_program }, index) => {
+                        const { asset_name, asset_img, _id: item_id } = inventory_id;
+                        return (
+                          <div className="flex flex-col gap-3 w-full mt-3" key={index}>
+                            <div className="flex items-center gap-1.5">
+                              <BsPatchCheck className="font-bold text-xs text-purple-900" />
+                              <h2 className="font-semibold text-xs bg-gradient-to-r from-blue-400 via-purple-800 to-red-700 bg-clip-text text-transparent animate-gradient">
+                                {item_program}
+                              </h2>
+                            </div>
+                            <div className="flex flex-col md:flex-row gap-2">
+                              <img
+                                src={asset_img}
+                                alt="item-image"
+                                className="rounded-lg object-cover object-center h-24 w-24 shadow-md shadow-blue-gray-700/20"
+                              />
+                              <div className="flex flex-col flex-wrap gap-1">
+                                <a
+                                  href={`/item_detail/${item_id}`}
+                                  target="_blank"
+                                  className="w-full"
+                                >
+                                  <h2 className="text-sm text-indigo-900 hover:underline">
+                                    {asset_name}
+                                  </h2>
+                                </a>
+                                <p className="text-xs text-gray-500">Quantity: {quantity}</p>
 
-                                  <p className="text-xs text-gray-500">
-                                    Is Consumable?:{" "}
-                                    {is_consumable === false ? "No" : "Yes"}
-                                  </p>
-                                </div>
+                                <p className="text-xs text-gray-500">
+                                  Is Consumable?: {is_consumable === false ? "No" : "Yes"}
+                                </p>
                               </div>
                             </div>
-                          );
-                        }
-                      )}
+                          </div>
+                        );
+                      })}
 
                     {borrowed_item?.length > 1 && (
                       <div className="text-xs font-semibold text-gray-600 italic">
@@ -166,15 +140,14 @@ const LoanTransactionCardComponent = ({
                   <div className="flex justify-center items-center md:w-max">
                     <div
                       className="w-max rounded-lg p-2 border border-indigo-100 bg-indigo-100/30 hover:cursor-pointer hover:bg-indigo-100/60 transition-all"
-                      onClick={() =>
-                        handleOpenQRCodeModal(
-                          `${window.location.origin}/user-loan/detail-loan/${_id}`,
-                          transaction_id
-                        )
-                      }
+                      onClick={() => handleOpenQRCodeModal(_id, transaction_id)}
                     >
                       <QRCode
-                        value={`${window.location.origin}/user-loan/detail-loan/${_id}`}
+                        value={
+                          role === 2
+                            ? `${window.location.origin}/user-loan/detail-loan/${_id}`
+                            : `${window.location.origin}/user-loan/detail/${_id}`
+                        }
                         size={90}
                         logoWidth={16}
                         eyeRadius={5}

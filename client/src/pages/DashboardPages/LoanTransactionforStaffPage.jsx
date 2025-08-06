@@ -26,10 +26,7 @@ import {
 } from "../../features/loanTransaction/loanSlice";
 import { accessToken } from "../../features/token/tokenSlice";
 import { getUserById } from "../../features/user/userSlice";
-import {
-  approveMeeting,
-  getMeetingByLoanId,
-} from "../../features/meeting/meetingSlice";
+import { approveMeeting, getMeetingByLoanId } from "../../features/meeting/meetingSlice";
 
 const LoanTransactionforStaffPage = () => {
   UseDocumentTitle("Loan Transaction detail");
@@ -38,12 +35,9 @@ const LoanTransactionforStaffPage = () => {
   const [openMeetingModal, setOpenMeetingModal] = useState(false);
   const [dialogType, setDialogType] = useState("");
   const [isHandoverModalOpen, setIsHandoverModalOpen] = useState(false);
-  const [isSConfirmReturnModalOpen, setIsConfirmReturnModalOpen] =
-    useState(false);
+  const [isSConfirmReturnModalOpen, setIsConfirmReturnModalOpen] = useState(false);
 
-  const { loanData, isError, isSuccess, message, isLoading } = useSelector(
-    (state) => state.loan
-  );
+  const { loanData, isError, isSuccess, message, isLoading } = useSelector((state) => state.loan);
   const { meetingInfoByLoanId } = useSelector((state) => state.meeting);
 
   const { id } = useParams();
@@ -56,8 +50,7 @@ const LoanTransactionforStaffPage = () => {
   const handleCloseHandoverModal = () => setIsHandoverModalOpen(false);
 
   const handleOpenConfirmReturnModal = () => setIsConfirmReturnModalOpen(true);
-  const handleCloseConfirmReturnModal = () =>
-    setIsConfirmReturnModalOpen(false);
+  const handleCloseConfirmReturnModal = () => setIsConfirmReturnModalOpen(false);
 
   const handleOpenDialog = (type = "loan") => {
     setDialogType(type);
@@ -114,11 +107,7 @@ const LoanTransactionforStaffPage = () => {
       });
   };
 
-  const handleConfirmReturnSubmit = (
-    loanId,
-    checkedReturnedItemIds,
-    loan_note
-  ) => {
+  const handleConfirmReturnSubmit = (loanId, checkedReturnedItemIds, loan_note) => {
     const data = {
       loanId,
       checkedReturnedItemIds,
