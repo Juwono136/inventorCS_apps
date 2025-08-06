@@ -31,13 +31,9 @@ const LoanTransactionCardComponent = ({
   const [qrCodeValue, setQRCodeValue] = useState("");
   const [qrCodeTransactionId, setQRCodeTransactionId] = useState("");
 
-  const handleOpenQRCodeModal = (id, transactionId) => {
-    const baseUrl = window.location.origin;
-    const url =
-      role === 2 ? `${baseUrl}/user-loan/detail-loan/${id}` : `${baseUrl}/user-loan/detail/${id}`;
-
+  const handleOpenQRCodeModal = (value, transactionId) => {
     setQRCodeModalOpen(true);
-    setQRCodeValue(url);
+    setQRCodeValue(value);
     setQRCodeTransactionId(transactionId);
   };
 
@@ -140,14 +136,15 @@ const LoanTransactionCardComponent = ({
                   <div className="flex justify-center items-center md:w-max">
                     <div
                       className="w-max rounded-lg p-2 border border-indigo-100 bg-indigo-100/30 hover:cursor-pointer hover:bg-indigo-100/60 transition-all"
-                      onClick={() => handleOpenQRCodeModal(_id, transaction_id)}
+                      onClick={() =>
+                        handleOpenQRCodeModal(
+                          `${window.location.origin}/user-loan/detail-loan/${_id}`,
+                          transaction_id
+                        )
+                      }
                     >
                       <QRCode
-                        value={
-                          role === 2
-                            ? `${window.location.origin}/user-loan/detail-loan/${_id}`
-                            : `${window.location.origin}/user-loan/detail/${_id}`
-                        }
+                        value={`${window.location.origin}/user-loan/detail-loan/${_id}`}
                         size={90}
                         logoWidth={16}
                         eyeRadius={5}

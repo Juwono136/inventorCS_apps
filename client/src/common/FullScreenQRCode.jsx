@@ -33,8 +33,8 @@ const FullScreenQRCode = ({ isOpen, onClose, qrValue, transactionId, text }) => 
         <div className="text-center mt-2">
           <p className="text-xs text-gray-500 italic">Point your camera to scan the QR Code</p>
           <p className="text-xs text-red-800 italic mt-3">
-            *) This QR Code can only be accessed by the staff and the corresponding user; it cannot
-            be accessed by other users.
+            *) Please give this QR Code to the our staff. This QR Code can only be accessed by the
+            staff, it cannot be accessed by the user.
           </p>
         </div>
       </div>
