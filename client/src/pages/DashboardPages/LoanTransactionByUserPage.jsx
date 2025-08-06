@@ -86,7 +86,7 @@ const LoanTransactionByUserPage = () => {
   useEffect(() => {
     if (loanData?.loanTransactions) {
       if (!matchedLoan) {
-        toast.error("Transaction not found");
+        toast.error("Transaction not found.", { duration: 4000 });
         navigate("/404", { replace: true });
       }
     }

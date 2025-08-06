@@ -232,7 +232,7 @@ const MyLoanTransactionPage = () => {
           handleCancelLoan={handleCancelLoan}
           cancelationReason={cancelationReason}
           setCancelationReason={setCancelationReason}
-          role={user.selectedRole}
+          role={user?.selectedRole}
         />
       )}
 

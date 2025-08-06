@@ -4,13 +4,7 @@ import { QRCode } from "react-qrcode-logo";
 // icons and material-tailwind
 import { FaTimes } from "react-icons/fa";
 
-const FullScreenQRCode = ({
-  isOpen,
-  onClose,
-  qrValue,
-  transactionId,
-  text,
-}) => {
+const FullScreenQRCode = ({ isOpen, onClose, qrValue, transactionId, text }) => {
   if (!isOpen) return null;
 
   return (
@@ -18,10 +12,7 @@ const FullScreenQRCode = ({
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-xs md:max-w-md lg:max-w-lg">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-base font-semibold text-indigo-800">{text}</h3>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-red-500 transition"
-          >
+          <button onClick={onClose} className="text-gray-500 hover:text-red-500 transition">
             <FaTimes size={18} />
           </button>
         </div>
@@ -36,14 +27,14 @@ const FullScreenQRCode = ({
             fgColor="#161D6F"
             qrStyle="dots"
           />
-          <p className="text-[10px] md:text-sm text-gray-600 font-semibold mt-1">
-            {transactionId}
-          </p>
+          <p className="text-[10px] md:text-sm text-gray-600 font-semibold mt-1">{transactionId}</p>
         </div>
 
-        <div className="text-center mt-4">
-          <p className="text-xs text-gray-500 italic">
-            Point your camera to scan the QR Code
+        <div className="text-center mt-2">
+          <p className="text-xs text-gray-500 italic">Point your camera to scan the QR Code</p>
+          <p className="text-xs text-red-800 italic mt-3">
+            *) This QR Code can only be accessed by the staff and the corresponding user; it cannot
+            be accessed by other users.
           </p>
         </div>
       </div>
