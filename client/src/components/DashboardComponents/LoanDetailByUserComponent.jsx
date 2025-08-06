@@ -53,6 +53,14 @@ const LoanDetailByUserComponent = ({
             </div>
           )}
 
+          {foundLoan?.loan_status === "Borrowed" && (
+            <div className="font-semibold text-xs w-full text-center px-3 py-2 rounded-lg bg-green-100/20 border border-green-800">
+              <p className="text-green-800 italic">
+                Please meet or contact our staff if you want to return the borrowed item.
+              </p>
+            </div>
+          )}
+
           {meetingInfoByLoanId?.status === "Need Approval" && (
             <div className="font-semibold text-xs w-full text-center px-3 py-2 rounded-lg bg-orange-100/20 border border-orange-800">
               <p className="text-orange-800 italic">
