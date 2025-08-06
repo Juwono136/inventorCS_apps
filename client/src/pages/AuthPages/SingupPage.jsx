@@ -32,6 +32,8 @@ const SingupPage = () => {
     binusian_id: "",
     name: "",
     email: "",
+    address: "",
+    phone: "",
     program: "",
     password: "",
     confirmPassword: "",
@@ -39,7 +41,7 @@ const SingupPage = () => {
     isSuccess: "",
   });
 
-  const { binusian_id, name, email, program, password, confirmPassword } = formData;
+  const { binusian_id, name, email, address, phone, program, password, confirmPassword } = formData;
   const dispatch = useDispatch();
 
   const { user, isLoading, isError, isSuccess, message } = useSelector((state) => state.auth);
@@ -57,6 +59,8 @@ const SingupPage = () => {
         binusian_id: "",
         name: "",
         email: "",
+        address: "",
+        phone: "",
         program: "",
         password: "",
         confirmPassword: "",
@@ -71,6 +75,8 @@ const SingupPage = () => {
       binusian_id,
       name,
       email,
+      address,
+      phone,
       program,
       password,
       confirmPassword,
@@ -146,7 +152,7 @@ const SingupPage = () => {
 
               <div>
                 <label htmlFor="email" className="flex text-sm font-medium leading-6 text-gray-900">
-                  Email address <span className="text-red-600">*</span>
+                  Email <span className="text-red-600">*</span>
                 </label>
                 <div className="text-xs text-gray-700 italic">
                   *) Please login using binus email (@binus.ac.id or @binus.edu)
@@ -158,6 +164,43 @@ const SingupPage = () => {
                     type="email"
                     placeholder="Write Your email"
                     value={email}
+                    onChange={onChange}
+                    className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="address"
+                  className="flex text-sm font-medium leading-6 text-gray-900"
+                >
+                  Address <span className="text-red-600">*</span>
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="address"
+                    name="address"
+                    type="address"
+                    placeholder="Your Address"
+                    value={address}
+                    onChange={onChange}
+                    className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="phone" className="flex text-sm font-medium leading-6 text-gray-900">
+                  Phone Number <span className="text-red-600">*</span>
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="phone"
+                    placeholder="Your Phone Number"
+                    value={phone}
                     onChange={onChange}
                     className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
