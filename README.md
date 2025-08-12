@@ -15,8 +15,7 @@
 - ✅ [API Documentation](#-api-documentation)
 - ✅ [Screenshots](#-screenshots)
 - ✅ [Development Notes](#-development-notes)
-- ✅ [License](#-license)
-- ✅ [Author](#-author)
+- ✅ [Project Members](#-project-members)
 
 ## ✨ Features
 - **User Authentication**: JWT-based login & registration. There are 3 user roles: User, Staff, and Admin.
@@ -161,9 +160,8 @@ npm start
 - Use nodemon for live reload during backend development.
 - Cron jobs handle automatic cancellations & periodic maintenance tasks.
 
-
-
-
-
-
-
+## 🤝 Project Members
+- Juwono (https://github.com/Juwono136)
+- Ida Bagus Kerthyayana Manuaba
+- Wilbert Wirawan Ichwan
+- Brilian Yudha
