@@ -2,8 +2,7 @@
 ![inventorcs-app](https://github.com/user-attachments/assets/55489197-ceda-43c9-b3b9-938ec63a3a7e)
 
 
-**inventorCS** is a **full-stack inventory management system** built with the **MERN Stack** (MongoDB, Express.js, React, Node.js).  
-It’s designed for efficient stock tracking, allows user to loan the item/inventory, reporting, and secure user authentication.
+**inventorCS** is a **full-stack inventory management system** built with the **MERN Stack** (MongoDB, Express.js, React, Node.js). It’s designed for efficient stock tracking, allows user to loan the item/inventory, reporting, and secure user authentication.
 
 > **Project Link**: [InventorCS Web App](https://inventorcs.csbihub.id/)
 
