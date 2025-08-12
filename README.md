@@ -54,7 +54,7 @@ It’s designed for efficient stock tracking, allows user to loan the item/inven
 - ➡️ **Helmet**, **CORS**, **cookie-parser** for security
 - ➡️ **Nodemailer** for email notifications
 
-## 🖥️ Requirements:
+## 🖥️ System Requirements:
 - ➡️ NodeJS v22 or above
 - ➡️ npm v9 or above
 - ➡️ MongoDB v6 or above
