@@ -28,7 +28,7 @@
 - **Email Notifications**: Automated transactional emails.
 - **Background Jobs**: Scheduled tasks via Cron & RabbitMQ workers.
 - **Security**: Input sanitization, Helmet, CORS, and cookie management.
-- **Responsive UI**: Built with TailwindCSS and Material Tailwind.
+- **Responsive UI Design**: Built with TailwindCSS and Material Tailwind.
 
 ## 🧑‍💻 Tech Stack
 => **Frontend**:
