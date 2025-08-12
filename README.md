@@ -69,7 +69,7 @@ cd inventorCS_apps
 
 ### **2. Install Backend Dependencies**
 ```bash
-cd backend
+cd server
 npm install
 ```
 
@@ -79,6 +79,28 @@ cd ../frontend
 npm install
 ```
 
+## ⚙️ Backend Setup
+### **1. Configure Environment Variables**
+Create a `.env` file inside the `server` folder:
+```env
+PORT = 5001
+CONNECTION_URL = MONGODB_CONNECTION_URI
+DB_NAME = inventorCS
+CLIENT_URL = http://localhost:5173 (OR USING VITE URI)
+INTERNET_SERVER = http://localhost:5001
+API_USERS_URL = http://localhost:5000/api/user
+NODE_ENV = production
+
+REFRESH_TOKEN_SECRET = YOUR_REFRESH_TOKEN_SECRET
+ACCESS_TOKEN_SECRET = YOUR_ACCESS_TOKEN_SECRET
+ACTIVATION_TOKEN_SECRET = YOUR_ACTIVATION_TOKEN_SECRET
+
+EMAIL_USER = YOU_HOST_EMAIL
+EMAIL_PASSWORD = YOUR_EMAIL_PASSWORD
+
+RABBITMQ_URL = amqp://<USERNAME>:<PASSWORD>@<YOUR_LOCAL_IP>:5672 
+
+```
 
 
 
