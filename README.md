@@ -1,20 +1,20 @@
 # InventorCS - Inventory Management System App
+![inventorcs-app](https://github.com/user-attachments/assets/55489197-ceda-43c9-b3b9-938ec63a3a7e)
+
 
 **inventorCS** is a **full-stack inventory management system** built with the **MERN Stack** (MongoDB, Express.js, React, Node.js).  
 It’s designed for efficient stock tracking, allows user to loan the item/inventory, reporting, and secure user authentication.
 
 > **Project Link**: [InventorCS Web App](https://inventorcs.csbihub.id/)
 
-
 ## 📑 Table of Contents
 1. [Features](#-features)
 2. [Tech Stack](#-tech-stack)
 3. [System Requirements](#-system-requirements)
-4. [Project Structure](#-project-structure)
-5. [Installation](#-installation)
-6. [Backend Setup](#-backend-setup)
-7. [Frontend Setup](#-frontend-setup)
-8. [Available Scripts](#-available-scripts)
+4. [Installation](#-installation)
+5. [Backend Setup](#-backend-setup)
+6. [Frontend Setup](#-frontend-setup)
+7. [Available Scripts](#-available-scripts)
 9. [Environment Variables](#-environment-variables)
 10. [API Documentation](#-api-documentation)
 11. [Development Notes](#-development-notes)
@@ -38,9 +38,9 @@ It’s designed for efficient stock tracking, allows user to loan the item/inven
 => **Frontend**:
 - ➡️ **React 18** with **Vite**
 - ➡️ **Redux Toolkit** for state management
+- ➡️ **Axios** for making HTTP requests from backend
 - ➡️ **Tailwind CSS** & **Material Tailwind** for UI
 - ➡️ **Recharts** for data visualization
-- ➡️ **Day.js / Moment.js / Date-fns** for date handling
 - ➡️ **ExcelJS, jsPDF, FileSaver** for export features
 - ➡️ **Framer Motion** for animations
 - ➡️ **QR Code & Barcode** support
@@ -60,8 +60,25 @@ It’s designed for efficient stock tracking, allows user to loan the item/inven
 - ➡️ MongoDB v6 or above
 - ➡️ RabbitMQ v3 or above
 
-## ⚙️ Installation & Setup
+## 📥 Installation
 ### **1. Clone Repository**
+```bash
+git clone https://github.com/Juwono136/inventorCS_apps.git
+cd inventorCS_apps
+```
+
+### **2. Install Backend Dependencies**
+```bash
+cd backend
+npm install
+```
+
+### **3. Install Frontend Dependencies**
+```bash
+cd ../frontend
+npm install
+```
+
 
 
 
