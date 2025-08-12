@@ -8,18 +8,16 @@ It’s designed for efficient stock tracking, allows user to loan the item/inven
 > **Project Link**: [InventorCS Web App](https://inventorcs.csbihub.id/)
 
 ## 📑 Table of Contents
-1. [Features](#-features)
-2. [Tech Stack](#-tech-stack)
-3. [System Requirements](#-system-requirements)
-4. [Installation](#-installation-and-running-the-app)
-5. [Backend Setup](#-backend-setup)
-6. [Frontend Setup](#-frontend-setup)
-7. [Available Scripts](#-available-scripts)
-9. [Environment Variables](#-environment-variables)
-10. [API Documentation](#-api-documentation)
-11. [Development Notes](#-development-notes)
-12. [License](#-license)
-13. [Author](#-author)
+- ✅ [Features](#-features)
+- ✅ [Tech Stack](#-tech-stack)
+- ✅ [System Requirements](#-system-requirements)
+- ✅ [Installation and Setup](#-installation-and-setup)
+- ✅ [Available Scripts](#-available-scripts)
+- ✅ [Environment Variables](#-environment-variables)
+- ✅ [API Documentation](#-api-documentation)
+- ✅ [Development Notes](#-development-notes)
+- ✅ [License](#-license)
+- ✅ [Author](#-author)
 
 ## ✨ Features
 - **User Authentication**: JWT-based login & registration. There are 3 user roles: User, Staff, and Admin.
@@ -34,7 +32,7 @@ It’s designed for efficient stock tracking, allows user to loan the item/inven
 - **Security**: Input sanitization, Helmet, CORS, and cookie management.
 - **Responsive UI**: Built with TailwindCSS and Material Tailwind.
 
-## 🧑‍💻 Tech Stack:
+## 🧑‍💻 Tech Stack
 => **Frontend**:
 - ➡️ **React 18** with **Vite**
 - ➡️ **Redux Toolkit** for state management
@@ -55,6 +53,9 @@ It’s designed for efficient stock tracking, allows user to loan the item/inven
 - ➡️ **Nodemailer** for email notifications
 
 => **Deployment & DevOps**:
+
+<img width="758" height="340" alt="InventorCS - CICD Pipeline" src="https://github.com/user-attachments/assets/15f99a24-4b68-4526-8119-134709e3221f" />
+
 - ➡️ GitHub Actions: CI/CD automation for build & deployment
 - ➡️ Docker & Docker Compose: Containerization for backend & frontend services
 - ➡️ Cloudflare Zero Trust: Secure remote access & protection
@@ -66,7 +67,7 @@ It’s designed for efficient stock tracking, allows user to loan the item/inven
 - ➡️ MongoDB v6 or above
 - ➡️ RabbitMQ v3 or above
 
-## 📥 Installation and Running The App
+## 📥 Installation and Setup
 ### **1. Clone Repository**
 ```bash
 git clone https://github.com/Juwono136/inventorCS_apps.git
@@ -81,7 +82,7 @@ npm install
 
 ### **3. Install Frontend Dependencies**
 ```bash
-cd ../frontend
+cd client
 npm install
 ```
 
@@ -91,8 +92,7 @@ cd inventorCS_apps
 npm start
 ```
 
-## ⚙️ Backend Setup
-### **1. Configure Environment Variables**
+### **5. Configure Environment Variables**
 Create a `.env` file inside the `server` folder:
 ```env
 PORT = 5001
