@@ -13,8 +13,8 @@ It’s designed for efficient stock tracking, allows user to loan the item/inven
 - ✅ [System Requirements](#-system-requirements)
 - ✅ [Installation and Setup](#-installation-and-setup)
 - ✅ [Available Scripts](#-available-scripts)
-- ✅ [Environment Variables](#-environment-variables)
 - ✅ [API Documentation](#-api-documentation)
+- ✅ [Screenshots](#-screenshots)
 - ✅ [Development Notes](#-development-notes)
 - ✅ [License](#-license)
 - ✅ [Author](#-author)
@@ -121,7 +121,7 @@ npm start
 ### Backend
 | Script           | Description                              |
 | ---------------- | ---------------------------------------- |
-| `npm start`      | Start API server and worker concurrently |
+| `npm start`      | Start server and worker concurrently |
 | `npm run dev`    | Development mode with live reload        |
 | `npm run worker` | Start background worker only             |
 
@@ -132,6 +132,38 @@ npm start
 | `npm run build`   | Build for production             |
 | `npm run preview` | Preview production build         |
 | `npm run lint`    | Run ESLint checks                |
+
+## 🌐 API Documentation
+- Swagger API documentation for inventorCS Server: Coming soon...
+- Swagger API documentation for User REST API: [Click Here](https://csbi-users.csbihub.id/users/api-docs/)
+
+## 🖼 Screenshots
+### Home Page
+
+### Sign In Page
+
+### Sign Up Page
+
+### Inventory lists Page
+
+### Inventory Detail Page
+
+### My Cart / Create Loan Transaction Page
+
+### User Dashboard
+
+### Staff Dashboard
+
+### Admin Dashboard
+
+## 📝 Development Notes
+- Ensure MongoDB & RabbitMQ are running before starting backend (running via docker).
+- Worker script (worker/autoCancelWorker.js) runs scheduled tasks automatically.
+- Use nodemon for live reload during backend development.
+- Cron jobs handle automatic cancellations & periodic maintenance tasks.
+
+
+
 
 
 
