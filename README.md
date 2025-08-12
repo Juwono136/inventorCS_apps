@@ -86,13 +86,7 @@ cd client
 npm install
 ```
 
-### 4. Running the app
-```bash
-cd inventorCS_apps
-npm start
-```
-
-### **5. Configure Environment Variables**
+### **4. Configure Environment Variables**
 Create a `.env` file inside the `server` folder:
 ```env
 PORT = 5001
@@ -112,6 +106,32 @@ EMAIL_PASSWORD = YOUR_EMAIL_PASSWORD
 
 RABBITMQ_URL = amqp://<USERNAME>:<PASSWORD>@<YOUR_LOCAL_IP>:5672 
 ```
+
+### 5. Running the app
+```bash
+cd inventorCS_apps
+npm start
+```
+
+> Backend URL: http://Localhost:5001
+
+> Frontend URL: http://localhost:5173
+
+## 📜 Available Scripts
+### Backend
+| Script           | Description                              |
+| ---------------- | ---------------------------------------- |
+| `npm start`      | Start API server and worker concurrently |
+| `npm run dev`    | Development mode with live reload        |
+| `npm run worker` | Start background worker only             |
+
+### Frontend
+| Script            | Description                      |
+| ----------------- | -------------------------------- |
+| `npm run dev`     | Start dev server with hot reload |
+| `npm run build`   | Build for production             |
+| `npm run preview` | Preview production build         |
+| `npm run lint`    | Run ESLint checks                |
 
 
 
