@@ -11,7 +11,7 @@ It’s designed for efficient stock tracking, allows user to loan the item/inven
 1. [Features](#-features)
 2. [Tech Stack](#-tech-stack)
 3. [System Requirements](#-system-requirements)
-4. [Installation](#-installation)
+4. [Installation](#-installation-and-running-the-app)
 5. [Backend Setup](#-backend-setup)
 6. [Frontend Setup](#-frontend-setup)
 7. [Available Scripts](#-available-scripts)
@@ -22,11 +22,11 @@ It’s designed for efficient stock tracking, allows user to loan the item/inven
 13. [Author](#-author)
 
 ## ✨ Features
-- **User Authentication**: JWT-based login & registration.
+- **User Authentication**: JWT-based login & registration. There are 3 user roles: User, Staff, and Admin.
 - **Inventory Management**: Create, update, delete, and view stock.
 - **Item Loan Transaction**: Borrow, return, and track item loan history.
 - **Request Meeting Scheduling**: Users can request meetings with staff to discuss loan transactions.
-- **Dashboard Analytics**: Real-time data visualization using charts.
+- **Dashboard Analytics**: Real-time data visualization using charts, and each user role has a different dashboard.
 - **Date Filters & Reports**: Filter data by date, export to Excel/PDF.
 - **Search, Sort, Filter, and Pagination**: Efficient data browsing with multiple criteria. 
 - **Email Notifications**: Automated transactional emails.
@@ -54,13 +54,19 @@ It’s designed for efficient stock tracking, allows user to loan the item/inven
 - ➡️ **Helmet**, **CORS**, **cookie-parser** for security
 - ➡️ **Nodemailer** for email notifications
 
+=> **Deployment & DevOps**:
+- ➡️ GitHub Actions: CI/CD automation for build & deployment
+- ➡️ Docker & Docker Compose: Containerization for backend & frontend services
+- ➡️ Cloudflare Zero Trust: Secure remote access & protection
+- ➡️ NGINX: Serving the frontend and reverse proxy for backend API
+
 ## 💻 System Requirements
 - ➡️ NodeJS v22 or above
 - ➡️ npm v9 or above
 - ➡️ MongoDB v6 or above
 - ➡️ RabbitMQ v3 or above
 
-## 📥 Installation
+## 📥 Installation and Running The App
 ### **1. Clone Repository**
 ```bash
 git clone https://github.com/Juwono136/inventorCS_apps.git
@@ -77,6 +83,12 @@ npm install
 ```bash
 cd ../frontend
 npm install
+```
+
+### 4. Running the app
+```bash
+cd inventorCS_apps
+npm start
 ```
 
 ## ⚙️ Backend Setup
@@ -99,7 +111,6 @@ EMAIL_USER = YOU_HOST_EMAIL
 EMAIL_PASSWORD = YOUR_EMAIL_PASSWORD
 
 RABBITMQ_URL = amqp://<USERNAME>:<PASSWORD>@<YOUR_LOCAL_IP>:5672 
-
 ```
 
 
