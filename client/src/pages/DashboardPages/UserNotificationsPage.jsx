@@ -97,6 +97,21 @@ const UserNotificationsPage = () => {
     setSearchParams({ page, search });
   }, [page, search]);
 
+  // Sync search with URL
+  useEffect(() => {
+    if (searchQuery !== search) {
+      setSearch(searchQuery);
+    }
+  }, [searchQuery]);
+
+  // Reset page to 1 when search changes
+  useEffect(() => {
+    if (debouncedSearch) {
+      setPage(1);
+      setSearchParams({ search: debouncedSearch, page: 1 });
+    }
+  }, [debouncedSearch]);
+
   // Fetch notifications
   useEffect(() => {
     dispatch(
