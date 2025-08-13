@@ -170,7 +170,7 @@ npm start
 - Cron jobs handle automatic cancellations & periodic maintenance tasks.
 
 ## 🤝 Project Members
-- Juwono (https://github.com/Juwono136)
-- Ida Bagus Kerthyayana Manuaba (https://github.com/bagzcode)
-- Wilbert Wirawan Ichwan (https://github.com/Rktify)
-- Brilian Yudha (https://github.com/brilianvy2)
+- Juwono (https://github.com/Juwono136) - Project Manager, Software Engineering, QA & Testing, DevOps
+- Ida Bagus Kerthyayana Manuaba (https://github.com/bagzcode) - Tech Lead
+- Wilbert Wirawan Ichwan (https://github.com/Rktify) - Backend Developer
+- Brilian Yudha (https://github.com/brilianvy2) - Frontend Developer
