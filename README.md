@@ -139,16 +139,25 @@ npm start
 ### Home Page
 
 ### Sign In Page
+<img width="1911" height="862" alt="image" src="https://github.com/user-attachments/assets/d1af3391-b7df-43c5-88cb-1224956bb84a" />
 
 ### Sign Up Page
+<img width="1920" height="1453" alt="image" src="https://github.com/user-attachments/assets/1c1c740b-7e61-4f57-9fee-0f8accab2f50" />
 
 ### Inventory lists Page
+<img width="1917" height="860" alt="image" src="https://github.com/user-attachments/assets/a4828102-a634-475f-8ff6-317360d43b3f" />
 
 ### Inventory Detail Page
+<img width="1911" height="866" alt="image" src="https://github.com/user-attachments/assets/d714da25-813b-4705-8946-3c09122fe3b4" />
 
 ### My Cart / Create Loan Transaction Page
+<img width="1912" height="860" alt="image" src="https://github.com/user-attachments/assets/17c4c019-4aec-42df-916c-d0d4761a7551" />
 
 ### User Dashboard
+<img width="1910" height="867" alt="image" src="https://github.com/user-attachments/assets/4f6a7bf7-5cf6-409f-839a-92b1386bde53" />
+
+### User Loan Transactions Page
+<img width="1912" height="862" alt="image" src="https://github.com/user-attachments/assets/88756054-7665-4366-b350-a02d40798e7a" />
 
 ### Staff Dashboard
 
