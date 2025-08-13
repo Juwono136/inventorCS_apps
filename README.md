@@ -171,6 +171,6 @@ npm start
 
 ## 🤝 Project Members
 - Juwono (https://github.com/Juwono136)
-- Ida Bagus Kerthyayana Manuaba
-- Wilbert Wirawan Ichwan
-- Brilian Yudha
+- Ida Bagus Kerthyayana Manuaba (https://github.com/bagzcode)
+- Wilbert Wirawan Ichwan (https://github.com/Rktify)
+- Brilian Yudha (https://github.com/brilianvy2)
