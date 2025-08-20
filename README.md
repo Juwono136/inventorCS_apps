@@ -6,17 +6,6 @@
 
 > **Project Link**: [InventorCS Web App](https://inventorcs.csbihub.id/)
 
-## 📑 Table of Contents
-- ✅ [Features](#-features)
-- ✅ [Tech Stack](#-tech-stack)
-- ✅ [System Requirements](#-system-requirements)
-- ✅ [Installation and Setup](#-installation-and-setup)
-- ✅ [Available Scripts](#-available-scripts)
-- ✅ [API Documentation](#-api-documentation)
-- ✅ [Screenshots](#-screenshots)
-- ✅ [Development Notes](#-development-notes)
-- ✅ [Project Members](#-project-members)
-
 ## ✨ Features
 - **User Authentication**: JWT-based login & registration. There are 3 user roles: User, Staff, and Admin.
 - **Inventory Management**: Create, update, delete, and view stock.
