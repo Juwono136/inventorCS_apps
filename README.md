@@ -40,8 +40,7 @@
 - ➡️ **Nodemailer** for email notifications
 
 => **Deployment & DevOps**:
-
-<img width="758" height="340" alt="InventorCS - CICD Pipeline" src="https://github.com/user-attachments/assets/15f99a24-4b68-4526-8119-134709e3221f" />
+<img width="758" height="340" alt="InventorCS - CICD Pipeline" src="https://github.com/user-attachments/assets/76d02772-8333-497f-8a5f-ac61cb85e556" />
 
 - ➡️ GitHub Actions: CI/CD automation for build & deployment
 - ➡️ Docker & Docker Compose: Containerization for backend & frontend services
