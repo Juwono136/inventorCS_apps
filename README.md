@@ -20,7 +20,7 @@
 - **Responsive UI Design**: Built with TailwindCSS and Material Tailwind.
 
 ## 🧑‍💻 Tech Stack
-=> **Frontend**:
+### Frontend:
 - ➡️ **React 18** with **Vite**
 - ➡️ **Redux Toolkit** for state management
 - ➡️ **Axios** for making HTTP requests from backend
@@ -30,7 +30,7 @@
 - ➡️ **Framer Motion** for animations
 - ➡️ **QR Code & Barcode** support
 
-=> **Backend**:
+### Backend:
 - ➡️ **Node.js** + **Express.js**
 - ➡️ **MongoDB** + **Mongoose**
 - ➡️ **JWT** authentication & **bcrypt** password hashing
@@ -39,13 +39,13 @@
 - ➡️ **Helmet**, **CORS**, **cookie-parser** for security
 - ➡️ **Nodemailer** for email notifications
 
-=> **Deployment & DevOps**:
+### Deployment & DevOps:
 <img width="758" height="340" alt="InventorCS - CICD Pipeline" src="https://github.com/user-attachments/assets/76d02772-8333-497f-8a5f-ac61cb85e556" />
 
 - ➡️ GitHub Actions: CI/CD automation for build & deployment
 - ➡️ Docker & Docker Compose: Containerization for backend & frontend services
-- ➡️ Cloudflare Zero Trust: Secure remote access & protection
-- ➡️ NGINX: Serving the frontend and reverse proxy for backend API
+- ➡️ Cloudflare Zero Trust: Secure remote access & protection, and create tunnel
+- ➡️ NGINX: Serving reverse proxy for frontend
 
 ## 💻 System Requirements
 - ➡️ NodeJS v22 or above
