@@ -38,12 +38,13 @@ export const getAllInventories = createAsyncThunk(
 // get all inventories based on user program
 export const getInventoriesByProgram = createAsyncThunk(
   "inventory/all_by_user_program",
-  async ({ token, page, sort, categories, search, limit }, thunkAPI) => {
+  async ({ token, page, sort, categories, draftStatus, search, limit }, thunkAPI) => {
     try {
       const params = {
         page,
         sort: `${sort.sort},${sort.order}`,
         categories,
+        draftStatus,
         search,
         limit,
       };
@@ -99,6 +100,22 @@ export const updateInventory = createAsyncThunk("inventory/update", async (data,
     // console.log(token)
 
     return await inventoryService.updateInventory(data, token);
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
+// active inventory
+export const activeInventory = createAsyncThunk("inventory/active", async (id, thunkAPI) => {
+  try {
+    const token = await tokenService.accessToken(id);
+
+    return await inventoryService.activeInventory(id, token);
   } catch (error) {
     const message =
       (error.response && error.response.data && error.response.data.message) ||
@@ -222,6 +239,21 @@ export const inventorySlice = createSlice({
       .addCase(updateInventory.rejected, (state, action) => {
         state.isError = true;
         state.isSuccess = false;
+        state.isLoading = false;
+        state.message = action.payload;
+      })
+      // active inventory builder
+      .addCase(activeInventory.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(activeInventory.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.inventories = action.payload;
+        state.message = action.payload.message;
+      })
+      .addCase(activeInventory.rejected, (state, action) => {
+        state.isError = true;
         state.isLoading = false;
         state.message = action.payload;
       })

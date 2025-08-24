@@ -82,6 +82,13 @@ const SidebarComponent = ({ isDrawerOpen = false, closeDrawer }) => {
               </ListItem>
             </NavLink>
 
+            <NavLink to="/notifications" onClick={closeDrawer} className={getNavLinkClass}>
+              <ListItem className="flex gap-2 items-center text-indigo-800">
+                <MdOutlineNotificationsActive className="text-md" />
+                Notifications
+              </ListItem>
+            </NavLink>
+
             {user?.selectedRole === 2 && (
               <>
                 <NavLink to="/inventories" onClick={closeDrawer} className={getNavLinkClass}>
@@ -113,13 +120,6 @@ const SidebarComponent = ({ isDrawerOpen = false, closeDrawer }) => {
               <ListItem className="flex gap-2 items-center text-indigo-800">
                 <MdAddShoppingCart className="text-md" />
                 My Loan Transactions
-              </ListItem>
-            </NavLink>
-
-            <NavLink to="/notifications" onClick={closeDrawer} className={getNavLinkClass}>
-              <ListItem className="flex gap-2 items-center text-indigo-800">
-                <MdOutlineNotificationsActive className="text-md" />
-                Notifications
               </ListItem>
             </NavLink>
 

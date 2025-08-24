@@ -1017,7 +1017,7 @@ export const getLoanTransactionsByUser = async (req, res) => {
     const userId = req.user._id;
 
     const page = parseInt(req.query.page) - 1 || 0;
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = parseInt(req.query.limit) || 6;
     const search = req.query.search || "";
     let sort = req.query.sort || "borrow_date";
     let loan_status = req.query.loanStatus || "All";

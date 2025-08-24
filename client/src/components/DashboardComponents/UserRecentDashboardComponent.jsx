@@ -108,7 +108,7 @@ const UserRecentDashboardComponent = () => {
                     <td className="py-3 px-4 font-medium">{activity.transactionId}</td>
                     <td className="py-3 px-4">{formatDate(activity.borrowDate)}</td>
                     <td className="py-3 px-4">
-                      {activity.returnDate ? formatDate(activity.returnDate) : "Not returned"}
+                      {activity.returnDate ? formatDate(activity.returnDate) : "-"}
                     </td>
                     <td className="py-3 px-4">
                       <span
@@ -149,9 +149,7 @@ const UserRecentDashboardComponent = () => {
                 </div>
                 <div className="text-xs text-gray-500 space-y-1">
                   <p>Borrowed: {formatDate(activity.borrowDate)}</p>
-                  <p>
-                    Return: {activity.returnDate ? formatDate(activity.returnDate) : "Not returned"}
-                  </p>
+                  <p>Return: {activity.returnDate ? formatDate(activity.returnDate) : "-"}</p>
                 </div>
               </motion.div>
             ))}

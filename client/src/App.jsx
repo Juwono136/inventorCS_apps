@@ -181,7 +181,7 @@ function App() {
           <Route
             path="user-loan/detail/:id"
             element={
-              <ProtectedUserRoutes allowedRoles={[0, 1, 2]}>
+              <ProtectedUserRoutes allowedRoles={[0, 2]}>
                 <LoanTransactionByUserPage />
               </ProtectedUserRoutes>
             }

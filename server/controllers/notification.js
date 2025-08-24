@@ -30,33 +30,34 @@ export const getNotificationByUser = async (req, res) => {
       user_id: { $in: [userId] },
     };
 
-    // Search by message content
     if (search) {
       query.message = { $regex: search, $options: "i" };
     }
 
-    // Filter by createdAt date range
     if (startDate || endDate) {
       query.createdAt = {};
       if (startDate) query.createdAt.$gte = new Date(startDate);
       if (endDate) query.createdAt.$lte = new Date(endDate);
     }
 
-    // Total count
-    const totalNotifications = await Notification.countDocuments(query);
+    const [totalNotifications, totalUnread, notifications] = await Promise.all([
+      Notification.countDocuments(query),
 
-    // Paginated and sorted result
-    const notifications = await Notification.find(query)
-      .populate("loan_transaction")
-      .sort({ createdAt: -1 })
-      .skip(page * limit)
-      .limit(limit)
-      .lean()
-      .exec();
+      Notification.countDocuments({ ...query, is_read: false }),
+
+      Notification.find(query)
+        .populate("loan_transaction")
+        .sort({ createdAt: -1 })
+        .skip(page * limit)
+        .limit(limit)
+        .lean()
+        .exec(),
+    ]);
 
     res.json({
       message: "User notifications retrieved successfully.",
       total: totalNotifications,
+      totalUnread,
       page: page + 1,
       totalPages: Math.ceil(totalNotifications / limit),
       limit,

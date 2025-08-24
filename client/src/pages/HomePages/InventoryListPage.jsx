@@ -32,7 +32,7 @@ const InventoryListPage = ({
   const dispatch = useDispatch();
 
   const currentPage = parseInt(searchParams.get("page")) || 1;
-  const searchQuery = searchParams.get("search") || "";
+  // const searchQuery = searchParams.get("search") || "";
 
   const { inventories, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.inventory
@@ -47,11 +47,11 @@ const InventoryListPage = ({
   }, []);
 
   // Sync search with URL
-  useEffect(() => {
-    if (searchQuery !== search) {
-      setSearch(searchQuery);
-    }
-  }, [searchQuery]);
+  // useEffect(() => {
+  //   if (searchQuery !== search) {
+  //     setSearch(searchQuery);
+  //   }
+  // }, [searchQuery]);
 
   // Reset page to 1 when search changes
   useEffect(() => {
@@ -92,9 +92,7 @@ const InventoryListPage = ({
   }, [page, search, isError, isSuccess, message]);
 
   const sortedItems = items
-    ? [...items].sort(
-        (a, b) => new Date(b.publishedAt) - new Date(a.publishedAt)
-      )
+    ? [...items].sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))
     : [];
 
   return (

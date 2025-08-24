@@ -37,7 +37,7 @@ const MyLoanTransactionPage = () => {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page")) || 1;
-  const searchQuery = searchParams.get("search") || "";
+  // const searchQuery = searchParams.get("search") || "";
   const [loanStatus, setLoanStatus] = useState("");
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -50,7 +50,6 @@ const MyLoanTransactionPage = () => {
     endDate: "",
   });
 
-  const { user } = useSelector((state) => state.auth);
   const { loanData, isLoading, isError, message } = useSelector((state) => state.loan);
   const [openCancelLoan, setOpenCancelLoan] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
@@ -64,7 +63,7 @@ const MyLoanTransactionPage = () => {
   const [copiedId, setCopiedId] = useState(null);
 
   const formattedStartDate = borrowDateRange.startDate
-    ? new Date(borrowDateRange.startDate).toISOString()
+    ? new Date(new Date(borrowDateRange.startDate).setHours(0, 0, 0, 0)).toISOString()
     : "";
 
   const formattedEndDate = borrowDateRange.endDate
@@ -110,17 +109,17 @@ const MyLoanTransactionPage = () => {
     });
   };
 
+  // Reset page to 1 when date range filter changes
+  useEffect(() => {
+    if (borrowDateRange.startDate || borrowDateRange.endDate) {
+      setPage(1);
+    }
+  }, [borrowDateRange.startDate, borrowDateRange.endDate]);
+
   // Sets the page when the component is first mounted to match the URL.
   useEffect(() => {
     setPage(currentPage);
   }, []);
-
-  // Sync search with URL
-  useEffect(() => {
-    if (searchQuery !== search) {
-      setSearch(searchQuery);
-    }
-  }, [searchQuery]);
 
   // Reset page to 1 when search changes
   useEffect(() => {
@@ -185,7 +184,7 @@ const MyLoanTransactionPage = () => {
       <hr className="w-full border-indigo-100 my-4" />
 
       <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-center">
-        <SearchElement setSearch={setSearch} />
+        <SearchElement search={search} setSearch={setSearch} />
 
         <FilterCheckBox
           filterValues={data?.loan_statuses || []}
@@ -232,11 +231,10 @@ const MyLoanTransactionPage = () => {
           handleCancelLoan={handleCancelLoan}
           cancelationReason={cancelationReason}
           setCancelationReason={setCancelationReason}
-          role={user?.selectedRole}
         />
       )}
 
-      {data?.totalLoans > 0 && (
+      {!isLoading && data?.totalLoans > 0 && (
         <Pagination
           totalPage={search ? Math.ceil(data?.totalLoans / data?.limit) : data?.totalPages}
           page={page}

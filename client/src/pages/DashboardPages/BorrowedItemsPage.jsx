@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 // icons and material-tailwind
@@ -19,26 +19,36 @@ const BorrowedItemsPage = () => {
   const tabParam = searchParams.get("tab") || "borrowedItems";
   const [activeTab, setActiveTab] = useState(tabParam);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const isInitialMount = useRef(true);
 
   useEffect(() => {
-    const currentParams = Object.fromEntries(searchParams.entries());
+    const params = Object.fromEntries(searchParams.entries());
 
-    if (!searchParams.has("page")) currentParams.page = "1";
-    if (!searchParams.has("search")) currentParams.search = "";
+    // Run when refreshing the page (first mount)
+    if (isInitialMount.current) {
+      isInitialMount.current = false; // Turn off the flag after the first run
 
-    if (tabParam === "meetingRequests") {
-      currentParams.meetingStatus = currentParams.meetingStatus || "";
-      delete currentParams.loanStatus;
-    } else {
-      currentParams.loanStatus = currentParams.loanStatus || "";
-      delete currentParams.meetingStatus;
+      const cleanParams = {
+        page: "1",
+        search: "",
+        tab: activeTab, // use activeTab state
+      };
+
+      if (activeTab === "meetingRequests") {
+        cleanParams.meetingStatus = "";
+      } else {
+        cleanParams.loanStatus = "";
+      }
+
+      setSearchParams(cleanParams, { replace: true });
+      return; // Stop further execution
     }
 
-    if (tabParam !== activeTab) {
-      currentParams.tab = activeTab;
+    // This logic runs for interactions after a refresh (e.g. changing tabs)
+    if (params.tab !== activeTab) {
+      params.tab = activeTab;
+      setSearchParams(params);
     }
-
-    setSearchParams(currentParams);
   }, [activeTab, searchParams, setSearchParams]);
 
   const handleTabChange = (newTab) => {

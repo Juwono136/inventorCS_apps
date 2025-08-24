@@ -25,7 +25,6 @@ const LoanTransactionCardComponent = ({
   handleCancelLoan,
   cancelationReason,
   setCancelationReason,
-  role,
 }) => {
   const [isQRCodeModalOpen, setQRCodeModalOpen] = useState(false);
   const [qrCodeValue, setQRCodeValue] = useState("");
@@ -173,7 +172,7 @@ const LoanTransactionCardComponent = ({
 
                   <Link
                     className="bg-gradient-to-r flex items-center gap-2 text-indigo-900 font-semibold hover:text-white hover:from-indigo-500 hover:to-purple-800 text-xs py-2 w-max px-2 rounded-lg capitalize transition-all"
-                    to={`detail/${_id}`}
+                    to={`${window.location.origin}/user-loan/detail/${_id}`}
                   >
                     See Detail
                     <FaArrowRight />

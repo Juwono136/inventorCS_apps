@@ -7,13 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { useDragScroll } from "../../utils/handleMouseDrag";
 
 const InventoriesTablComponent = ({ items, TABLE_HEAD, handleSort }) => {
-  const {
-    tableRef,
-    handleMouseDown,
-    handleMouseLeave,
-    handleMouseUp,
-    handleMouseMove,
-  } = useDragScroll();
+  const { tableRef, handleMouseDown, handleMouseLeave, handleMouseUp, handleMouseMove } =
+    useDragScroll();
 
   const navigate = useNavigate();
 
@@ -97,13 +92,12 @@ const InventoriesTablComponent = ({ items, TABLE_HEAD, handleSort }) => {
                 total_items,
                 item_status,
                 is_consumable,
+                draft,
               },
               index
             ) => {
               const isLast = index === items.length - 1;
-              const classes = isLast
-                ? "p-4"
-                : "p-4 border-b border-blue-gray-50";
+              const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
 
               const statusColors = {
                 Available: "green",
@@ -126,9 +120,7 @@ const InventoriesTablComponent = ({ items, TABLE_HEAD, handleSort }) => {
                 >
                   <td className={classes}>
                     <div className="flex flex-col">
-                      <p className="font-normal text-sm text-blue-gray-700">
-                        {index + 1}
-                      </p>
+                      <p className="font-normal text-sm text-blue-gray-700">{index + 1}</p>
                     </div>
                   </td>
 
@@ -136,9 +128,7 @@ const InventoriesTablComponent = ({ items, TABLE_HEAD, handleSort }) => {
                     <div className="flex items-center gap-3">
                       <Avatar src={asset_img} alt={asset_name} size="sm" />
                       <div className="flex flex-col">
-                        <p className="font-semibold text-sm text-blue-800">
-                          {asset_name}
-                        </p>
+                        <p className="font-semibold text-sm text-blue-800">{asset_name}</p>
                         <p className="opacity-80 font-normal text-xs text-indigo-900">
                           Item ID: {asset_id}
                         </p>
@@ -147,18 +137,14 @@ const InventoriesTablComponent = ({ items, TABLE_HEAD, handleSort }) => {
                   </td>
                   <td className={classes}>
                     <div className="flex flex-col">
-                      <p className="font-normal text-sm text-blue-gray-700">
-                        {location}
-                      </p>
+                      <p className="font-normal text-sm text-blue-gray-700">{location}</p>
                       <p className="font-normal opacity-70 text-sm text-blue-gray-600">
                         Room: {room_number}
                       </p>
                     </div>
                   </td>
                   <td className={classes}>
-                    <p className="font-normal text-sm text-blue-gray-700">
-                      {cabinet}
-                    </p>
+                    <p className="font-normal text-sm text-blue-gray-700">{cabinet}</p>
                   </td>
                   <td className={classes}>
                     <p className="font-semibold capitalize text-orange-800 text-sm">
@@ -180,6 +166,17 @@ const InventoriesTablComponent = ({ items, TABLE_HEAD, handleSort }) => {
                         color={statusColors[item_status] || "gray"}
                         variant="outlined"
                         className="rounded-full"
+                      />
+                    </div>
+                  </td>
+
+                  <td className={classes}>
+                    <div className="w-max">
+                      <Chip
+                        variant="ghost"
+                        size="sm"
+                        color={draft === true ? "red" : "light-green"}
+                        value={draft === true ? "Draft" : "Active"}
                       />
                     </div>
                   </td>

@@ -19,7 +19,7 @@ import UseDocumentTitle from "../../common/UseDocumentTitle";
 // features
 import {
   confirmReturnedByBorrower,
-  getLoanTransactionsByUser,
+  getLoanTransactionById,
   loanReset,
   userConfirmReceipt,
 } from "../../features/loanTransaction/loanSlice";
@@ -43,7 +43,8 @@ const LoanTransactionByUserPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const matchedLoan = loanData?.loanTransactions?.find((loan) => loan._id === id);
+  // const matchedLoan = loanData?.find((loan) => loan._id === id);
+  // console.log(loanData);
 
   const handleOpenDialog = () => {
     setOpenDialog(!openDialog);
@@ -83,37 +84,28 @@ const LoanTransactionByUserPage = () => {
     setOpenReturned(!openReturned);
   };
 
+  // useEffect(() => {
+  //   if (!loanData) {
+  //     toast.error("Invalid Credential.", { duration: 4000 });
+  //     navigate("/404", { replace: true });
+  //   }
+  // }, [loanData, navigate]);
+
   useEffect(() => {
-    if (loanData?.loanTransactions) {
-      if (!matchedLoan) {
-        toast.error("Transaction not found.", { duration: 4000 });
-        navigate("/404", { replace: true });
-      }
-    }
-  }, [loanData, id, navigate]);
+    dispatch(getLoanTransactionById(id));
+    dispatch(getMeetingByLoanId(id));
+  }, [dispatch, id]);
 
   useEffect(() => {
     if (isError && message) {
       toast.error(message);
     }
 
-    if (isSuccess && loanData?.message) {
-      toast.success(loanData.message);
+    if (isSuccess && message) {
+      toast.success(message);
       dispatch(loanReset());
     }
     dispatch(loanReset());
-    dispatch(
-      getLoanTransactionsByUser({
-        page: 1,
-        sort: { sort: "borrow_date", order: "desc" },
-        loanStatus: "",
-        search: "",
-        borrow_date_start: "",
-        borrow_date_end: "",
-        limit: "",
-      })
-    );
-    dispatch(getMeetingByLoanId(id));
   }, [isError, isSuccess, message]);
 
   if (isLoading || !loanData) {
@@ -159,7 +151,7 @@ const LoanTransactionByUserPage = () => {
         open={openMeetingModal}
         handleClose={handleCloseMeetingModal}
         meetingData={meetingInfoByLoanId}
-        loanData={matchedLoan}
+        loanData={loanData}
       />
 
       {/* Dialog component for request meeting */}

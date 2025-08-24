@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useDebounce } from "use-debounce";
@@ -42,14 +42,17 @@ const InventoriesPage = ({
     "Item Category",
     "Total Items",
     "Item Status",
+    "Is Draft?",
     "Is Consumable?",
   ];
   const [progress, setProgress] = useState(0);
+  const [draftStatus, setDraftStatus] = useState("");
   const [inventoryData, setInventoryData] = useState([]);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page")) || 1;
-  const searchQuery = searchParams.get("search") || "";
+  const currentDraftStatus = searchParams.get("draftStatus") || "";
+  // const searchQuery = searchParams.get("search") || "";
 
   const { inventories, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.inventory
@@ -63,14 +66,15 @@ const InventoriesPage = ({
   // Sets the page when the component is first mounted to match the URL.
   useEffect(() => {
     setPage(currentPage);
+    setDraftStatus(currentDraftStatus);
   }, []);
 
   // Sync search with URL
-  useEffect(() => {
-    if (searchQuery !== search) {
-      setSearch(searchQuery);
-    }
-  }, [searchQuery]);
+  // useEffect(() => {
+  //   if (searchQuery !== search) {
+  //     setSearch(searchQuery);
+  //   }
+  // }, [searchQuery]);
 
   // Reset page to 1 when search changes
   useEffect(() => {
@@ -89,10 +93,11 @@ const InventoriesPage = ({
           sort,
           categories,
           search: debouncedSearch || "",
+          draftStatus,
         })
       );
     }
-  }, [debouncedSearch, categories, page, sort, dispatch, currentPage]);
+  }, [debouncedSearch, categories, draftStatus, page, sort, dispatch, currentPage]);
 
   // Make sure the URL is always updated with the state
   useEffect(() => {
@@ -131,10 +136,7 @@ const InventoriesPage = ({
     };
     const selectedSortField = sortFileMap[column];
     if (selectedSortField) {
-      const newOrder =
-        sort.sort === selectedSortField && sort.order === "asc"
-          ? "desc"
-          : "asc";
+      const newOrder = sort.sort === selectedSortField && sort.order === "asc" ? "desc" : "asc";
       setSort({ sort: selectedSortField, order: newOrder });
     }
   };
@@ -143,11 +145,7 @@ const InventoriesPage = ({
     <Layout>
       {/* progress bar */}
       {progress > 0 && (
-        <Progress
-          value={progress}
-          color="indigo"
-          className="transition-all duration-500 my-1"
-        />
+        <Progress value={progress} color="indigo" className="transition-all duration-500 my-1" />
       )}
       <ExcelImportExportComponent
         handleProgressBar={handleProgressBar}
@@ -162,10 +160,7 @@ const InventoriesPage = ({
 
         <div className="flex gap-2 w-max flex-col md:flex-row justify-center md:items-center">
           <a href="inventories/add_inventory">
-            <Button
-              className="flex items-center capitalize bg-purple-500"
-              size="sm"
-            >
+            <Button className="flex items-center capitalize bg-purple-500" size="sm">
               <IoIosAddCircleOutline className="mr-1 text-lg" />
               Add Inventory
             </Button>
@@ -184,6 +179,13 @@ const InventoriesPage = ({
             setPage={setPage}
             filterTitle="Filter by Category"
           />
+
+          <FilterCheckBox
+            filterValues={["Draft", "Active"]}
+            setFilter={setDraftStatus}
+            setPage={setPage}
+            filterTitle="Filter by Item Draft"
+          />
         </div>
 
         <div className="basis-4/5 overflow-x-auto md:w-full">
@@ -201,9 +203,7 @@ const InventoriesPage = ({
         </div>
 
         <div className="flex">
-          <p className="text-xs text-blue-gray-800">
-            Total Items: {totalItems}
-          </p>
+          <p className="text-xs text-blue-gray-800">Total Items: {totalItems}</p>
         </div>
 
         {/* pagination */}

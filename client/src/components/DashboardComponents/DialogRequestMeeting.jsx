@@ -36,7 +36,10 @@ const DialogRequestMeeting = ({ loanData, openDialog, setOpenDialog, handleOpenD
     "17:00",
   ];
 
-  const locationOptions = ["Binus JWC Campus", "Binus FX Campus"];
+  const locationOptions = [
+    "Binus JWC Campus (Faculty Room)",
+    "Binus FX Senayan Campus (Faculty Room)",
+  ];
 
   const initialState = {
     location: "",
@@ -50,8 +53,7 @@ const DialogRequestMeeting = ({ loanData, openDialog, setOpenDialog, handleOpenD
 
   const { meeting, isError, isSuccess, message, isLoading } = useSelector((state) => state.meeting);
 
-  const foundLoan = loanData?.loanTransactions?.find((loan) => loan._id === id);
-  // console.log(foundLoan);
+  const foundLoan = loanData;
 
   const { location, meeting_date, meeting_time } = data;
 
@@ -167,7 +169,8 @@ const DialogRequestMeeting = ({ loanData, openDialog, setOpenDialog, handleOpenD
                 toggleClassName="absolute rounded-r-lg text-gray-600 right-0 h-full px-3 text-gray-400 focus:outline-none disabled:opacity-40 disabled:cursor-not-allowed"
                 value={data.meeting_date}
                 displayFormat={"DD-MM-YYYY"}
-                minDate={new Date()}
+                minDate={new Date(foundLoan?.borrow_date)}
+                maxDate={new Date(foundLoan?.expected_return_date)}
                 onChange={(newValue) => handleChange("meeting_date", newValue)}
               />
             </div>

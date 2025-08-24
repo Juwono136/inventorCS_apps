@@ -1,18 +1,29 @@
-import React from "react";
+import { useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
+import { useSelector, useDispatch } from "react-redux";
+
+// features
+import { logout } from "../features/auth/authSlice";
+
+const UnauthorizedRedirect = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    toast.error("You are not authorized to access this page. Please Login!");
+    dispatch(logout());
+  }, [dispatch]);
+
+  return <Navigate to="/signin" replace />;
+};
 
 const ProtectedUserRoutes = ({ children, allowedRoles }) => {
   const { user } = useSelector((state) => state.auth);
 
-  // console.log("Current User Role:", user?.selectedRole);
+  const isAuthorized = user && allowedRoles.includes(user.selectedRole);
 
-  if (
-    !user ||
-    !typeof user?.selectedRole ||
-    !allowedRoles.includes(user?.selectedRole)
-  ) {
-    return <Navigate to="404" />;
+  if (!isAuthorized) {
+    return <UnauthorizedRedirect />;
   }
 
   return children;

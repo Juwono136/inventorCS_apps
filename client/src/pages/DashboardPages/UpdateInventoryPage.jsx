@@ -21,6 +21,7 @@ import { getFullDay } from "../../common/Date";
 // features
 import { convertFileToBase64 } from "../../utils/convertToBase64";
 import {
+  activeInventory,
   draftInventory,
   getInventoryById,
   updateInventory,
@@ -82,8 +83,7 @@ const UpdateInventoryPage = () => {
         asset_img: inventoryById?.asset_img || "",
         serial_number: inventoryById?.serial_number || "",
         categories:
-          Array.isArray(inventoryById?.categories) &&
-          inventoryById.categories.length > 0
+          Array.isArray(inventoryById?.categories) && inventoryById.categories.length > 0
             ? inventoryById.categories[0]
             : "",
         item_status: inventoryById?.item_status || "Available",
@@ -108,6 +108,7 @@ const UpdateInventoryPage = () => {
   const [isQRCodeModalOpen, setQRCodeModalOpen] = useState(false);
   const [qrCodeValue, setQRCodeValue] = useState("");
   const [openDraftInventory, setOpenDraftinventory] = useState(false);
+  const [openActiveInventory, setOpenActiveInventory] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
 
   const {
@@ -126,17 +127,32 @@ const UpdateInventoryPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleOpenDraftLoan = (id) => {
+  const handleOpenDraftItem = (id) => {
     setOpenDraftinventory(!openDraftInventory);
     setSelectedId(id);
   };
 
+  const handleOpenActiveItem = (id) => {
+    setOpenActiveInventory(!openActiveInventory);
+    setSelectedId(id);
+  };
+
+  // draft inventory handler
   const handleDraftInventory = (id) => {
     dispatch(draftInventory(id)).then(() => {
       navigate("/inventories");
     });
 
     setOpenDraftinventory(!openDraftInventory);
+  };
+
+  // active inventory handler
+  const handleActiveInventory = (id) => {
+    dispatch(activeInventory(id)).then(() => {
+      navigate("/inventories");
+    });
+
+    setOpenActiveInventory(!openActiveInventory);
   };
 
   const handleOpenQRCodeModal = (value) => {
@@ -231,13 +247,30 @@ const UpdateInventoryPage = () => {
               Update Inventory
             </h3>
 
-            <Button
+            {inventoryById?.draft === false ? (
+              <Button
+                className="flex justify-center items-center gap-1 bg-red-600 text-xs py-2 px-3 rounded-lg capitalize transition-all"
+                onClick={() => handleOpenDraftItem(inventoryById?._id)}
+              >
+                <TiFolderDelete className="text-lg font-semibold" />
+                Draft Item
+              </Button>
+            ) : (
+              <Button
+                className="flex justify-center items-center gap-1 bg-green-600 text-xs py-2 px-3 rounded-lg capitalize transition-all"
+                onClick={() => handleOpenActiveItem(inventoryById?._id)}
+              >
+                <TiFolderDelete className="text-lg font-semibold" />
+                Activate Item
+              </Button>
+            )}
+            {/* <Button
               className="flex justify-center items-center gap-1 bg-red-600 text-xs py-2 px-3 rounded-lg capitalize transition-all"
-              onClick={() => handleOpenDraftLoan(inventoryById?._id)}
+              onClick={() => handleOpenDraftItem(inventoryById?._id)}
             >
               <TiFolderDelete className="text-lg font-semibold" />
               Draft Item
-            </Button>
+            </Button> */}
           </div>
 
           <hr className="w-full border-indigo-100 my-4" />
@@ -247,10 +280,7 @@ const UpdateInventoryPage = () => {
               {/* Inventory summary info */}
               <div className="flex md:basis-1/2 gap-2 flex-col w-full items-center justify-start shadow-lg bg-indigo-50/40 rounded-md">
                 <div className="flex flex-col gap-4 px-2 py-4 justify-center items-center w-full">
-                  <FullScreenImage
-                    src={inventoryById.asset_img}
-                    alt="item-image"
-                  >
+                  <FullScreenImage src={inventoryById.asset_img} alt="item-image">
                     <img
                       className="h-96 md:h-full w-full rounded-lg object-cover object-center shadow-xl shadow-blue-gray-900/50"
                       src={image || inventoryById?.asset_img}
@@ -532,8 +562,7 @@ const UpdateInventoryPage = () => {
                       onChange={handleChange}
                     ></textarea>
                     <p className="mb-1 text-gray-600 text-xs text-right">
-                      {characterLimit - desc.length}/{characterLimit} characters
-                      left
+                      {characterLimit - desc.length}/{characterLimit} characters left
                     </p>
                   </div>
 
@@ -561,12 +590,21 @@ const UpdateInventoryPage = () => {
         btnText="Save"
       />
 
+      {/* Active Inventory dialog component */}
+      <DialogOpenComponent
+        openDialog={openActiveInventory}
+        handleFunc={() => handleActiveInventory(selectedId)}
+        handleOpenDialog={handleOpenActiveItem}
+        message="Are you sure you want to activate this inventory?"
+        btnText="Yes"
+      />
+
       {/* Draft Inventory dialog component */}
       <DialogOpenComponent
         openDialog={openDraftInventory}
         handleFunc={() => handleDraftInventory(selectedId)}
-        handleOpenDialog={handleOpenDraftLoan}
-        message="Are you sure want to draft this inventory?"
+        handleOpenDialog={handleOpenDraftItem}
+        message="Are you sure you want to draft this inventory?"
         btnText="Yes"
       />
 

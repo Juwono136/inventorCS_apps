@@ -121,7 +121,7 @@ const StaffDashboardCardComponent = ({ inventories, meeting, loanData }) => {
                       item.isPositive ? "text-green-600" : "text-red-600"
                     }`}
                   >
-                    {item.change > 0 ? `+${item.change}` : `-${item.change}`}
+                    {item.change > 0 ? `+${item.change}` : `${item.change}`}
                   </span>
                   <span className="text-xs text-gray-500 ml-1">this week</span>
                 </>

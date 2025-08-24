@@ -49,7 +49,7 @@ const BorrowedItemTableComponent = ({ refreshTrigger }) => {
   const data = loanData;
 
   const formattedStartDate = borrowDateRange.startDate
-    ? new Date(borrowDateRange.startDate).toISOString()
+    ? new Date(newDate(borrowDateRange.startDate).setHours(0, 0, 0, 0)).toISOString()
     : "";
 
   const formattedEndDate = borrowDateRange.endDate
@@ -61,15 +61,11 @@ const BorrowedItemTableComponent = ({ refreshTrigger }) => {
 
   // Sets the page when the component is first mounted to match the URL.
   useEffect(() => {
-    setPage(currentPage);
-  }, []);
-
-  // Sync search with URL
-  useEffect(() => {
-    if (searchQuery !== search) {
+    if (page !== currentPage) {
+      setPage(currentPage);
       setSearch(searchQuery);
     }
-  }, [searchQuery]);
+  }, [currentPage, searchQuery]);
 
   // Reset page to 1 when search changes
   useEffect(() => {
@@ -199,7 +195,10 @@ const BorrowedItemTableComponent = ({ refreshTrigger }) => {
 
           <FilterByDate
             dateRange={borrowDateRange}
-            setDateRange={setBorrowDateRange}
+            setDateRange={(newRange) => {
+              setBorrowDateRange(newRange);
+              setPage(1);
+            }}
             placeholder="Filter by Borrow Date"
           />
         </div>

@@ -19,7 +19,7 @@ import {
 } from "@material-tailwind/react";
 import { FaCartShopping } from "react-icons/fa6";
 import { FiMenu } from "react-icons/fi";
-import { IoCloseOutline } from "react-icons/io5";
+import { IoCloseOutline, IoPersonCircleOutline } from "react-icons/io5";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { CiPower } from "react-icons/ci";
 import { MdAddShoppingCart } from "react-icons/md";
@@ -53,10 +53,7 @@ const NavbarComponent = () => {
   };
 
   useEffect(() => {
-    window.addEventListener(
-      "resize",
-      () => window.innerWidth >= 768 && setOpenNav(false)
-    );
+    window.addEventListener("resize", () => window.innerWidth >= 768 && setOpenNav(false));
 
     if (isLoggedOut) {
       setOpenDialog(false);
@@ -80,22 +77,12 @@ const NavbarComponent = () => {
 
   const navList = (
     <ul className="mt-2 mb-4 flex flex-col gap-2 md:mb-0 md:mt-0 md:flex-row md:items-center md:gap-6">
-      <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="p-1 font-normal"
-      >
+      <Typography as="li" variant="small" color="blue-gray" className="p-1 font-normal">
         <a href="/inventory-list" className="flex items-center">
           Inventories
         </a>
       </Typography>
-      <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="p-1 font-normal"
-      >
+      <Typography as="li" variant="small" color="blue-gray" className="p-1 font-normal">
         <HashLink
           smooth
           to="/#team"
@@ -116,11 +103,7 @@ const NavbarComponent = () => {
             href="/"
             className="flex gap-2 items-center justify-center mx-4 md:mx-1 cursor-pointer py-1.5 font-bold text-sm md:text-xl text-indigo-700 hover:text-indigo-900"
           >
-            <img
-              src={logoImg}
-              alt="logoImg"
-              className="h-4 w-4 md:h-5 md:w-5"
-            />
+            <img src={logoImg} alt="logoImg" className="h-4 w-4 md:h-5 md:w-5" />
             InventorCS
           </a>
           <div className="flex items-center gap-3">
@@ -153,12 +136,16 @@ const NavbarComponent = () => {
                     </MenuHandler>
                     <MenuList className="p-1" onClick={closeMenuProfile}>
                       <MenuItem className="flex items-center gap-2 rounded">
-                        <LuLayoutDashboard
-                          className="h-4 w-4"
-                          strokeWidth={2}
-                        />
+                        <LuLayoutDashboard className="h-4 w-4" strokeWidth={2} />
                         <a href="/dashboard" className="text-sm">
                           My Dashboard
+                        </a>
+                      </MenuItem>
+
+                      <MenuItem className="flex items-center gap-2 rounded">
+                        <IoPersonCircleOutline className="h-4 w-4" />
+                        <a href="/profile" className="text-sm">
+                          My Profile
                         </a>
                       </MenuItem>
 
@@ -173,13 +160,8 @@ const NavbarComponent = () => {
                         onClick={handleOpenDialog}
                         className="flex items-center gap-2 rounded hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
                       >
-                        <CiPower
-                          className="h-4 w-4 text-red-500"
-                          strokeWidth={2}
-                        />
-                        <ListItemPrefix className="text-sm text-red-500">
-                          Sign Out
-                        </ListItemPrefix>
+                        <CiPower className="h-4 w-4 text-red-500" strokeWidth={2} />
+                        <ListItemPrefix className="text-sm text-red-500">Sign Out</ListItemPrefix>
                       </MenuItem>
                     </MenuList>
                   </Menu>
@@ -204,10 +186,7 @@ const NavbarComponent = () => {
               {isLoggedOut ? (
                 ""
               ) : (
-                <a
-                  href="/mycarts"
-                  className="flex justify-center items-center gap-1"
-                >
+                <a href="/mycarts" className="flex justify-center items-center gap-1">
                   <FaCartShopping className="text-indigo-700 text-2xl transition ease-in-out hover:text-indigo-400" />
                   {cartCount === 0 ? (
                     ""

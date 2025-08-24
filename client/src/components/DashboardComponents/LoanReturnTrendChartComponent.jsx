@@ -119,7 +119,7 @@ const LoanReturnTrendChartComponent = ({ loanData }) => {
         chartRef={chartRef}
       />
 
-      <div className="h-80 bg-gradient-to-br from-green-50/50 to-blue-50/50 rounded-lg p-4 flex items-center justify-center">
+      <div className="h-80 bg-gradient-to-br from-green-50/50 to-blue-50/50 rounded-lg py-3 flex items-center justify-center">
         {filteredChartData.length === 0 ? (
           <p className="text-gray-500 text-sm font-medium">No data available.</p>
         ) : (
@@ -158,8 +158,8 @@ const LoanReturnTrendChartComponent = ({ loanData }) => {
                 dataKey="loans"
                 stroke="#10b981"
                 strokeWidth={3}
-                dot={{ fill: "#10b981", strokeWidth: 2, r: 6 }}
-                activeDot={{ r: 8, stroke: "#10b981", strokeWidth: 2 }}
+                dot={{ fill: "#10b981", strokeWidth: 1, r: 4 }}
+                activeDot={{ r: 8, stroke: "#10b981", strokeWidth: 1 }}
                 name="Borrowed"
               />
               <Line
@@ -167,8 +167,8 @@ const LoanReturnTrendChartComponent = ({ loanData }) => {
                 dataKey="returns"
                 stroke="#3b82f6"
                 strokeWidth={3}
-                dot={{ fill: "#3b82f6", strokeWidth: 2, r: 6 }}
-                activeDot={{ r: 8, stroke: "#3b82f6", strokeWidth: 2 }}
+                dot={{ fill: "#3b82f6", strokeWidth: 1, r: 4 }}
+                activeDot={{ r: 8, stroke: "#3b82f6", strokeWidth: 1 }}
                 name="Returns"
               />
               <Line
@@ -176,8 +176,8 @@ const LoanReturnTrendChartComponent = ({ loanData }) => {
                 dataKey="consumed"
                 stroke="#f97316"
                 strokeWidth={3}
-                dot={{ fill: "#f97316", strokeWidth: 2, r: 6 }}
-                activeDot={{ r: 8, stroke: "#f97316", strokeWidth: 2 }}
+                dot={{ fill: "#f97316", strokeWidth: 1, r: 4 }}
+                activeDot={{ r: 8, stroke: "#f97316", strokeWidth: 1 }}
                 name="Consumed"
               />
             </LineChart>

@@ -31,18 +31,19 @@ const UserNotificationsPage = () => {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page")) || 1;
-  const searchQuery = searchParams.get("search") || "";
+  // const searchQuery = searchParams.get("search") || "";
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const [page, setPage] = useState(currentPage);
-  const [search, setSearch] = useState(searchQuery);
-  const [debouncedSearch] = useDebounce(search, 500);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
   const [notifDateRange, setNotifDateRange] = useState({
     startDate: "",
     endDate: "",
   });
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [debouncedSearch] = useDebounce(search, 500);
 
   const { notifications, isLoading, isSuccess, isError, message } = useSelector(
     (state) => state.notification
@@ -51,7 +52,7 @@ const UserNotificationsPage = () => {
   const { user } = useSelector((state) => state.auth);
 
   const formattedStartDate = notifDateRange.startDate
-    ? new Date(notifDateRange.startDate).toISOString()
+    ? new Date(new Date(notifDateRange.startDate).setHours(0, 0, 0, 0)).toISOString()
     : "";
 
   const formattedEndDate = notifDateRange.endDate
@@ -86,23 +87,14 @@ const UserNotificationsPage = () => {
     );
   };
 
-  const unreadCount = Array.isArray(notifications?.notifications)
-    ? notifications.notifications.filter((n) => !n.is_read).length
-    : 0;
+  const unreadCount = notifications?.totalUnread || 0;
 
   const displayCount = unreadCount > 99 ? "99+" : unreadCount;
 
-  // Sync page and search to URL
+  // Sets the page when the component is first mounted to match the URL.
   useEffect(() => {
-    setSearchParams({ page, search });
-  }, [page, search]);
-
-  // Sync search with URL
-  useEffect(() => {
-    if (searchQuery !== search) {
-      setSearch(searchQuery);
-    }
-  }, [searchQuery]);
+    setPage(currentPage);
+  }, []);
 
   // Reset page to 1 when search changes
   useEffect(() => {
@@ -114,17 +106,24 @@ const UserNotificationsPage = () => {
 
   // Fetch notifications
   useEffect(() => {
-    dispatch(
-      getNotificationByUser({
-        page,
-        search: debouncedSearch,
-        startDate: formattedStartDate,
-        endDate: formattedEndDate,
-      })
-    );
-  }, [dispatch, page, debouncedSearch, formattedStartDate, formattedEndDate]);
+    if (page === currentPage) {
+      dispatch(
+        getNotificationByUser({
+          page,
+          search: debouncedSearch || "",
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
+        })
+      );
+    }
+  }, [dispatch, page, currentPage, debouncedSearch, formattedStartDate, formattedEndDate]);
 
   useEffect(() => {
+    setSearchParams({
+      page,
+      search,
+    });
+
     if (isError && message) {
       toast.error(message);
     }
@@ -132,7 +131,7 @@ const UserNotificationsPage = () => {
     if (isSuccess && message) {
       toast.success(message);
     }
-  }, [isError, isSuccess, message]);
+  }, [page, search, isError, isSuccess, message]);
 
   const notifList = notifications?.notifications || [];
   const totalPage = notifications?.totalPages || 1;

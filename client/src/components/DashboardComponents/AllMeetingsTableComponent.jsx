@@ -5,13 +5,7 @@ import { useDebounce } from "use-debounce";
 import toast from "react-hot-toast";
 
 // icons and material-tailwind
-import {
-  Card,
-  CardHeader,
-  Typography,
-  CardBody,
-  Chip,
-} from "@material-tailwind/react";
+import { Card, CardHeader, Typography, CardBody, Chip } from "@material-tailwind/react";
 import { RxCaretSort } from "react-icons/rx";
 
 // components
@@ -54,32 +48,24 @@ const AllMeetingsTableComponent = ({ refreshTrigger }) => {
   const dispatch = useDispatch();
   const [debouncedSearch] = useDebounce(search, 500);
 
-  const { meeting, isLoading, isError, message } = useSelector(
-    (state) => state.meeting
-  );
+  const { meeting, isLoading, isError, message } = useSelector((state) => state.meeting);
   const data = meeting;
 
   const formattedStartDate = meetingDateRange.startDate
-    ? new Date(meetingDateRange.startDate).toISOString()
+    ? new Date(new Date(meetingDateRange.startDate).setHours(0, 0, 0, 0)).toISOString()
     : "";
 
   const formattedEndDate = meetingDateRange.endDate
-    ? new Date(
-        new Date(meetingDateRange.endDate).setHours(23, 59, 59, 999)
-      ).toISOString()
+    ? new Date(new Date(meetingDateRange.endDate).setHours(23, 59, 59, 999)).toISOString()
     : "";
 
   // Sets the page when the component is first mounted to match the URL.
   useEffect(() => {
-    setPage(currentPage);
-  }, []);
-
-  // Sync search with URL
-  useEffect(() => {
-    if (searchQuery !== search) {
+    if (page !== currentPage) {
+      setPage(currentPage);
       setSearch(searchQuery);
     }
-  }, [searchQuery]);
+  }, [currentPage, searchQuery]);
 
   // Reset page to 1 when search changes
   useEffect(() => {
@@ -142,9 +128,7 @@ const AllMeetingsTableComponent = ({ refreshTrigger }) => {
     const selectedSortField = sortFileMap[column];
     if (selectedSortField) {
       const newOrder =
-        sortMeeting.sort === selectedSortField && sortMeeting.order === "asc"
-          ? "desc"
-          : "asc";
+        sortMeeting.sort === selectedSortField && sortMeeting.order === "asc" ? "desc" : "asc";
       setSortMeeting({ sort: selectedSortField, order: newOrder });
     }
   };
@@ -157,10 +141,7 @@ const AllMeetingsTableComponent = ({ refreshTrigger }) => {
             <Typography className="text-orange-900 text-sm font-semibold md:text-xl">
               Recent Meeting Requests
             </Typography>
-            <Typography
-              color="gray"
-              className="mt-1 font-normal text-xs md:text-sm"
-            >
+            <Typography color="gray" className="mt-1 font-normal text-xs md:text-sm">
               Overview of all meeting requests related to loan transactions
             </Typography>
           </div>
@@ -180,7 +161,10 @@ const AllMeetingsTableComponent = ({ refreshTrigger }) => {
 
           <FilterByDate
             dateRange={meetingDateRange}
-            setDateRange={setMeetingDateRange}
+            setDateRange={(newRange) => {
+              setMeetingDateRange(newRange);
+              setPage(1);
+            }}
             placeholder="Filter by Meeting Date"
           />
         </div>
@@ -218,20 +202,11 @@ const AllMeetingsTableComponent = ({ refreshTrigger }) => {
               <tbody>
                 {data?.meetings?.map(
                   (
-                    {
-                      _id,
-                      loanTransaction_info,
-                      meeting_date,
-                      meeting_time,
-                      location,
-                      status,
-                    },
+                    { _id, loanTransaction_info, meeting_date, meeting_time, location, status },
                     index
                   ) => {
                     const isLast = index === data.meetings.length - 1;
-                    const classes = isLast
-                      ? "p-4"
-                      : "p-4 border-b border-blue-gray-50";
+                    const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
 
                     const statusMeetingColors = {
                       "Need Approval": "orange",
@@ -302,11 +277,7 @@ const AllMeetingsTableComponent = ({ refreshTrigger }) => {
 
         {data?.totalMeetings > 0 && (
           <Pagination
-            totalPage={
-              search
-                ? Math.ceil(data?.totalMeetings / data?.limit)
-                : data?.totalPages
-            }
+            totalPage={search ? Math.ceil(data?.totalMeetings / data?.limit) : data?.totalPages}
             page={page}
             setPage={setPage}
             bgColor="orange"
