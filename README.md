@@ -178,6 +178,7 @@ npm start
 <img width="1920" height="1135" alt="image" src="https://github.com/user-attachments/assets/e3c438ce-5de3-4a47-8247-3a0962e199b2" />
 
 ### Admin Dashboard
+Under process...
 
 ## 📝 Development Notes
 - Ensure MongoDB & RabbitMQ are running before starting backend (running via docker).
