@@ -243,6 +243,36 @@ const LoanDetailforStaffComponent = ({
                 </div>
               </div>
             </div>
+
+            {/* loan note after returning the item */}
+            {loanData?.return_date && (
+              <div className="flex flex-col gap-2 bg-green-400/10 p-4 w-full font-semibold rounded-md border border-green-500/30">
+                <p className="text-xs text-green-800 w-full text-left bg-green-100/40 p-1.5 rounded-md">
+                  Loan Item Note:
+                </p>
+
+                <hr className="border-1 mb-2 border-green-800" />
+
+                <div className="flex w-full flex-col justify-center items-start">
+                  <span className=" text-xs text-gray-600">{loanData?.loan_note}</span>
+                </div>
+              </div>
+            )}
+
+            {/* cancelation reason */}
+            {loanData?.loan_status === "Cancelled" && (
+              <div className="flex flex-col gap-2 bg-red-400/10 p-4 w-full font-semibold rounded-md border border-red-500/30">
+                <p className="text-xs text-red-800 w-full text-left bg-red-100/40 p-1.5 rounded-md">
+                  Cancelation Reason:
+                </p>
+
+                <hr className="border-1 mb-2 border-red-800" />
+
+                <div className="flex w-full flex-col justify-center items-start">
+                  <span className=" text-xs text-gray-600">{loanData?.cancelation_reason}</span>
+                </div>
+              </div>
+            )}
           </div>
         </CardBody>
       </Card>

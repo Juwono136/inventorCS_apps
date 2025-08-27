@@ -31,7 +31,7 @@ const members = [
 
 const TeamComponent = () => {
   return (
-    <section className="min-h-screen py-8 px-8 lg:py-28" id="team">
+    <section className="min-h-screen p-8" id="team">
       <div className="container mx-auto">
         <div className="mb-16 text-center lg:mb-28">
           <Typography variant="h6" className="text-lg text-gray-600 ">

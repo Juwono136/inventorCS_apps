@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 // components
@@ -6,6 +6,7 @@ import HeroComponent from "../../components/HomeComponents/HeroComponent";
 import InventoriesSummaryComponent from "../../components/HomeComponents/InventoriesSummaryComponent";
 import TeamComponent from "../../components/HomeComponents/TeamComponent";
 import FooterComponent from "../../components/HomeComponents/FooterComponent";
+import FAQComponent from "../../components/HomeComponents/FAQComponent";
 import ScrollUp from "../../common/ScrollUp";
 
 // features
@@ -22,6 +23,7 @@ const Home = ({ page, sort }) => {
     <>
       <HeroComponent />
       <InventoriesSummaryComponent />
+      <FAQComponent />
       <TeamComponent />
       <FooterComponent />
       <ScrollUp />

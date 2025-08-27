@@ -1,5 +1,5 @@
 import Inventories from "../models/inventory.js";
-import { nanoid, customAlphabet } from "nanoid";
+import { customAlphabet } from "nanoid";
 
 // get All inventories info
 export const getAllInventories = async (req, res) => {
