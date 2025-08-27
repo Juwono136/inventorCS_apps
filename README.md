@@ -132,8 +132,11 @@ npm start
 ### Sign Up Page
 <img width="1920" height="1453" alt="image" src="https://github.com/user-attachments/assets/1c1c740b-7e61-4f57-9fee-0f8accab2f50" />
 
+### Select Role Page (If user has more than 1 role)
+<img width="1916" height="1013" alt="image" src="https://github.com/user-attachments/assets/cfce1ea2-9f74-4d9d-95a0-e760fe71435c" />
+
 ### Inventory lists Page
-<img width="1917" height="860" alt="image" src="https://github.com/user-attachments/assets/a4828102-a634-475f-8ff6-317360d43b3f" />
+<img width="1920" height="3233" alt="image" src="https://github.com/user-attachments/assets/8c6c7a74-fac6-4a36-b2b6-5ff5f2155d1d" />
 
 ### Inventory Detail Page
 <img width="1911" height="866" alt="image" src="https://github.com/user-attachments/assets/d714da25-813b-4705-8946-3c09122fe3b4" />
@@ -147,9 +150,35 @@ npm start
 ### User Loan Transactions Page
 <img width="1912" height="862" alt="image" src="https://github.com/user-attachments/assets/88756054-7665-4366-b350-a02d40798e7a" />
 
+### User Loan Transaction Detail Form Page
+<img width="1920" height="2080" alt="image" src="https://github.com/user-attachments/assets/f7e4c086-acfe-406a-ad31-a1bab529172a" />
+
+### My Profile Page
+<img width="1920" height="1135" alt="image" src="https://github.com/user-attachments/assets/f911f63d-b407-44c1-ba98-a936363f8449" />
+
+### Notification Page
+<img width="1920" height="1135" alt="image" src="https://github.com/user-attachments/assets/3e8811a0-8e61-44bb-b311-218029c52ec0" />
+
 ### Staff Dashboard
+<img width="1920" height="1135" alt="image" src="https://github.com/user-attachments/assets/b40a2d99-46bc-4766-bc90-c402cae9e8a2" />
+
+### Inventories List
+<img width="1920" height="1135" alt="image" src="https://github.com/user-attachments/assets/d5905e50-a32a-486a-a95f-64256bb5cfb3" />
+
+### Inventory Detail Page (Update Inventory)
+<img width="1920" height="1135" alt="image" src="https://github.com/user-attachments/assets/0bbbac67-4d00-4caa-921d-055856f2dba6" />
+
+### Add Inventory Page
+<img width="1920" height="1135" alt="image" src="https://github.com/user-attachments/assets/48dd1acd-e6d3-4282-a41b-0e5a4756578a" />
+
+### Borrowed Items Info Page
+<img width="1920" height="1135" alt="image" src="https://github.com/user-attachments/assets/8d58d8d7-da01-478f-bcee-6c9a2bd00eb2" />
+
+### Meeting Requests Info Page
+<img width="1920" height="1135" alt="image" src="https://github.com/user-attachments/assets/e3c438ce-5de3-4a47-8247-3a0962e199b2" />
 
 ### Admin Dashboard
+Under process...
 
 ## 📝 Development Notes
 - Ensure MongoDB & RabbitMQ are running before starting backend (running via docker).
