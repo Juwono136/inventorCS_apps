@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
 import { useDispatch, useSelector } from "react-redux";
@@ -82,6 +82,7 @@ const NavbarComponent = () => {
           Inventories
         </a>
       </Typography>
+
       <Typography as="li" variant="small" color="blue-gray" className="p-1 font-normal">
         <HashLink
           smooth
@@ -90,6 +91,28 @@ const NavbarComponent = () => {
           onClick={() => handleNavigation("team")}
         >
           Our Team
+        </HashLink>
+      </Typography>
+
+      <Typography as="li" variant="small" color="blue-gray" className="p-1 font-normal">
+        <HashLink
+          smooth
+          to="/#manual"
+          className="flex items-center"
+          onClick={() => handleNavigation("manual")}
+        >
+          User Manual
+        </HashLink>
+      </Typography>
+
+      <Typography as="li" variant="small" color="blue-gray" className="p-1 font-normal">
+        <HashLink
+          smooth
+          to="/#faq"
+          className="flex items-center"
+          onClick={() => handleNavigation("faq")}
+        >
+          FAQ
         </HashLink>
       </Typography>
     </ul>

@@ -37,7 +37,7 @@ const DialogRequestMeeting = ({ loanData, openDialog, setOpenDialog, handleOpenD
   ];
 
   const locationOptions = [
-    "Binus JWC Campus (Faculty Room)",
+    "Binus FX Senayan Campus (Game Lab)",
     "Binus FX Senayan Campus (Faculty Room)",
   ];
 

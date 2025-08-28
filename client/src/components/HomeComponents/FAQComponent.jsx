@@ -66,7 +66,7 @@ export function FAQComponent() {
   const handleOpen = (value) => setOpen(open === value ? 0 : value);
 
   return (
-    <section className="min-h-screen p-4 md:p-8">
+    <section className="min-h-screen p-4 md:p-8" id="faq">
       <div className="mx-auto p-6 md:p-8 rounded-xl border-2 border-indigo-50">
         <div className="mb-8 text-center lg:mb-10">
           <Typography
