@@ -86,22 +86,22 @@ const NavbarComponent = () => {
       <Typography as="li" variant="small" color="blue-gray" className="p-1 font-normal">
         <HashLink
           smooth
-          to="/#team"
+          to="/#manual"
           className="flex items-center"
-          onClick={() => handleNavigation("team")}
+          onClick={() => handleNavigation("manual")}
         >
-          Our Team
+          User Manual
         </HashLink>
       </Typography>
 
       <Typography as="li" variant="small" color="blue-gray" className="p-1 font-normal">
         <HashLink
           smooth
-          to="/#manual"
+          to="/#team"
           className="flex items-center"
-          onClick={() => handleNavigation("manual")}
+          onClick={() => handleNavigation("team")}
         >
-          User Manual
+          Our Team
         </HashLink>
       </Typography>
 

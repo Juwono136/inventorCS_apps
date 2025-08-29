@@ -49,7 +49,7 @@ const BorrowedItemTableComponent = ({ refreshTrigger }) => {
   const data = loanData;
 
   const formattedStartDate = borrowDateRange.startDate
-    ? new Date(newDate(borrowDateRange.startDate).setHours(0, 0, 0, 0)).toISOString()
+    ? new Date(new Date(borrowDateRange.startDate).setHours(0, 0, 0, 0)).toISOString()
     : "";
 
   const formattedEndDate = borrowDateRange.endDate

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 // icons and material-tailwind
 import {
@@ -46,10 +46,7 @@ const ExcelImportExportComponent = ({ handleProgressBar, setData }) => {
                 <PiMicrosoftExcelLogo className="h-5 w-5" />
                 <Typography {...labelProps}>Download Template</Typography>
               </SpeedDialAction>
-              <SpeedDialAction
-                className="relative bg-green-600 text-white"
-                onClick={handleOpen}
-              >
+              <SpeedDialAction className="relative bg-green-600 text-white" onClick={handleOpen}>
                 <TbTableImport className="h-5 w-5" />
                 <Typography {...labelProps}>Import Inventories</Typography>
               </SpeedDialAction>
