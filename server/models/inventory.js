@@ -81,6 +81,14 @@ const inventorySchema = mongoose.Schema(
       required: true,
       default: false,
     },
+    deletion_requested_by: {
+      type: String, // staff id
+      default: null,
+    },
+    deletion_approved_by: {
+      type: String, // admin id
+      default: null,
+    },
   },
   {
     timestamps: {

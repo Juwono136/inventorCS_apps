@@ -23,8 +23,9 @@ const SigninPage = () => {
   const { email, password } = formData;
   const dispatch = useDispatch();
 
-  const { user, isLoading, isError, isSuccess, isLoggedOut, message } =
-    useSelector((state) => state.auth);
+  const { user, isLoading, isError, isSuccess, isLoggedOut, message } = useSelector(
+    (state) => state.auth
+  );
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -77,10 +78,7 @@ const SigninPage = () => {
           <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
-                <label
-                  htmlFor="email"
-                  className="flex text-sm font-medium leading-6 text-gray-900"
-                >
+                <label htmlFor="email" className="flex text-sm font-medium leading-6 text-gray-900">
                   Email address
                 </label>
                 <div className="mt-2">

@@ -199,7 +199,8 @@ const LoanTransactionCardComponent = ({
         onClose={handleCloseQRCodeModal}
         qrValue={qrCodeValue}
         transactionId={qrCodeTransactionId}
-        text="Scan the loan transaction "
+        text="Scan the loan transaction"
+        QRNote="Please give this QR Code to the our staff. This QR Code can only be accessed by the staff, it cannot be accessed by the user."
       />
     </div>
   );

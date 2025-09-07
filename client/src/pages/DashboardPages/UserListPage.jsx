@@ -3,6 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
+// icons and material-tailwind
+import { FaUserPlus } from "react-icons/fa";
+
 // components
 import Layout from "./Layout";
 import UserTableComponent from "../../components/DashboardComponents/UserTableComponent";
@@ -16,6 +19,7 @@ import UseDocumentTitle from "../../common/UseDocumentTitle";
 
 // features
 import { getAllUsersInfor } from "../../features/user/userSlice";
+import { Button } from "@material-tailwind/react";
 // import { accessToken } from "../../features/token/tokenSlice";
 
 const UserListPage = ({ sort, setSort, program, setProgram, page, setPage, search, setSearch }) => {
@@ -106,9 +110,20 @@ const UserListPage = ({ sort, setSort, program, setProgram, page, setPage, searc
   return (
     <Layout>
       <DynamicBreadcrumbs />
-      <h3 className="text-base font-bold text-indigo-500/60 pointer-events-none sm:text-xl">
-        Users List
-      </h3>
+      <div className="flex w-full gap-2 flex-col md:flex-row justify-between md:items-center">
+        <h3 className="text-base font-bold text-indigo-500/60 pointer-events-none sm:text-xl">
+          Users List
+        </h3>
+
+        <div className="flex gap-2 w-max flex-col md:flex-row justify-center md:items-center">
+          <a href="users/add_user">
+            <Button className="flex items-center capitalize bg-blue-gray-500" size="sm">
+              <FaUserPlus className="mr-1 text-lg" />
+              Add New User
+            </Button>
+          </a>
+        </div>
+      </div>
       <hr className="w-full border-indigo-100 my-4" />
 
       <div className="flex gap-4 flex-col">

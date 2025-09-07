@@ -15,7 +15,7 @@ import InventoriesPage from "./pages/DashboardPages/InventoriesPage";
 import BorrowedItemsPage from "./pages/DashboardPages/BorrowedItemsPage";
 import UserListPage from "./pages/DashboardPages/UserListPage";
 import MyProfilePage from "./pages/DashboardPages/MyProfilePage";
-import MySettingsPage from "./pages/DashboardPages/MySettingsPage";
+// import MySettingsPage from "./pages/DashboardPages/MySettingsPage";
 import UpdateUserRolePage from "./pages/DashboardPages/UpdateUserRolePage";
 import SelecteRolePage from "./pages/AuthPages/SelecteRolePage";
 import AddInventoryPage from "./pages/DashboardPages/AddInventoryPage";
@@ -36,6 +36,7 @@ import ProtectedUserRoutes from "./common/ProtectedUserRoutes";
 // features
 import { getUserInfor } from "./features/user/userSlice";
 import { accessToken } from "./features/token/tokenSlice";
+import AddNewUserPage from "./pages/DashboardPages/AddNewUserPage";
 
 function App() {
   const [sortUser, setSortUser] = useState({
@@ -66,7 +67,11 @@ function App() {
 
   return (
     <>
-      <Toaster />
+      <Toaster
+        toastOptions={{
+          duration: 5000,
+        }}
+      />
       <BrowserRouter>
         <Routes>
           {/* Not found routes */}
@@ -226,6 +231,15 @@ function App() {
             element={
               <ProtectedUserRoutes allowedRoles={[1]}>
                 <UpdateUserRolePage />
+              </ProtectedUserRoutes>
+            }
+          />
+
+          <Route
+            path="users/add_user"
+            element={
+              <ProtectedUserRoutes allowedRoles={[1]}>
+                <AddNewUserPage />
               </ProtectedUserRoutes>
             }
           />

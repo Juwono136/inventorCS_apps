@@ -16,10 +16,7 @@ import UseDocumentTitle from "../../common/UseDocumentTitle";
 
 // features
 import { convertFileToBase64 } from "../../utils/convertToBase64";
-import {
-  createInventory,
-  inventoryReset,
-} from "../../features/inventory/inventorySlice";
+import { createInventory, inventoryReset } from "../../features/inventory/inventorySlice";
 import { accessToken } from "../../features/token/tokenSlice";
 
 const AddInventoryPage = () => {
@@ -58,9 +55,7 @@ const AddInventoryPage = () => {
     is_consumable: "",
   };
 
-  const { isLoading, isError, isSuccess, message } = useSelector(
-    (state) => state.inventory
-  );
+  const { isLoading, isError, isSuccess, message } = useSelector((state) => state.inventory);
 
   const [data, setData] = useState(initialState);
   const [image, setImage] = useState();
@@ -222,12 +217,9 @@ const AddInventoryPage = () => {
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
                         <IoCloudUploadOutline className="w-8 h-8 mb-4 text-gray-600 " />
                         <p className="mb-2 text-sm text-gray-600 ">
-                          <span className="font-semibold">Click to upload</span>{" "}
-                          or drag and drop
+                          <span className="font-semibold">Click to upload</span> or drag and drop
                         </p>
-                        <p className="text-xs text-gray-600 ">
-                          PNG, JPEG, or JPG
-                        </p>
+                        <p className="text-xs text-gray-600 ">PNG, JPEG, or JPG</p>
                       </div>
                     )}
 
@@ -302,10 +294,7 @@ const AddInventoryPage = () => {
                         >
                           <option defaultValue="">Select item category</option>
                           {categoryMenu.map((category) => (
-                            <option
-                              key={category}
-                              value={category.toLowerCase()}
-                            >
+                            <option key={category} value={category.toLowerCase()}>
                               {category}
                             </option>
                           ))}
@@ -397,8 +386,7 @@ const AddInventoryPage = () => {
                         htmlFor="room_number"
                         className="text-gray-800 font-semibold lg:text-sm text-xs"
                       >
-                        Item Room Number:{" "}
-                        <span className="text-red-600">*</span>
+                        Item Room Number: <span className="text-red-600">*</span>
                       </label>
                       <input
                         type="text"
@@ -471,8 +459,7 @@ const AddInventoryPage = () => {
                   </div>
 
                   <p className="mb-1 text-gray-600 text-xs text-right">
-                    {characterLimit - desc.length}/{characterLimit} characters
-                    left
+                    {characterLimit - desc.length}/{characterLimit} characters left
                   </p>
 
                   <div className="flex w-full items-center justify-center md:justify-start text-white mt-4">

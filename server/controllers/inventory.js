@@ -177,61 +177,89 @@ export const createInventory = async (req, res) => {
       inventories = [inventories];
     }
 
-    const validatedInventories = inventories.map((inventory) => {
-      const {
-        asset_id,
-        asset_name,
-        asset_img,
-        serial_number,
-        categories,
-        desc,
-        location,
-        room_number,
-        cabinet,
-        total_items,
-        is_consumable,
-      } = inventory;
+    // get all the item names you want to add
+    const incomingNames = inventories.map((inv) => inv.asset_name.toLowerCase());
 
-      const alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-      const nanoid = customAlphabet(alphabet, 15);
-      const newAssetId = nanoid(15);
-
-      if (
-        !asset_name ||
-        !categories ||
-        !desc ||
-        !location ||
-        !room_number ||
-        !cabinet ||
-        !total_items ||
-        is_consumable === undefined
-      ) {
-        throw new Error("Please fill in the required fields.");
-      }
-
-      if (asset_name.length < 3) throw new Error("Item name is too short.");
-      if (asset_name.length > 80) throw new Error("Item name cannot exceed 80 characters.");
-      if (asset_id && asset_id.length > 15) throw new Error("Item ID cannot exceed 15 characters.");
-      if (serial_number && serial_number.length > 15)
-        throw new Error("Serial number cannot exceed 15 characters.");
-      if (total_items < 0) throw new Error("Please input the total items with a positive number.");
-
-      return {
-        asset_id: newAssetId,
-        asset_name,
-        asset_img: asset_img || "https://api.dicebear.com/9.x/icons/svg?seed=Chase",
-        serial_number: serial_number || "",
-        item_program: req.userData.personal_info.program || "",
-        desc,
-        categories: categories.map((category) => category.toLowerCase()),
-        location,
-        room_number,
-        cabinet,
-        total_items,
-        is_consumable,
-        added_by: req.user._id,
-      };
+    // check the database for the same asset_name (case-insensitive)
+    const existingInventories = await Inventories.find({
+      asset_name: { $in: incomingNames.map((name) => new RegExp(`^${name}$`, "i")) },
     });
+
+    const existingNames = existingInventories.map((inv) => inv.asset_name.toLowerCase());
+
+    const validatedInventories = inventories
+      .filter((inventory) => !existingNames.includes(inventory.asset_name.toLowerCase()))
+      .map((inventory) => {
+        const {
+          asset_id,
+          asset_name,
+          asset_img,
+          serial_number,
+          categories,
+          desc,
+          location,
+          room_number,
+          cabinet,
+          total_items,
+          is_consumable,
+          draft,
+        } = inventory;
+
+        const alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        const nanoid = customAlphabet(alphabet, 15);
+        const newAssetId = nanoid(15);
+
+        if (
+          !asset_name ||
+          !categories ||
+          !desc ||
+          !location ||
+          !room_number ||
+          !cabinet ||
+          !total_items ||
+          is_consumable === undefined ||
+          draft === undefined
+        ) {
+          throw new Error("Please fill in the required fields.");
+        }
+
+        if (asset_name.length < 3) throw new Error("Item name is too short.");
+
+        if (asset_name.length > 80) throw new Error("Item name cannot exceed 80 characters.");
+
+        if (asset_id && asset_id.length > 15)
+          throw new Error("Item ID cannot exceed 15 characters.");
+
+        if (serial_number && serial_number.length > 15)
+          throw new Error("Serial number cannot exceed 15 characters.");
+
+        if (total_items < 0)
+          throw new Error("Please input the total items with a positive number.");
+
+        return {
+          asset_id: newAssetId,
+          asset_name,
+          asset_img: asset_img || "https://api.dicebear.com/9.x/icons/svg?seed=Chase",
+          serial_number: serial_number || "",
+          item_program: req.userData.personal_info.program || "",
+          desc,
+          categories: categories.map((category) => category.toLowerCase()),
+          location,
+          room_number,
+          cabinet,
+          total_items,
+          is_consumable,
+          draft,
+          added_by: req.user._id,
+        };
+      });
+
+    if (validatedInventories.length === 0) {
+      return res.json({
+        message: "No new items were added because all provided items already exist.",
+        inventories: [],
+      });
+    }
 
     let savedInventories;
     if (isArray) {
@@ -241,7 +269,7 @@ export const createInventory = async (req, res) => {
     }
 
     res.json({
-      message: "Item created successfully",
+      message: "Item(s) created successfully",
       inventories: savedInventories,
     });
   } catch (error) {
@@ -365,7 +393,7 @@ export const activeInventory = async (req, res) => {
   }
 };
 
-// draft inventory (soft delete)
+// draft the inventory
 export const draftInventory = async (req, res) => {
   try {
     const updateDrafInventory = await Inventories.findByIdAndUpdate(
@@ -381,6 +409,82 @@ export const draftInventory = async (req, res) => {
     res.json({
       message: `${updateDrafInventory.asset_name} marked as draft.`,
       inventory: updateDrafInventory,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// request inventory deletion (by staff)
+export const requestInventoryDeletion = async (req, res) => {
+  try {
+    const { inventoryIds } = req.body;
+    const staffId = req.user._id;
+    const staffProgram = req.userData.personal_info.program;
+
+    if (!inventoryIds || !Array.isArray(inventoryIds) || inventoryIds.length === 0) {
+      return res.status(400).json({ message: "Inventory IDs must be a non-empty array." });
+    }
+
+    const itemsToUpdate = await Inventories.find({
+      _id: { $in: inventoryIds },
+      item_program: staffProgram,
+      draft: false,
+    }).select("_id asset_name");
+
+    if (itemsToUpdate.length === 0) {
+      return res.status(404).json({
+        message: "No active items found for deletion in your program.",
+      });
+    }
+
+    const idsToUpdate = itemsToUpdate.map((item) => item._id);
+
+    await Inventories.updateMany(
+      { _id: { $in: idsToUpdate } },
+      {
+        $set: {
+          draft: true,
+          deletion_requested_by: staffId,
+        },
+      }
+    );
+
+    res.json({
+      message: `Request to delete has been sent. Waiting for admin approval.`,
+      requested_count: idsToUpdate.length,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// approve and delete inventory (by admin)
+export const approveInventoryDeletion = async (req, res) => {
+  try {
+    const { inventoryIds } = req.body;
+    const adminProgram = req.userData.personal_info.program;
+
+    if (!inventoryIds || !Array.isArray(inventoryIds) || inventoryIds.length === 0) {
+      return res.status(400).json({ message: "Inventory IDs must be a non-empty array." });
+    }
+
+    const deletionResult = await Inventories.deleteMany({
+      _id: { $in: inventoryIds },
+      item_program: adminProgram,
+      draft: true,
+    });
+
+    if (deletionResult.deletedCount === 0) {
+      return res.status(404).json({
+        message:
+          "No items matched the criteria for deletion. They might have been restored or do not belong to your program.",
+      });
+    }
+
+    res.json({
+      message: `Successfully deleted inventory item(s).`,
+      deleted_count: deletionResult.deletedCount,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

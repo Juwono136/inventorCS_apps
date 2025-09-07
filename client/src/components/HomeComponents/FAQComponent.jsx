@@ -44,7 +44,7 @@ const faqData = [
     id: 5,
     question: "When is the deadline for returning items?",
     answer:
-      "Each item has a different borrowing duration. You can check the return date in the transaction details on your dashboard and on the 'My Loan Transactions' page. If you borrow an item psast the allowed period, the program staff will remind you via email or available contact information.",
+      "Each item has a different borrowing duration. You can check the return date in the transaction details on your dashboard and on the 'My Loan Transactions' page. If you borrow an item past the allowed period, the program staff will remind you via email or available contact information.",
   },
   {
     id: 6,

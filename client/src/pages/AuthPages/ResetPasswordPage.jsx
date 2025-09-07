@@ -24,8 +24,9 @@ const ResetPasswordPage = () => {
   const navigate = useNavigate();
 
   const { password, confirmPassword } = data;
-  const { user, isLoading, isError, isSuccess, isLoggedOut, message } =
-    useSelector((state) => state.auth);
+  const { user, isLoading, isError, isSuccess, isLoggedOut, message } = useSelector(
+    (state) => state.auth
+  );
 
   useEffect(() => {
     if (isError) {
@@ -71,7 +72,7 @@ const ResetPasswordPage = () => {
               Reset Password
             </h2>
             <p className="text-center text-sm leading-9 tracking-tight text-gray-900">
-              Please Reset your password for recorvery
+              Please Reset your password
             </p>
           </div>
 

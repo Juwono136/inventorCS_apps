@@ -1,5 +1,3 @@
-import React from "react";
-
 // icons and material-tailwind
 import { Avatar, Chip } from "@material-tailwind/react";
 import { RxCaretSort } from "react-icons/rx";

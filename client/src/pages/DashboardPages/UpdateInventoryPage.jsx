@@ -93,6 +93,7 @@ const UpdateInventoryPage = () => {
         cabinet: inventoryById?.cabinet || "",
         desc: inventoryById?.desc || "",
         is_consumable: inventoryById?.is_consumable || false,
+        draft: inventoryById?.draft || false,
       });
 
       // Set image state separately if it exists
@@ -122,6 +123,7 @@ const UpdateInventoryPage = () => {
     cabinet,
     desc,
     is_consumable,
+    draft,
   } = selectedItem;
 
   const dispatch = useDispatch();
@@ -334,10 +336,22 @@ const UpdateInventoryPage = () => {
                           size="sm"
                           value={item_status}
                           color={statusColors[item_status] || "gray"}
-                          variant="ghost"
+                          variant="outlined"
                           className="rounded-full"
                         />
                       </div>
+
+                      {draft && (
+                        <div className="flex w-full justify-center items-center lg:justify-start mt-2">
+                          <Chip
+                            size="sm"
+                            value={draft ? "Draft" : "Active"}
+                            color={draft ? "red" : "green"}
+                            variant="ghost"
+                            className="rounded-full"
+                          />
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex">
@@ -358,6 +372,10 @@ const UpdateInventoryPage = () => {
                           fgColor="#161D6F"
                           qrStyle="dots"
                         />
+
+                        <p className="text-[8px] mt-1 text-gray-600 italic w-max">
+                          Click the QR Code to scan
+                        </p>
                       </div>
                     </div>
                   </div>

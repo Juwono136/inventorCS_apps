@@ -4,14 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 
 // icons and material-tailwind
-import {
-  Avatar,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Chip,
-} from "@material-tailwind/react";
+import { Avatar, Button, Card, CardBody, CardHeader, Chip } from "@material-tailwind/react";
 
 // components
 import Layout from "./Layout";
@@ -50,11 +43,15 @@ const UpdateUserRolePage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { userById, isLoading, isError, isSuccess, message } = useSelector(
-    (state) => state.user
-  );
-
+  const { userById, isLoading, isError, isSuccess, message } = useSelector((state) => state.user);
   // console.log(userById);
+
+  const [selectedUser, setSelectedUser] = useState(initialState);
+  const [openDialogSave, setOpenDialogSave] = useState(false);
+  const [isRoleChanged, setIsRoleChanged] = useState(false);
+  const [isStatusChanged, setIsStatusChanged] = useState(false);
+  const [isSaveDisabled, setIsSaveDisabled] = useState(true);
+  const { role, status } = selectedUser;
 
   useEffect(() => {
     if (userById) {
@@ -71,23 +68,21 @@ const UpdateUserRolePage = () => {
     });
   }, [dispatch]);
 
-  const [selectedUser, setSelectedUser] = useState(initialState);
-  const [openDialogSave, setOpenDialogSave] = useState(false);
-  const [isRoleChanged, setIsRoleChanged] = useState(false);
-  const [isStatusChanged, setIsStatusChanged] = useState(false);
-  const [isSaveDisabled, setIsSaveDisabled] = useState(true);
-  const { role, status } = selectedUser;
+  const handleRoleChange = (e) => {
+    const { value, checked } = e.target;
+    const roleValue = parseInt(value, 10);
 
-  const handleRoleChange = (e, index) => {
-    const { value } = e.target;
-    const updatedRoles = [...selectedUser.role];
-    updatedRoles[index] = parseInt(value);
-
-    setSelectedUser({
-      ...selectedUser,
-      role: updatedRoles,
+    setSelectedUser((prevState) => {
+      let updatedRoles;
+      if (checked) {
+        // if checked, add the role to the array
+        updatedRoles = [...prevState.role, roleValue];
+      } else {
+        // otherwise, remove the role from the array.
+        updatedRoles = prevState.role.filter((r) => r !== roleValue);
+      }
+      return { ...prevState, role: updatedRoles };
     });
-
     setIsRoleChanged(true);
   };
 
@@ -159,12 +154,23 @@ const UpdateUserRolePage = () => {
       navigate(`/users/update_user/${id}`);
     }
 
-    const isChanged =
-      selectedUser.role !== userById?.personal_info?.role ||
-      selectedUser.status !== userById?.personal_info?.status;
+    if (userById) {
+      // converts an array to a sorted string for accurate comparison
+      const initialRolesStr = JSON.stringify([...(userById.personal_info?.role || [])].sort());
+      const currentRolesStr = JSON.stringify([...(selectedUser.role || [])].sort());
 
-    setIsSaveDisabled(!isChanged);
-    dispatch(userResetMessage());
+      const rolesHaveChanged = initialRolesStr !== currentRolesStr;
+      const statusHasChanged = selectedUser.status !== userById.personal_info?.status;
+
+      // the save button is active if there is a change in role or status
+      setIsSaveDisabled(!(rolesHaveChanged || statusHasChanged));
+    } else {
+      setIsSaveDisabled(true);
+    }
+
+    if (isError || (isSuccess && message)) {
+      dispatch(userResetMessage());
+    }
   }, [selectedUser, userById, isError, message, navigate]);
 
   return (
@@ -201,13 +207,9 @@ const UpdateUserRolePage = () => {
                 </CardHeader>
 
                 <CardBody className="text-center flex flex-col gap-2 p-2">
-                  <h1 className="text-indigo-800 text-sm">
-                    {userById?.personal_info?.name}
-                  </h1>
+                  <h1 className="text-indigo-800 text-sm">{userById?.personal_info?.name}</h1>
 
-                  <p className="text-indigo-600 text-xs">
-                    {userById?.personal_info?.email}
-                  </p>
+                  <p className="text-indigo-600 text-xs">{userById?.personal_info?.email}</p>
 
                   {role?.map((r, index) => (
                     <Chip
@@ -231,45 +233,32 @@ const UpdateUserRolePage = () => {
               {/* user detail info */}
               <div className="flex gap-4 w-full p-4 flex-col bg-indigo-50 rounded-md shadow-lg">
                 {/* change user role */}
-                {selectedUser?.role?.map((roleValue, index) => (
-                  <div className="mb-2" key={index}>
-                    <label
-                      htmlFor={`role-${index}`}
-                      className="block text-sm font-semibold text-purple-800"
-                    >
-                      Change User Role-{index + 1}:
-                    </label>
-
-                    {/* Loop through user roles to create a select option for each role */}
-                    <div className="flex flex-col gap-4">
-                      <select
-                        key={index}
-                        id={`role-${index}`}
-                        name="role"
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base text-indigo-800 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-lg"
-                        value={roleValue}
-                        onChange={(e) => handleRoleChange(e, index)} // Adjust to handle role change for specific index
-                      >
-                        {Object.entries(roleMap).map(([key, value]) => (
-                          <option
-                            key={key}
-                            value={key}
-                            className="text-indigo-800"
-                          >
-                            {value}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                <div className="mb-2">
+                  <label className="block text-sm font-semibold text-purple-800 mb-2">
+                    Change User Role:
+                  </label>
+                  <div className="flex flex-col gap-2">
+                    {Object.entries(roleMap).map(([key, value]) => (
+                      <div key={key} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id={`role-${key}`}
+                          value={key}
+                          checked={role.includes(parseInt(key))}
+                          onChange={handleRoleChange}
+                          className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                        />
+                        <label htmlFor={`role-${key}`} className="ml-2 text-sm text-gray-700">
+                          {value}
+                        </label>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
 
                 {/* change user role */}
                 <div className="mb-2">
-                  <label
-                    htmlFor="userStatus"
-                    className="block text-sm font-semibold text-red-700"
-                  >
+                  <label htmlFor="userStatus" className="block text-sm font-semibold text-red-700">
                     Change User Status:
                   </label>
                   <select
@@ -280,11 +269,7 @@ const UpdateUserRolePage = () => {
                     onChange={handleChange}
                   >
                     {userStatus.map((status, index) => (
-                      <option
-                        key={index}
-                        value={status}
-                        className="text-red-800"
-                      >
+                      <option key={index} value={status} className="text-red-800">
                         {status.charAt(0).toUpperCase() + status.slice(1)}
                       </option>
                     ))}
@@ -293,24 +278,18 @@ const UpdateUserRolePage = () => {
 
                 <div className="flex gap-1 flex-col flex-wrap">
                   <h1 className="text-sm text-indigo-800">Binusian ID:</h1>
-                  <p className="text-sm text-indigo-500">
-                    {userById?.personal_info?.binusian_id}
-                  </p>
+                  <p className="text-sm text-indigo-500">{userById?.personal_info?.binusian_id}</p>
                 </div>
 
                 <div className="flex gap-1 flex-col flex-wrap">
                   <h1 className="text-sm text-indigo-800">Program:</h1>
-                  <p className="text-sm text-indigo-500">
-                    {userById?.personal_info?.program}
-                  </p>
+                  <p className="text-sm text-indigo-500">{userById?.personal_info?.program}</p>
                 </div>
 
                 <div className="flex gap-1 flex-col flex-wrap">
                   <h1 className="text-sm text-indigo-800">Phone Number:</h1>
                   {userById?.personal_info?.phone.length ? (
-                    <p className="text-sm text-indigo-500">
-                      {userById?.personal_info?.phone}
-                    </p>
+                    <p className="text-sm text-indigo-500">{userById?.personal_info?.phone}</p>
                   ) : (
                     <p className="text-sm text-indigo-500">-</p>
                   )}
@@ -319,9 +298,7 @@ const UpdateUserRolePage = () => {
                 <div className="flex gap-1 flex-col flex-wrap">
                   <h1 className="text-sm text-indigo-800">Address:</h1>
                   {userById?.personal_info?.address.length ? (
-                    <p className="text-sm text-indigo-500">
-                      {userById?.personal_info?.address}
-                    </p>
+                    <p className="text-sm text-indigo-500">{userById?.personal_info?.address}</p>
                   ) : (
                     <p className="text-sm text-indigo-500">-</p>
                   )}

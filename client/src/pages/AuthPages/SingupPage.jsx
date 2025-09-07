@@ -155,7 +155,7 @@ const SingupPage = () => {
                   Email <span className="text-red-600">*</span>
                 </label>
                 <div className="text-xs text-gray-700 italic">
-                  *) Please login using binus email (@binus.ac.id or @binus.edu)
+                  *) Please register using binus email (@binus.ac.id or @binus.edu)
                 </div>
                 <div className="mt-2">
                   <input
@@ -177,6 +177,9 @@ const SingupPage = () => {
                 >
                   Address <span className="text-red-600">*</span>
                 </label>
+                <div className="text-xs text-gray-700 italic">
+                  *) Example: JWC Campus, Senayan Campus, Anggrek Campus, etc.
+                </div>
                 <div className="mt-2">
                   <input
                     id="address"
