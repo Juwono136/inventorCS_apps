@@ -27,23 +27,55 @@ const FooterComponent = () => {
           <img src={LogoImg} alt="logoImg" className="h-5 w-5" />
           InventorCS
         </a>
-        <ul className="flex flex-wrap items-center gap-y-2 gap-x-8">
+        <ul className="flex flex-wrap justify-center md:justify-start items-center gap-y-2 gap-x-6">
           <li>
             <Typography
               as="a"
               href="/inventory-list"
-              className="font-semibold transition-colors text-gray-700 hover:text-gray-900"
+              className="font-semibold text-sm transition-colors text-gray-700 hover:text-gray-900"
             >
               Inventories
             </Typography>
           </li>
+
+          <li>
+            <Typography
+              as="a"
+              href="#manual"
+              className="font-semibold text-sm transition-colors text-gray-700 hover:text-gray-900"
+            >
+              User Manual
+            </Typography>
+          </li>
+
           <li>
             <Typography
               as="a"
               href="#team"
-              className="font-semibold transition-colors text-gray-700 hover:text-gray-900"
+              className="font-semibold text-sm transition-colors text-gray-700 hover:text-gray-900"
             >
               Our Team
+            </Typography>
+          </li>
+
+          <li>
+            <Typography
+              as="a"
+              href="#faq"
+              className="font-semibold text-sm transition-colors text-gray-700 hover:text-gray-900"
+            >
+              FAQ
+            </Typography>
+          </li>
+
+          <li>
+            <Typography
+              as="a"
+              href="https://forms.office.com/r/y0tGpTHFBW?origin=lprLink"
+              target="_blank"
+              className="font-semibold text-sm transition-colors text-gray-700 hover:text-gray-900"
+            >
+              Report Issue
             </Typography>
           </li>
         </ul>
