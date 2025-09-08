@@ -1,5 +1,6 @@
 import Inventories from "../models/inventory.js";
 import { customAlphabet } from "nanoid";
+import { createLog } from "./historyLog.js";
 
 // get All inventories info
 export const getAllInventories = async (req, res) => {
@@ -169,6 +170,13 @@ export const getInventoryById = async (req, res) => {
 
 // create inventory
 export const createInventory = async (req, res) => {
+  const actorInfo = {
+    actorId: req.user?._id || "SYSTEM", // use 'SYSTEM' if user is not defined
+    actorName: req.user?.personal_info?.name || "Unknown",
+    role: req.user?.personal_info?.role || [-1],
+    ipAddress: req.ip,
+  };
+
   try {
     let inventories = req.body;
 
@@ -217,8 +225,7 @@ export const createInventory = async (req, res) => {
           !room_number ||
           !cabinet ||
           !total_items ||
-          is_consumable === undefined ||
-          draft === undefined
+          is_consumable === undefined
         ) {
           throw new Error("Please fill in the required fields.");
         }
@@ -268,19 +275,58 @@ export const createInventory = async (req, res) => {
       savedInventories = await Inventories.create(validatedInventories[0]); // Single Insert
     }
 
+    // LOGGING (SUCCESS)
+    const logPromises = (
+      Array.isArray(savedInventories) ? savedInventories : [savedInventories]
+    ).map((inv) =>
+      createLog({
+        ...actorInfo,
+        actionType: "CREATE_INVENTORY",
+        entityType: "Inventory",
+        entityId: inv._id.toString(),
+        changes: {
+          before: null, // there is no 'before' data as this is a new build.
+          after: inv.toObject(), // new data saved
+        },
+        details: `New inventory item '${inv.asset_name}' was created.`,
+        status: "SUCCESS",
+      })
+    );
+
+    await Promise.all(logPromises);
+
     res.json({
       message: "Item(s) created successfully",
       inventories: savedInventories,
     });
   } catch (error) {
+    // LOGGING (FAILURE)
+    await createLog({
+      ...actorInfo,
+      actionType: "CREATE_INVENTORY",
+      entityType: "Inventory",
+      entityId: "N/A", // entity ID is not available because it failed to create
+      details: "Attempt to create inventory failed.",
+      status: "FAILURE",
+      failureReason: error.message,
+    });
+
     return res.status(500).json({ message: error.message });
   }
 };
 
 // update inventory
 export const updateInventory = async (req, res) => {
+  const inventoryId = req.params.id;
+
+  const actorInfo = {
+    actorId: req.user?._id || "SYSTEM",
+    actorName: req.user?.personal_info?.name || "Unknown",
+    role: req.user?.personal_info?.role || [-1],
+    ipAddress: req.ip,
+  };
+
   try {
-    const inventoryId = req.params.id;
     const {
       asset_id,
       asset_name,
@@ -321,7 +367,8 @@ export const updateInventory = async (req, res) => {
       return res.status(400).json({ message: "Invalid request." });
     }
 
-    const existingInventory = await Inventories.findById(inventoryId);
+    // before state
+    const existingInventory = await Inventories.findById(inventoryId).lean();
 
     if (!existingInventory) {
       return res.status(404).json({ message: "Inventory not found." });
@@ -361,65 +408,177 @@ export const updateInventory = async (req, res) => {
       author: req.user._id,
     };
 
+    // after state
     const result = await Inventories.findByIdAndUpdate({ _id: inventoryId }, updatedInventory, {
       new: true,
+    }).lean();
+
+    // LOGGING (SUCCESS)
+    await createLog({
+      ...actorInfo,
+      actionType: "UPDATE_INVENTORY",
+      entityType: "Inventory",
+      entityId: inventoryId,
+      changes: {
+        before: existingInventory,
+        after: result,
+      },
+      details: `Inventory item '${result.asset_name}' was updated.`,
+      status: "SUCCESS",
     });
 
     res.json({ message: "Update item success", result });
   } catch (error) {
+    // LOGGING (FAILURE)
+    await createLog({
+      ...actorInfo,
+      actionType: "UPDATE_INVENTORY",
+      entityType: "Inventory",
+      entityId: inventoryId,
+      details: "Attempt to update inventory failed.",
+      status: "FAILURE",
+      failureReason: error.message,
+    });
     return res.status(500).json({ message: error.message });
   }
 };
 
 // update draft to active inventory
 export const activeInventory = async (req, res) => {
-  try {
-    const updateDrafInventory = await Inventories.findByIdAndUpdate(
-      req.params.id,
-      { draft: false },
-      { new: true }
-    );
+  const inventoryId = req.params.id;
 
-    if (!updateDrafInventory) {
+  const actorInfo = {
+    actorId: req.user?._id || "SYSTEM",
+    actorName: req.user?.personal_info?.name || "Unknown",
+    role: req.user?.personal_info?.role || [-1],
+    ipAddress: req.ip,
+  };
+
+  try {
+    const beforeState = await Inventories.findById(inventoryId).lean();
+
+    if (!beforeState) {
       return res.status(404).json({ message: "Inventory not found." });
     }
 
+    const updateDraftInventory = await Inventories.findByIdAndUpdate(
+      req.params.id,
+      { draft: false },
+      { new: true }
+    ).lean();
+
+    if (!updateDraftInventory) {
+      return res.status(404).json({ message: "Inventory not found." });
+    }
+
+    // LOGGING (SUCCESS)
+    await createLog({
+      ...actorInfo,
+      actionType: "UPDATE_INVENTORY",
+      entityType: "Inventory",
+      entityId: inventoryId,
+      changes: {
+        before: beforeState,
+        after: updateDraftInventory,
+      },
+      details: `Inventory item '${updateDraftInventory.asset_name}' status changed to active.`,
+      status: "SUCCESS",
+    });
+
     res.json({
-      message: `${updateDrafInventory.asset_name} changes to active.`,
-      inventory: updateDrafInventory,
+      message: `${updateDraftInventory.asset_name} changes to active.`,
+      inventory: updateDraftInventory,
     });
   } catch (error) {
+    // LOGGING (FAILURE)
+    await createLog({
+      ...actorInfo,
+      actionType: "UPDATE_INVENTORY",
+      entityType: "Inventory",
+      entityId: inventoryId,
+      details: "Attempt to change inventory status to active failed.",
+      status: "FAILURE",
+      failureReason: error.message,
+    });
+
     return res.status(500).json({ message: error.message });
   }
 };
 
 // draft the inventory
 export const draftInventory = async (req, res) => {
-  try {
-    const updateDrafInventory = await Inventories.findByIdAndUpdate(
-      req.params.id,
-      { draft: true },
-      { new: true }
-    );
+  const inventoryId = req.params.id;
 
-    if (!updateDrafInventory) {
+  const actorInfo = {
+    actorId: req.user?._id || "SYSTEM",
+    actorName: req.user?.personal_info?.name || "Unknown",
+    role: req.user?.personal_info?.role || [-1],
+    ipAddress: req.ip,
+  };
+
+  try {
+    const beforeState = await Inventories.findById(inventoryId).lean();
+
+    if (!beforeState) {
       return res.status(404).json({ message: "Inventory not found." });
     }
 
+    const updateDraftInventory = await Inventories.findByIdAndUpdate(
+      req.params.id,
+      { draft: true },
+      { new: true }
+    ).lean();
+
+    if (!updateDraftInventory) {
+      return res.status(404).json({ message: "Inventory not found." });
+    }
+
+    // LOGGING (SUCCESS)
+    await createLog({
+      ...actorInfo,
+      actionType: "UPDATE_INVENTORY",
+      entityType: "Inventory",
+      entityId: inventoryId,
+      changes: {
+        before: beforeState,
+        after: updateDraftInventory,
+      },
+      details: `Inventory item '${updateDraftInventory.asset_name}' was marked as draft.`,
+      status: "SUCCESS",
+    });
+
     res.json({
-      message: `${updateDrafInventory.asset_name} marked as draft.`,
-      inventory: updateDrafInventory,
+      message: `${updateDraftInventory.asset_name} marked as draft.`,
+      inventory: updateDraftInventory,
     });
   } catch (error) {
+    // LOGGING (FAILURE)
+    await createLog({
+      ...actorInfo,
+      actionType: "UPDATE_INVENTORY",
+      entityType: "Inventory",
+      entityId: inventoryId,
+      details: "Attempt to mark inventory as draft failed.",
+      status: "FAILURE",
+      failureReason: error.message,
+    });
+
     return res.status(500).json({ message: error.message });
   }
 };
 
 // request inventory deletion (by staff)
 export const requestInventoryDeletion = async (req, res) => {
+  const { inventoryIds } = req.body;
+
+  const actorInfo = {
+    actorId: req.user?._id || "SYSTEM",
+    actorName: req.user?.personal_info?.name || "Unknown",
+    role: req.user?.personal_info?.role || [-1],
+    ipAddress: req.ip,
+  };
+
   try {
-    const { inventoryIds } = req.body;
-    const staffId = req.user._id;
     const staffProgram = req.userData.personal_info.program;
 
     if (!inventoryIds || !Array.isArray(inventoryIds) || inventoryIds.length === 0) {
@@ -430,7 +589,7 @@ export const requestInventoryDeletion = async (req, res) => {
       _id: { $in: inventoryIds },
       item_program: staffProgram,
       draft: false,
-    }).select("_id asset_name");
+    }).lean();
 
     if (itemsToUpdate.length === 0) {
       return res.status(404).json({
@@ -450,43 +609,114 @@ export const requestInventoryDeletion = async (req, res) => {
       }
     );
 
+    // LOGGING (SUCCESS)
+    const logPromises = itemsToUpdate.map((item) => {
+      const afterState = { ...item, draft: true, deletion_requested_by: actorInfo.actorId };
+
+      return createLog({
+        ...actorInfo,
+        actionType: "DELETE_INVENTORY_REQUEST",
+        entityType: "Inventory",
+        entityId: item._id.toString(),
+        changes: {
+          before: item,
+          after: afterState,
+        },
+        details: `Deletion requested for item '${item.asset_name}'.`,
+        status: "SUCCESS",
+      });
+    });
+
+    await Promise.all(logPromises);
+
     res.json({
       message: `Request to delete has been sent. Waiting for admin approval.`,
       requested_count: idsToUpdate.length,
     });
   } catch (error) {
+    // LOGGING (FAILURE)
+    await createLog({
+      ...actorInfo,
+      actionType: "DELETE_INVENTORY_REQUEST",
+      entityType: "Inventory",
+      entityId: inventoryIds.join(", "),
+      details: "Attempt to request inventory deletion failed.",
+      status: "FAILURE",
+      failureReason: error.message,
+    });
+
     return res.status(500).json({ message: error.message });
   }
 };
 
 // approve and delete inventory (by admin)
 export const approveInventoryDeletion = async (req, res) => {
+  const { inventoryIds } = req.body;
+
+  const actorInfo = {
+    actorId: req.user?._id || "SYSTEM",
+    actorName: req.user?.personal_info?.name || "Unknown",
+    role: req.user?.personal_info?.role || [-1],
+    ipAddress: req.ip,
+  };
+
   try {
-    const { inventoryIds } = req.body;
     const adminProgram = req.userData.personal_info.program;
 
     if (!inventoryIds || !Array.isArray(inventoryIds) || inventoryIds.length === 0) {
       return res.status(400).json({ message: "Inventory IDs must be a non-empty array." });
     }
 
-    const deletionResult = await Inventories.deleteMany({
+    const itemsToDelete = await Inventories.find({
       _id: { $in: inventoryIds },
       item_program: adminProgram,
       draft: true,
-    });
+    }).lean();
 
-    if (deletionResult.deletedCount === 0) {
+    if (itemsToDelete.length === 0) {
       return res.status(404).json({
-        message:
-          "No items matched the criteria for deletion. They might have been restored or do not belong to your program.",
+        message: "No items matched the criteria for deletion.",
       });
     }
+
+    const idsToDelete = itemsToDelete.map((item) => item._id);
+
+    const deletionResult = await Inventories.deleteMany({ _id: { $in: idsToDelete } });
+
+    // LOGGING (SUCCESS)
+    const logPromises = itemsToDelete.map((item) =>
+      createLog({
+        ...actorInfo,
+        actionType: "DELETE_INVENTORY_APPROVE",
+        entityType: "Inventory",
+        entityId: item._id.toString(),
+        changes: {
+          before: item,
+          after: null,
+        },
+        details: `Item '${item.asset_name}' was permanently deleted.`,
+        status: "SUCCESS",
+      })
+    );
+
+    await Promise.all(logPromises);
 
     res.json({
       message: `Successfully deleted inventory item(s).`,
       deleted_count: deletionResult.deletedCount,
     });
   } catch (error) {
+    // LOGGING (FAILURE)
+    await createLog({
+      ...actorInfo,
+      actionType: "DELETE_INVENTORY_APPROVE",
+      entityType: "Inventory",
+      entityId: inventoryIds.join(", "),
+      details: "Attempt to approve inventory deletion failed.",
+      status: "FAILURE",
+      failureReason: error.message,
+    });
+
     return res.status(500).json({ message: error.message });
   }
 };
