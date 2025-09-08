@@ -13,23 +13,16 @@ const InventoriesSummaryComponent = () => {
   const { items } = inventories;
 
   const sortedItems = items
-    ? [...items].sort(
-        (a, b) => new Date(b.publishedAt) - new Date(a.publishedAt)
-      )
+    ? [...items].sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))
     : [];
 
   return (
-    <div
-      id="inventories"
-      className="flex flex-col items-center justify-center px-4"
-    >
+    <div id="inventories" className="flex flex-col items-center justify-center px-4">
       <div className="text-indigo-600 mb-6 text-center">
         <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-500 to-blue-500 bg-clip-text text-transparent animate-gradient">
           Our Inventories
         </h1>
-        <p className="text-sm text-gray-600 mt-2">
-          Check out our latest inventories
-        </p>
+        <p className="text-sm text-gray-600 mt-2">Check out our latest inventories</p>
       </div>
 
       <>

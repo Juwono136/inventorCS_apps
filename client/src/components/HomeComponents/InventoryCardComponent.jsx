@@ -23,9 +23,7 @@ const InventoryCardComponent = ({
   const { cartItems, isLoading } = useSelector((state) => state.loan);
   const cartItem = cartItems?.find((item) => item._id === itemId);
   const cartItemQuantity = cartItem ? cartItem.quantity : 0;
-  const [availableItems, setAvailableItems] = useState(
-    total_items - cartItemQuantity
-  );
+  const [availableItems, setAvailableItems] = useState(total_items - cartItemQuantity);
 
   const statusColorMap = {
     Available: "green",
@@ -54,7 +52,7 @@ const InventoryCardComponent = ({
             {title}
           </h2>
           <p className="text-xs font-semibold text-purple-900 my-2">
-            Total Items:{" "}
+            Total Item:{" "}
             <span className="text-purple-00 bg-purple-100 px-1.5 py-1 rounded-md">
               {availableItems}
             </span>
@@ -73,11 +71,7 @@ const InventoryCardComponent = ({
             <Chip
               size="sm"
               value={availableItems > 0 ? status : "Out of Stock"}
-              color={
-                availableItems > 0
-                  ? statusColorMap[status]
-                  : statusColorMap["OutOfStock"]
-              }
+              color={availableItems > 0 ? statusColorMap[status] : statusColorMap["OutOfStock"]}
               variant="outlined"
               className="rounded-md"
             />
@@ -85,10 +79,7 @@ const InventoryCardComponent = ({
 
           <div className="flex flex-wrap gap-1.5 w-full mt-2">
             {categories?.map((category, i) => (
-              <div
-                key={i}
-                className="inline-block px-3 py-1 border-red-800 border-2 rounded-full"
-              >
+              <div key={i} className="inline-block px-3 py-1 border-red-800 border-2 rounded-full">
                 <p className="text-xs text-red-700 font-base">#{category}</p>
               </div>
             ))}

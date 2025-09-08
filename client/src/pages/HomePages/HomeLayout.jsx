@@ -9,6 +9,7 @@ import FooterComponent from "../../components/HomeComponents/FooterComponent";
 import FAQComponent from "../../components/HomeComponents/FAQComponent";
 import ScrollUp from "../../common/ScrollUp";
 import UserManualComponent from "../../components/HomeComponents/UserManualComponent";
+import FeedbackComponent from "../../components/HomeComponents/FeedbackComponent";
 
 // features
 import { getAllInventories } from "../../features/inventory/inventorySlice";
@@ -27,6 +28,7 @@ const Home = ({ page, sort }) => {
       <UserManualComponent />
       <TeamComponent />
       <FAQComponent />
+      <FeedbackComponent />
       <FooterComponent />
       <ScrollUp />
     </>
