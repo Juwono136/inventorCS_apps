@@ -237,8 +237,8 @@ export const createInventory = async (req, res) => {
         if (asset_id && asset_id.length > 15)
           throw new Error("Item ID cannot exceed 15 characters.");
 
-        if (serial_number && serial_number.length > 15)
-          throw new Error("Serial number cannot exceed 15 characters.");
+        if (serial_number && serial_number.length > 40)
+          throw new Error("Serial number cannot exceed 40 characters.");
 
         if (total_items < 0)
           throw new Error("Please input the total items with a positive number.");
