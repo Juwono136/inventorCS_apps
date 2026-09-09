@@ -1,7 +1,6 @@
 import HistoryLogs from "../models/historyLog.js";
 
 /**
- * Function to create a history log entry:
  * @param {object} logData - Data to log.
  * @param {string} logData.actorId - ID of the user who performed the action.
  * @param {string} logData.actorName - User name.
