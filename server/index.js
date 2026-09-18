@@ -44,10 +44,10 @@ app.use(
         scriptSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net"],
         styleSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net"],
         imgSrc: ["'self'", "data:", "cdn.jsdelivr.net"],
-        connectSrc: ["'self'", process.env.INTERNET_SERVER],
+        connectSrc: ["'self'", process.env.INTERNET_SERVER, "https://csbi-users.csbihub.id"],
       },
     },
-  })
+  }),
 );
 
 // Ensure trust for reverse proxies (e.g., Nginx or cloud hosting)
